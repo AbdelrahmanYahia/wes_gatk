@@ -1,5 +1,4 @@
 #!/bin/bash
-# isntall GUAP source code in home
 
 YEL='\x1b[1;33m'
 GRE='\x1b[1;32m'
@@ -19,7 +18,9 @@ error_cheker(){
 
 echo -e "${YEL}Creating wes_gatk ENV${NC}"
 # Create a conda environment
-conda create -n wes_gatk -y
+#mamba create -n wes_gatk -y -c bioconda bwa fastqc samtools vcftools gatk4 picard qualimap bcftools multiqc bedtools ensembl-vep
+mamba create -n wes_gatk -f wes_gatk.yml
+#mamba update -n wes_gatk -f wes_gatk.yml
 error_cheker $?
 
 echo -e "${YEL}Activating ENV${NC}"
@@ -27,17 +28,17 @@ eval "$(conda shell.bash hook)"
 conda activate wes_gatk
 
 echo -e "${YEL}Installing Packages${NC}"
-conda install -n wes_gatk -y -c bioconda bwa fastqc samtools vcftools gatk4 picard qualimap bcftools multiqc bedtools ensembl-vep 
-error_cheker $?
+#conda install -n wes_gatk -y -c bioconda bwa fastqc samtools vcftools gatk4 picard qualimap bcftools multiqc bedtools ensembl-vep 
+#error_cheker $?
 
-conda install -n wes_gatk -y -c conda-forge pip
-error_cheker $?
+#conda install -n wes_gatk -y -c conda-forge pip
+#error_cheker $?
 
-conda install -n wes_gatk -y -c anaconda pandas psutil pyyaml argparse tqdm
+#conda install -n wes_gatk -y -c anaconda pandas psutil pyyaml argparse tqdm
 
 # Install dotnet
-conda install -n wes_gatk -y -c conda-forge dotnet
-error_cheker $?
+#mamba install -n wes_gatk -y -c conda-forge dotnet
+#error_cheker $?
 
 
 echo -e "${YEL}Cloning Nirvana from github${NC}"
@@ -59,7 +60,7 @@ echo -e "${YEL}Installing Nirvana${NC}"
 dotnet build -c Release
 error_cheker $?
 
-
+#########################################
 echo -e "${YEL}Downloading Nirvana DB${NC}"
 # Download the database
 cd ~
