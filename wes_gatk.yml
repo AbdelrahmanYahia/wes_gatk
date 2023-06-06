@@ -4,7 +4,7 @@ channels:
   - conda-forge
   - bioconda
   - defaults
-
+  - r
 dependencies:
   - bwa 
   - fastqc 
@@ -20,6 +20,12 @@ dependencies:
   - pip
   - snakemake
   - dotnet
+  - makehub
+  - r-ggplot2
+  - r-gplots
+  - r-gsalib
+  - ucsc-twobittofa
+  
   - pip:
     - pandas 
     - psutil 
