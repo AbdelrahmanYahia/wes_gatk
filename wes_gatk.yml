@@ -1,0 +1,28 @@
+name: wes_gatk
+channels:
+  - bioconda
+  - conda-forge
+  - bioconda
+  - defaults
+
+dependencies:
+  - bwa 
+  - fastqc 
+  - samtools 
+  - vcftools 
+  - gatk4 
+  - picard 
+  - qualimap 
+  - bcftools 
+  - multiqc 
+  - bedtools 
+  - ensembl-vep 
+  - pip
+  - snakemake
+  - dotnet
+  - pip:
+    - pandas 
+    - psutil 
+    - pyyaml 
+    - argparse 
+    - tqdm
