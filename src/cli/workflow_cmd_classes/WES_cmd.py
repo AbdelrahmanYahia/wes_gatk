@@ -91,9 +91,10 @@ class WES(WorkflowCli):
             '--generate-confs-only', 
             help='Generate sample table and config file only', 
             action='store_true', 
+            default=True
         )
 
-        workflow_conf.set_defaults(generate_confs_only=False)
+        workflow_conf.set_defaults(generate_confs_only=True)
 
         # qc_conf = parser.add_argument_group(f'{BLU}QC configuration{NC}')
 

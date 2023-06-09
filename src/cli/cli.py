@@ -20,8 +20,7 @@ class Cli:
         args = self.parser.parse_args()
 
         if args.workflow == None:
-            self.parser.print_help()
-            exit(0)
+            WESworkflowCli.run(args)
 
         elif args.workflow == 'WES':
             WESworkflowCli.run(args)

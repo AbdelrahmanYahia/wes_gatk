@@ -8,7 +8,6 @@ os.environ['start_time'] = start_time
 import sys
 
 ### TODO: should modify this for stability 
-
 sys.setrecursionlimit(10000000)
 from src.cli import cli
 from src.utils.globals import *
