@@ -90,11 +90,9 @@ class WES(WorkflowCli):
         workflow_conf.add_argument(
             '--generate-confs-only', 
             help='Generate sample table and config file only', 
-            action='store_true', 
-            default=True
+            action='store_true'
         )
 
-        workflow_conf.set_defaults(generate_confs_only=True)
 
         # qc_conf = parser.add_argument_group(f'{BLU}QC configuration{NC}')
 
@@ -330,10 +328,8 @@ class WES(WorkflowCli):
             '--print-last-run', 
             action='store_true', 
             help="Prints last run on screen",
-            default=False
         )
 
-        other_conf.set_defaults(print_last_run=False)
 
     def run(self, args):
 
@@ -348,7 +344,7 @@ class WES(WorkflowCli):
         if all_args["generate_confs_only"]:
             print(f"{PRP}{runtime.elapsed()}{NC}")
         else:
-            glogger.prnt_fatel(f"{RED}Sorry still under dev :({NC}")
+            glogger.prnt_fatel(f"{RED}Sorry still under dev :(\n{YEL}Make sure to include: {GRE}--generate-confs-only{NC}")
             snakemake_cmd = smk_cmd(all_args, f"{workflow}")
             try:
                 if all_args['export_dag'] is True and all_args['dry_run'] != True:

@@ -7,7 +7,7 @@ bed_file: /home/marc/wes_gatk/file
 gff_file: /home/marc/wes_gatk/file
 nirvana_bath: /home/marc/wes_gatk/$HOME/annDB/Nirvana
 annovar_bath: /home/marc/wes_gatk/$HOME/annDB/annovar_source/annovar
-generate_confs_only: true
+generate_confs_only: false
 threads_index: 4
 threads_align: 4
 aligner_extra_args: ''
@@ -22,7 +22,7 @@ annovar_protocol: refGene,avsnp150,clinvar_20221231,cosmic70,dbnsfp31a_interpro,
 annovar_operation: g,f,f,f,f,f,f,f,f,f
 continue: false
 overwrite: false
-name: guap_run[2023-06-10 02:33:03]
+name: guap_run[2023-06-10 02:41:42]
 verbose: false
 print_last_run: false
 decompress: false
