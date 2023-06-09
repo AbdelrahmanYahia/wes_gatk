@@ -348,6 +348,7 @@ class WES(WorkflowCli):
         if all_args["generate_confs_only"]:
             print(f"{PRP}{runtime.elapsed()}{NC}")
         else:
+            glogger.prnt_fatel(f"{RED}Sorry still under dev :({NC}")
             snakemake_cmd = smk_cmd(all_args, f"{workflow}")
             try:
                 if all_args['export_dag'] is True and all_args['dry_run'] != True:
