@@ -34,7 +34,7 @@ rule bwa_index:
     
     conda: "env/wes_gatk.yml"
 
-    output: directory(f"{ref_bwa_path}/hg38")
+    output: directory(f"{ref_bwa_path}/{ref_prefix}")
     params:
         prefix = "hg38"
     resources:

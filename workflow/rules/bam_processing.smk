@@ -2,7 +2,6 @@
 rule mrk_duplicates:
     input:
         "02_alignment/{sample}.sorted.bam"
-
     
     conda: "env/wes_gatk.yml"
 

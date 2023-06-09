@@ -6,6 +6,7 @@ GRE='\x1b[1;32m'
 RED='\x1b[1;31m'
 BLU='\x1b[1;34m'
 NC='\e[0m'
+annovar_link=""
 
 script_dir="$(dirname "$(readlink -f "$0")")"
 script_dir="${script_dir%'/scripts'}"
@@ -48,8 +49,8 @@ error_cheker $?
 # Annovar
 cd ~/annDB/annovar_source
 echo -e "${YEL}Downloading annovar${NC}"
-echo -e "${GRE}Annovar was registerred by a.ahmad@nu.edu.eg ${NC}"
-wget -c http://www.openbioinformatics.org/annovar/download/0wgxR2rIVP/annovar.latest.tar.gz 
+# echo -e "${GRE}Annovar was registerred by a.ahmad@nu.edu.eg ${NC}"
+wget -c "${annovar_link}" 
 error_cheker $?
 echo -e "${YEL}Installing annovar and dbs${NC}"
 tar xvfz annovar.latest.tar.gz
@@ -60,14 +61,13 @@ do
     #error_cheker $?
 done
 
-
 # genome GFF for bcftools consequence 
 echo -e "${YEL}Downloading Genome GFF for bcftools annotation${NC}"
 cd ~/annDB/bcftools/hg38/
 wget -c https://ftp.ensembl.org/pub/release-109/gff3/homo_sapiens/Homo_sapiens.GRCh38.109.gff3.gz
 
 # downloading ref genome 
-### TO DO: ( needs conversion from 2bit to fa ) ###
+### TODO : ( needs conversion from 2bit to fa )
 mkdir -p ~/annDB/ref/fa
 cd ~/annDB/ref/fa
 echo -e "${YEL}Downloading refrecne genome from : http://hgdownload.cse.ucsc.edu/goldenPath/hg38/bigZips/analysisSet/hg38.analysisSet.2bit${NC}"

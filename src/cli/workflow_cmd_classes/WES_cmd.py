@@ -5,7 +5,7 @@ class WES(WorkflowCli):
     help = '''guap WES -i/--input dir'''
     usage = f"""{YEL}Basic Run Usage example:{NC}
     guap WES -i indir -o outdir --bed-file file \
-            --aligner bwa --reference-fasta fasta.fasta \
+            --reference-fasta fasta.fasta \
             --reference-index indexpath 
         """
 
@@ -39,6 +39,7 @@ class WES(WorkflowCli):
             metavar = "N",
             help= "Number of total threads to use [default = all]", 
             type=int,
+            required = not any(arg in ["--print-last-run"] for arg in sys.argv)
 
         )
 
@@ -46,84 +47,122 @@ class WES(WorkflowCli):
             '--reference-fasta',
             metavar='path/to/file.fa',
             type=os.path.abspath,
-            help="path to reference fasta file"
+            help="path to reference fasta file",
+            required = not any(arg in ["--print-last-run"] for arg in sys.argv)
+
         )
 
         workflow_conf.add_argument(
             '--bed-file', 
             help='bed file path', 
             metavar='path',
-            type=os.path.abspath
+            type=os.path.abspath,
+            required = not any(arg in ["--print-last-run"] for arg in sys.argv)
+
         )
 
-        qc_conf = parser.add_argument_group(f'{BLU}QC configuration{NC}')
+        workflow_conf.add_argument(
+            '--gff-file', 
+            help='gff file path', 
+            metavar='path',
+            type=os.path.abspath,
+            required = not any(arg in ["--print-last-run"] for arg in sys.argv)
 
-        qc_conf.add_argument(
-            '--trimmomatic',
-            dest='trimmomatic',
-            action='store_true',
-            help="Use trimmomatic"
         )
 
-        qc_conf.add_argument(
-            '--trim-t', 
-            help= "Number of threads to use during trim step", 
-            type=int ,
-            metavar = "N",
-            default= 4 
+        workflow_conf.add_argument(
+            '--nirvana-bath', 
+            help='Path for Nirvana', 
+            metavar='path',
+            type=os.path.abspath,
+            default="$HOME/annDB/Nirvana"
+
         )
 
-        qc_conf.add_argument(
-            "--trim-min-length", 
-            type=int,
-            default=30,
-            metavar = "N",
-            help='trimmomatic min length [default = 30]'
+        workflow_conf.add_argument(
+            '--annovar-bath', 
+            help='Path for annovar', 
+            metavar='path',
+            type=os.path.abspath,
+            default="$HOME/annDB/annovar_source/annovar"
         )
 
-        qc_conf.add_argument(
-            "--slidingwindow-size", 
-            type=int,
-            default=4,
-            metavar = "N",
-            help='trimmomatic sliding window size [default = 4]'
+        workflow_conf.add_argument(
+            '--generate-confs-only', 
+            help='Generate sample table and config file only', 
+            action='store_true', 
         )
 
-        qc_conf.add_argument(
-            "--slidingwindow-quality", 
-            type=int,
-            default=10,
-            metavar = "N",
-            help='trimmomatic sliding window quality score [default = 10]'
-        )
+        workflow_conf.set_defaults(generate_confs_only=False)
 
-        qc_conf.add_argument(
-            '--trimmomatic-extra-args',
-             type=str,
-            metavar="='-args'",
-            help="A string value of extra args for trimmomatic (must be used with = with no spaces (--trimmomatic-extra-args='-arg1 -arg2'))",
-            default=""
-        )
+        # qc_conf = parser.add_argument_group(f'{BLU}QC configuration{NC}')
+
+        # qc_conf.add_argument(
+        #     '--trimmomatic',
+        #     dest='trimmomatic',
+        #     action='store_true',
+        #     help="Use trimmomatic"
+        # )
+
+        # qc_conf.add_argument(
+        #     '--trim-t', 
+        #     help= "Number of threads to use during trim step", 
+        #     type=int ,
+        #     metavar = "N",
+        #     default= 4 
+        # )
+
+        # qc_conf.add_argument(
+        #     "--trim-min-length", 
+        #     type=int,
+        #     default=30,
+        #     metavar = "N",
+        #     help='trimmomatic min length [default = 30]'
+        # )
+
+        # qc_conf.add_argument(
+        #     "--slidingwindow-size", 
+        #     type=int,
+        #     default=4,
+        #     metavar = "N",
+        #     help='trimmomatic sliding window size [default = 4]'
+        # )
+
+        # qc_conf.add_argument(
+        #     "--slidingwindow-quality", 
+        #     type=int,
+        #     default=10,
+        #     metavar = "N",
+        #     help='trimmomatic sliding window quality score [default = 10]'
+        # )
+
+        # qc_conf.add_argument(
+        #     '--trimmomatic-extra-args',
+        #      type=str,
+        #     metavar="='-args'",
+        #     help="A string value of extra args for trimmomatic (must be used with = with no spaces (--trimmomatic-extra-args='-arg1 -arg2'))",
+        #     default=""
+        # )
 
 
-        qc_conf.add_argument(
-            '--skip-QC',
-             action='store_true',
-             help="Skipp Fastqc step"
-        )
+        # qc_conf.add_argument(
+        #     '--skip-QC',
+        #      action='store_true',
+        #      help="Skipp Fastqc step"
+        # )
 
-        qc_conf.set_defaults(trimmomatic=False)
+        # qc_conf.set_defaults(trimmomatic=False)
 
         aligner_conf = parser.add_argument_group(f'{BLU}Aligner configuration{NC}')
 
-        aligner_conf.add_argument(
-            '--aligner', 
-            help = "Choose aligner [default = bwa]",
-            choices=["bwa", "bowtie2"], 
-            metavar = "bwa|bowtie2",
-            type=str,
-            default='bwa'
-        )
+        # aligner_conf.add_argument(
+        #     '--aligner', 
+        #     help = "Choose aligner [default = bwa]",
+        #     choices=["bwa", "bowtie2"], 
+        #     metavar = "bwa|bowtie2",
+        #     type=str,
+        #     default='bwa'
+        # )
 
         aligner_conf.add_argument(
             '--threads-index', 
@@ -156,46 +195,56 @@ class WES(WorkflowCli):
             help="path to reference index"
         )
 
+        aligner_conf.add_argument(
+            '--index-fasta', 
+            help='Index fasta file', 
+            action='store_true', 
+        )
+
+        aligner_conf.set_defaults(index_fasta=False)
+
         variant_caller_conf = parser.add_argument_group(f'{BLU}Variant caller configuration{NC}')
 
-        variant_caller_conf.add_argument(
-                '--variant-caller', 
-                help = "Choose variant caller", 
-                choices=["GATK", "mpileup", "lofreq"], 
-                type=str, 
-                default='GATK'
-        )
+        # variant_caller_conf.add_argument(
+        #         '--variant-caller', 
+        #         help = "Choose variant caller", 
+        #         choices=["GATK", "mpileup", "lofreq"], 
+        #         type=str, 
+        #         default='GATK'
+        # )
 
-        variant_caller_conf.add_argument(
-                '--bqsr-mem', 
-                help = "base quality score recalipration memory for each sample", 
-                choices=["GATK", "mpileup", "lofreq"], 
-                type=str, 
-                default='GATK'
-        )
+        # variant_caller_conf.add_argument(
+        #         '--bqsr-mem', 
+        #         help = "base quality score recalipration memory for each sample", 
+        #         choices=["GATK", "mpileup", "lofreq"], 
+        #         type=str, 
+        #         default='GATK'
+        # )
 
         variant_caller_conf.add_argument(
             '--known-variants',
             metavar='path', 
             type=os.path.abspath, 
-            help="path to reference fasta file"
+            help="path to reference fasta file",
+            required = not any(arg in ["--print-last-run"] for arg in sys.argv)
+
         )
 
-        variant_caller_conf.add_argument(
-            '--caller-extra-args', 
-            help = "Extra arguments for caller, use it with no spaces and add = ( --caller-extra-args='-arg1 -arg2' ) ",
-            type=str,
-            metavar = "'-args'",
-            default=""
-        )
+        # variant_caller_conf.add_argument(
+        #     '--caller-extra-args', 
+        #     help = "Extra arguments for caller, use it with no spaces and add = ( --caller-extra-args='-arg1 -arg2' ) ",
+        #     type=str,
+        #     metavar = "'-args'",
+        #     default=""
+        # )
 
-        variant_caller_conf.add_argument(
-            '--threads-calling', 
-            help= "Number of threads to use during variant calling [default = 4]", 
-            type=int, 
-            default= 4,
-            metavar = "N",
-        )
+        # variant_caller_conf.add_argument(
+        #     '--threads-calling', 
+        #     help= "Number of threads to use during variant calling [default = 4]", 
+        #     type=int, 
+        #     default= 4,
+        #     metavar = "N",
+        # )
 
         # Snakemake Options
         snakemake_options = parser.add_argument_group(f'{CYN}Snakemake Options{NC}')
@@ -223,6 +272,22 @@ class WES(WorkflowCli):
             "--parse-snakemake-output", 
             action='store_true', 
             help="prints progress bar instead of snakemake regular output "
+        )
+
+        annotation_conf = parser.add_argument_group(f'{BLU}Annotation configuration{NC}')
+
+        annotation_conf.add_argument(
+            "--annovar-protocol", 
+            default="refGene,avsnp150,clinvar_20221231,cosmic70,dbnsfp31a_interpro,EAS.sites.2015_08,EUR.sites.2015_08,gme,gnomad211_exome,SAS.sites.2015_08", 
+            metavar = 'str',
+            help=f"Annovar Protocol\n defaults:\nrefGene,avsnp150,clinvar_20221231,cosmic70,dbnsfp31a_interpro,EAS.sites.2015_08,EUR.sites.2015_08,gme,gnomad211_exome,SAS.sites.2015_08"
+        )
+
+        annotation_conf.add_argument(
+            "--annovar-operation", 
+            default="g,f,f,f,f,f,f,f,f,f", 
+            metavar = 'str',
+            help=f"Annovar Protocol\n defaults:\ng,f,f,f,f,f,f,f,f,f"
         )
 
         # other options

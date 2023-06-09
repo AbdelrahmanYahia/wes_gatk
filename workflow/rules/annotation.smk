@@ -40,9 +40,9 @@ rule Nirvana:
         nodes = 1,
         time = lambda wildcards, attempt: 60 * 2 * attempt
     params:
-        Nirvana_supplementray = f"{nirvana_path}/Data/SupplementaryAnnotation/GRCh38/",
-        Nirvana_ref = f"{nirvana_path}/Data/References/Homo_sapiens.GRCh38.Nirvana.dat",
-        Nirvana_cache = f"{nirvana_path}/Data/Cache/GRCh38/Both",
+        Nirvana_supplementray = f"{nirvana_path}/DB/SupplementaryAnnotation/GRCh38/",
+        Nirvana_ref = f"{nirvana_path}/DB/References/Homo_sapiens.GRCh38.Nirvana.dat",
+        Nirvana_cache = f"{nirvana_path}/DB/Cache/GRCh38/Both",
         Nirvana_cmd = f"{nirvana_path}/bin/Release/net*/Nirvana.dll",
         file_name = "05_Annotation/Nirvana/Annotation"
 
@@ -72,9 +72,9 @@ rule Annovar:
         nodes = 1,
         time = lambda wildcards, attempt: 60 * 2 * attempt
     params:
-        annovar_dir = "~/annovar",
-        protocol = "refGene,avsnp150,clinvar_20221231,cosmic70,dbnsfp31a_interpro,EAS.sites.2015_08,EUR.sites.2015_08,gme,gnomad211_exome,SAS.sites.2015_08",
-        operation = "g,f,f,f,f,f,f,f,f,f",
+        annovar_dir = annovar_dir,
+        protocol = config["annovar_protocol"],
+        operation = config["annovar_operation"],
         output = "05_Annotation/ANNOVAR/annotations"
 
     shell:

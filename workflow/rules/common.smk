@@ -1,30 +1,37 @@
-
 import os
 import pandas as pd
-
-# samples = ["father", "mother", "proband"]
-samples = ["proband", "mother", "father"]
-aligners = ["bwa"]
-variant_callers = ["GATK"]
 
 RS = "R"
 EXT = "fastq"
 
 samples_dir = "/home/marc/WES_GATK/test/samples"
-out_dir = "/home/marc/WES_GATK/test/snake_out2"
-ref_bwa = "/home/marc/Desktop/data/refs/indexes/bwa/hg38/hg38"
-ref_bwa_path = "/home/marc/Desktop/data/refs/indexes/bwa"
-ref_fasta = "~/Desktop/data/refs/fa/hg38/hg38.fa"
-ref_fasta_path = "/home/marc/Desktop/data/refs/fa/hg38"
-bed_file = "/home/marc/Desktop/data/refs/BED/Twist_Exome_Core_Covered_Targets_hg38.bed"
-known_variants = "/home/marc/Desktop/data/refs/vcf/resources_broad_hg38_v0_1000G_omni2.5.hg38.vcf.gz"
-nirvana_path = "/home/marc/Nirvana"
+
+out_dir = config["output"]
+
+
+ref_bwa = config["reference_index"]
+
+ref_bwa_path = confi["reference_output_path"]
+ref_prefix = confi["reference_output_prefix"]
+
+ref_fasta = config["refence_fasta"]
+ref_fasta_path = os.path.dirname(ref_fasta)
+
+bed_file = config["bed_file"]
+
+known_variants = config["known_variants"]
+
+
+nirvana_path = config["nirvana_path"]
+annovar_dir = config["annovar_path"]
+
 Nirvana_cmd = f"{nirvana_path}/bin/Release/net*/Nirvana.dll"
-Nirvana_supplementray = f"{nirvana_path}/Data/SupplementaryAnnotation/GRCh38/"
-Nirvana_ref = f"{nirvana_path}/Data/References/Homo_sapiens.GRCh38.Nirvana.dat"
-Nirvana_cache = f"{nirvana_path}/Data/Cache/GRCh38/Both"
-gff = "/home/marc/Desktop/data/refs/gtf/Homo_sapiens.GRCh38.109.gff3.gz"
-env_path = "/home/marc/WES_GATK/test_workflow/envs"
+Nirvana_supplementray = f"{nirvana_path}/DB/SupplementaryAnnotation/GRCh38/"
+Nirvana_ref = f"{nirvana_path}/DB/References/Homo_sapiens.GRCh38.Nirvana.dat"
+Nirvana_cache = f"{nirvana_path}/DB/Cache/GRCh38/Both"
+
+
+gff = config["gff_file"]
 
 
 workdir: out_dir
