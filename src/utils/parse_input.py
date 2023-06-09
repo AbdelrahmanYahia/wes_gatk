@@ -54,6 +54,8 @@ def recogize_pattern(file_name): # takes string of fastq file name and returns d
     """ using re to recognize the naming pattern of samples (illumina, srr and general naming patten)"""
     # naming pattern for re 
     patterns = { # ! fix (_|\.) group for R pattern in dict config !
+        "Novagen1": "(((.+)_(.+)-(.+))_(L\d+)((_)([1|2]))\.(fastq\.gz|fastq|fq\.gz|fq))",
+        "Novagen2": "(((.+)_(.+)-(.+))_(L\d+)((-)(r[1|2]))\.(fastq\.gz|fastq|fq\.gz|fq))",
         "illumina": "(((.+)_(S\d+)_(L00\d))_(R1|R2|r1|r2|read1|read2)_(00\d)\.(fastq\.gz|fastq|fq\.gz|fq))",
         "SRR": "(((SRR)(\d+))(_|\.)(1|2|R1|R2|r1|r2|read1|read2)\.(fastq\.gz|fastq|fq\.gz|fq))",
         "general": "(((.+))(_|\.)(1|2|R1|R2|r1|r2|read1|read2)\.(fastq\.gz|fastq|fq\.gz|fq))"
