@@ -78,8 +78,13 @@ def recogize_pattern(file_name): # takes string of fastq file name and returns d
         else:
             continue
 
-    # Extracts sample information
-    if matched_pattern == "illumina":
+    if matched_pattern == "Novagen1":
+        file_name, sample_name, sample_id, acc1, acc2, lane, R_pattern, R_sep, read_num, ext, tail, sample_number =  matched.groups()[0], matched.groups()[1], matched.groups()[2], matched.groups()[3], matched.groups()[4], matched.groups()[5], matched.groups()[6], matched.groups()[7] , matched.groups()[8] , matched.groups()[9], "", ""
+
+    elif matched_pattern == "Novagen2":
+        file_name, sample_name, sample_id, acc1, acc2, lane, R_pattern, R_sep, read_num, ext, tail, sample_number =  matched.groups()[0], matched.groups()[1], matched.groups()[2], matched.groups()[3], matched.groups()[4], matched.groups()[5], matched.groups()[6], matched.groups()[7] , matched.groups()[8] , matched.groups()[9], "", ""
+
+    elif matched_pattern == "illumina":
         file_name, sample_name, sample_id, sample_number, read_num, lane, tail, ext = matched.groups()[0], matched.groups()[1], matched.groups()[2], matched.groups()[3], matched.groups()[5], matched.groups()[4], matched.groups()[6], matched.groups()[7]
 
     elif matched_pattern == "SRR":
@@ -94,107 +99,37 @@ def recogize_pattern(file_name): # takes string of fastq file name and returns d
         glogger.prnt_fatel(f"{RED}Your Samples Pattern is an unfamiler pattern.{NC}\nPlease contact my Developpers and they will look into it :D")
         file_name = sample_name = sample_id = sample_number = read_num = lane = tail = ext = None
 
-    # Returns a dictionary of sample information
-    return {
-        "file_name": file_name,
-        "sample_name": sample_name,
-        "sample_id": sample_id,
-        "sample_number": sample_number,
-        "read_num": read_num,
-        "lane": lane,
-        "tail": tail,
-        "ext": ext,
-        "matched_pattern": ptrn_name
-    }
 
-def qiime_table_checker(df):
-    if ("sample-id" or "id" or "sampleid" or "sample id") in df.columns:
-        if "#q2:types" in (df.iloc[:1]).values.tolist()[0]:
-            return True
-        else:
-            return False
+    if matched_pattern == "Novagen1" or matched_pattern == "Novagen2":
+        return {
+            "file_name": file_name,
+            "sample_name": sample_name,
+            "sample_id": sample_id,
+            "acc1": acc1,
+            "acc2": acc2,
+            "lane": lane,
+            "R_pattern" : R_pattern, 
+            "R_sep" : R_sep, 
+            "read_num" : read_num, 
+            "ext" : ext,
+            "tail": tail,
+            "sample_number": sample_number,
+            "matched_pattern": ptrn_name
+        }
+    
     else:
-        return False
-
-def check_metadata(args):
-    # samples dataframe and output path declaration 
-    samples = parse_samples(os.path.abspath(args.input))
-    samples_IDs = list(samples.iloc[:, 2])
-    outpath = os.path.abspath(args.output)
-
-    # check metadata file 
-    if args.metadata is None or args.create_metadata_table:
-        if args.create_metadata_table:
-            pass
-        else:
-            # prompt the user to create metadata file 
-            create_meta = input(f"{RED}No metadata file supplied,{NC} do I create an empty one with sample IDs? (y/n) ")
-            if create_meta == ( 'y' or 'Y'):
-                pass
-            else:
-                # exiting 
-                glogger.prnt_fatel("No metadata supplied or created!")
-        # creating metadata file 
-        glogger.prnt_warning(f"I will create one at '{args.output}', {YEL}\nplease re-run the analysis with: \n -m {args.output}/sample-metada.tsv after modifing the file\n{NC}(check https://docs.qiime2.org/2021.11/tutorials/metadata/)")
-        # creating empty data frame to store metadata info
-        header = pd.DataFrame({"1": ["#q2:types", "categorical"]}).T
-        header.columns = ["sample-id", "condition"]
-
-        new_samples = {}
-        c = 2
-        # get sample ids
-        for sample in samples_IDs:
-            new_samples[c] = [sample, "BLANK"]
-            c += 1
-        # store sample IDs and BLANK at new df, and export
-        samples_df = pd.DataFrame(new_samples).T
-        samples_df.columns = ["sample-id", "condition"]
-        samples_df = samples_df.sort_values(["sample-id"])
-        metadata_file = pd.concat([header, samples_df])
-        # Create the directory if it doesn't exist
-        if not os.path.exists(outpath):
-            os.makedirs(outpath)
-        metadata_file.to_csv(outpath+"/"+"sample-metadata.tsv",sep='\t',index=False) 
-        args.metadata = f"{outpath}/sample-metadata.tsv"
-        glogger.prnt_fatel(f"{GRE}Metadata empty file created, {RED}Exiting...{NC}")
-
-    else:
-        if not os.path.isfile(args.metadata):
-            glogger.prnt_fatel(f"{RED}{args.metadata} Doesn't exist!{NC}")
-        else:
-            # checking metadata file extension 
-            metadataname, metadataextension = os.path.splitext(args.metadata)
-            if metadataextension == (".tsv"):
-                the_file = pd.read_csv(args.metadata,sep="\t")
-            elif metadataextension == (".csv"):
-                the_file = pd.read_csv(args.metadata,sep="\t")
-            else:
-                glogger.prnt_fatel(f"{RED}{args.metadata} Have strange extension (use: tsv or csv){NC}")
-
-            rest_of_cols = the_file.columns[1:]
-            # checks all samples are present in the file with proper names
-            if False in samples['sample_id'].isin(the_file.T.iloc[0]).tolist():
-                glogger.prnt_fatel(f"{RED} Please check {args.metadata} sample IDs!\n{YEL}Note: {NC}You can re-run your code WITHOUT suppling a metadata file and \nGUAP will ask to create an empty one for you with the samples IDs.")
-     
-            else:
-                # check qiime2 format and modifing if not
-                if qiime_table_checker(the_file):
-                    if metadataextension == (".csv"):
-                        the_file.to_csv(outpath+"/"+"sample-metadata.tsv",sep='\t',index=False) 
-                        args.metadata = "{outpath}/sample-metadata.tsv"
-                else:
-                    print(f"{RED}Note:{NC}Modifing sample metadata file to be compatible with QIIME2")
-                    columns_names = rest_of_cols.to_list()
-                    columns_names.insert(0, 'sample-id')
-                    columns_names
-                    t = f'{(len(columns_names) -1 )* "categorical,"}'.split(",")[:-1]
-                    t.insert(0, "#q2:types")
-                    header_N = pd.DataFrame({1: t}).T
-                    header_N.columns = columns_names
-                    the_file.columns = columns_names
-                    last_file = pd.concat([header_N, the_file])
-                    last_file.to_csv(outpath+"/"+"sample-metadata.tsv",sep='\t',index=False) 
-                    args.metadata = f"{outpath}/sample-metadata.tsv"
+        # Returns a dictionary of sample information
+        return {
+            "file_name": file_name,
+            "sample_name": sample_name,
+            "sample_id": sample_id,
+            "sample_number": sample_number,
+            "read_num": read_num,
+            "lane": lane,
+            "tail": tail,
+            "ext": ext,
+            "matched_pattern": ptrn_name
+        }
 
 def parse_samples(inpath): # takes path return contains fastq files, returns df contains sample information
     ## takes input path
@@ -220,6 +155,7 @@ def parse_samples(inpath): # takes path return contains fastq files, returns df 
 
             # get only forward reads and replace the read number to get R2
             # appends sample information to a dict of dicts
+            
             if "1" in sample_info["read_num"]:
                 read_2 = sample_info["read_num"].replace("1","2")
                 if sample_info["matched_pattern"] == "illumina":
@@ -233,7 +169,7 @@ def parse_samples(inpath): # takes path return contains fastq files, returns df 
                 if f2 in all_files:
                     sample_info["file2"] = f2
                     sample_info["PE"] = True
-                    samples[sample_info["sample_id"]] = sample_info
+                    samples[sample_info["sample_name"]] = sample_info
 
                 else:
                     sample_info["file2"] = ""
@@ -331,6 +267,7 @@ def parse_input_args(args): # takes args (object) returns dict of args informati
     else:
         samples.to_csv(outpath+"/"+"samples.tsv",sep='\t')  
     
+    ### TODO: modify R1_pattern and R2s
     extra_info = {
         "path": path,
         "working_dir": outpath,
