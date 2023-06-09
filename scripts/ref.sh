@@ -1,8 +1,27 @@
+##### https://github.com/gatk-workflows
+##### ref for dev the gatk pest paractice snakemake workflow
+
 bwa_commandline="bwa mem -K 100000000 -p -v 3 -t 16 -Y $bash_ref_fasta"
+"""
+-K 100000000: This parameter sets the maximum 
+size of the prefix seed array in BWA. The value 
+100000000 indicates that BWA will allocate memory 
+for storing 100 million seed positions. Seeds are 
+short sequences used to quickly identify potential 
+alignment locations.
 
-    set -o pipefail
-    set -e
+-p: This parameter is used to enable the pairing of 
+reads. In DNA sequencing, paired-end reads are generated 
+from both ends of a DNA fragment. The -p option tells BWA 
+to consider the paired-end information during the alignment 
+process.
 
+-v 3: This parameter sets the verbosity level for BWA mem. 
+The value 3 indicates a high level of verbosity, which means 
+BWA will produce more detailed output during the alignment process. 
+This can be useful for debugging or gaining more insights into the 
+alignment procedure.
+"""
 
 ### SamToFastqAndBwaMem  
 # set the bash variable needed for the command-line
@@ -88,7 +107,6 @@ java -Dsamjdk.compression_level=~{compression_level} -Xms~{command_mem_gb}G -jar
 
 ### MarkDuplicates 
 # Mark duplicate reads to avoid counting non-independent observations
-
 
     ~{gatk_path} --java-options "-Dsamjdk.compression_level=~{compression_level} -Xms~{command_mem_gb}G" \
       MarkDuplicates \

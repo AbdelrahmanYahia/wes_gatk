@@ -7,6 +7,9 @@ RED='\x1b[1;31m'
 BLU='\x1b[1;34m'
 NC='\e[0m'
 
+script_dir="$(dirname "$(readlink -f "$0")")"
+script_dir="${script_dir%'/scripts'}"
+
 # error to terminate if failed
 error_cheker(){
     lastexit=$1
@@ -18,7 +21,7 @@ error_cheker(){
 
 # create env from yml file 
 echo -e "${YEL}Creating wes_gatk ENV${NC}"
-conda env create -f ../env/wes_gatk.yml
+conda env create -f ${script_dir}/workflow/env/wes_gatk.yml
 error_cheker $?
 
 # create dir for all dbs and sources

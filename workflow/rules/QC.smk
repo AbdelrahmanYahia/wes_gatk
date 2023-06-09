@@ -5,7 +5,7 @@ rule trimmomatic:
         R2 = f"{samples_dir}/{{sample}}_R2.fastq"
 
     
-    conda: "GUAP"
+    conda: "env/wes_gatk.yml"
 
     output:
         log="logs/trimmomatic/{sample}.log",
@@ -44,7 +44,7 @@ rule Fastqc:
     log:
         f"logs/QC/QC_{{sample}}_R{{R}}.log"
     
-    conda: "GUAP"
+    conda: "env/wes_gatk.yml"
 
     output:
         zip=f"00_QC/{{sample}}_R{{R}}_fastqc.zip",
@@ -68,7 +68,7 @@ rule multiqc:
     input:
         get_final_output
     
-    conda: "wes"
+    conda: "env/wes_gatk.yml"
 
     output:
         "multiqc/multiqc_report.html"

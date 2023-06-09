@@ -2,7 +2,7 @@
 rule HaplotypeCaller:
     input: "03_bamPrep/{sample}.pqsr.bam"
     
-    conda: "GUAP"
+    conda: "env/wes_gatk.yml"
 
     output: "04_calling/{sample}_raw.gvcf.gz"
     params: 
@@ -28,7 +28,7 @@ rule combine_gvcf:
     input:
         gvcfs=get_gvcf
     
-    conda: "GUAP"
+    conda: "env/wes_gatk.yml"
 
     output:
         "04_calling/variants.gvcf.gz"
@@ -55,7 +55,7 @@ rule genotype_gvcfs:
     input:
         "04_calling/variants.gvcf.gz"
     
-    conda: "GUAP"
+    conda: "env/wes_gatk.yml"
 
     output:
         "04_calling/variants_genotyped.gvcf.gz"

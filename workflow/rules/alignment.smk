@@ -3,7 +3,7 @@
 rule index_ref:
     input: f"{ref_fasta}"
     
-    conda: "GUAP"
+    conda: "env/wes_gatk.yml"
 
     output: f"{ref_fasta}.fai"
     resources:
@@ -18,7 +18,7 @@ rule index_ref:
 rule refrence_dict:
     input: f"{ref_fasta_path}/hg38.fa"
     
-    conda: "GUAP"
+    conda: "env/wes_gatk.yml"
 
     output: f"{ref_fasta_path}/hg38.dict"
     resources:
@@ -32,7 +32,7 @@ rule refrence_dict:
 rule bwa_index:
     input: f"{ref_fasta_path}/hg38.fa"
     
-    conda: "GUAP"
+    conda: "env/wes_gatk.yml"
 
     output: directory(f"{ref_bwa_path}/hg38")
     params:
@@ -53,7 +53,7 @@ rule bwa_align:
         R2 = f"01_trimmomatic/{{sample}}_R2.{EXT}",
 
     
-    conda: "GUAP"
+    conda: "env/wes_gatk.yml"
 
     output:
         temp("02_alignment/{sample}.sam")
@@ -93,7 +93,7 @@ rule sort_and_convert_sam:
         "02_alignment/{sample}.sam"
 
     
-    conda: "GUAP"
+    conda: "env/wes_gatk.yml"
 
     output:
         "02_alignment/{sample}.sorted.bam"
@@ -117,7 +117,7 @@ rule QC_alignment:
         "02_alignment/{sample}.sorted.bam"
 
     
-    conda: "GUAP"
+    conda: "env/wes_gatk.yml"
 
     output:
         cov = "02_alignment/QC/{sample}.cov",
