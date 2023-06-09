@@ -40,6 +40,13 @@ def check_R(df): # takes pandas df and returns string
     else:
         return uniques[0].replace("1","")
 
+def check_R_pattern(df): # takes pandas df and returns string
+    """checks all files have same naming patterns from pandas df, to use in generete sample table function"""
+    uniques = df['R_pattern'].unique()
+    if len(uniques) > 1:
+        glogger.prnt_fatel(f"Your input directory has multible fastq file naming patterns, please check directory.")
+    else:
+        return uniques[0].replace("1","")
 
 def check_pattern(df): # takes pandas df and returns a string 
     """checks all files have same naming patterns from pandas df, to use in generete sample table function"""
@@ -251,6 +258,7 @@ def parse_input_args(args): # takes args (object) returns dict of args informati
     ext = str(check_extension(samples))
     PE = bool(check_PE(samples))
     R = str(check_R(samples))
+    R_pattern = str(check_R_pattern(samples))
     compressed = False
     EXT = ext
     pattern = str(check_pattern(samples))
@@ -268,6 +276,23 @@ def parse_input_args(args): # takes args (object) returns dict of args informati
         samples.to_csv(outpath+"/"+"samples.tsv",sep='\t')  
     
     ### TODO: modify R1_pattern and R2s
+
+    """            
+            "file_name": file_name,
+            "sample_name": sample_name,
+            "sample_id": sample_id,
+            "acc1": acc1,
+            "acc2": acc2,
+            "lane": lane,
+            "R_pattern" : R_pattern, 
+            "R_sep" : R_sep, 
+            "read_num" : read_num, 
+            "ext" : ext,
+            "tail": tail,
+            "sample_number": sample_number,
+            "matched_pattern": ptrn_name
+
+    """
     extra_info = {
         "path": path,
         "working_dir": outpath,
@@ -275,8 +300,7 @@ def parse_input_args(args): # takes args (object) returns dict of args informati
         "tail": tail,
         "R": R,
         "naming_pattern": pattern,
-        "R1_pattern": f"_{R}1_{tail}.{EXT}",
-        "R2_pattern": f"_{R}2_{tail}.{EXT}",
+        "R_pattern": R_pattern,
         "compressed" : compressed,
         "total_mem": all_mem,
         "GUAP_DIR": GUAP_DIR,
