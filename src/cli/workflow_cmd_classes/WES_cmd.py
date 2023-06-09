@@ -342,42 +342,45 @@ class WES(WorkflowCli):
             print(f"guap {last_command}")
             exit()
         all_args = parse_input_args(args)
-        snakemake_cmd = smk_cmd(all_args, f"{workflow}")
-        try:
-            if all_args['export_dag'] is True and all_args['dry_run'] != True:
-                if all_args['continue']:
-                    subprocess.run(f"snakemake --snakefile '{GUAP_DIR}/workflows/{workflow}/Snakefile' --configfile '{all_args['working_dir']}/config.yaml' -j {all_args['threads']} --progress {all_args['smk_extra_args']}", shell=True)
-                else:
-                    subprocess.run(snakemake_cmd, shell=True)
-                    subprocess.run(f"snakemake --snakefile '{GUAP_DIR}/workflows/{workflow}/Snakefile' --configfile '{all_args['working_dir']}/config.yaml' -j {all_args['threads']} --progress {all_args['smk_extra_args']}", shell=True)
-
-                print(f"{PRP}{runtime.elapsed()}{NC}")
-            elif all_args['dry_run']:
-                try:
-                    subprocess.run(snakemake_cmd, shell=True)
-                except Exception as E:
-                    glogger.prnt_fatel(f"Error in Dry Run:\n{E}")
-                subprocess.run(f"{snakemake_cmd} -q -n --rulegraph | dot -Tpng > '{all_args['working_dir']}/{all_args['name']}.png'", shell=True)
-                print(f"{PRP}{runtime.elapsed()}{NC}") 
-
-            else:
-
-                subprocess.run(f"{snakemake_cmd} -q -n --rulegraph | dot -Tpng > '{all_args['working_dir']}/{all_args['name']}.png'", shell=True)
-
-                try:
-                    if args.parse_snakemake_output:
-                        process_snakemake_standard_output(snakemake_cmd, f"{all_args['working_dir']}/output.log")
+        if all_args["generate_confs_only"]:
+            print(f"{PRP}{runtime.elapsed()}{NC}")
+        else:
+            snakemake_cmd = smk_cmd(all_args, f"{workflow}")
+            try:
+                if all_args['export_dag'] is True and all_args['dry_run'] != True:
+                    if all_args['continue']:
+                        subprocess.run(f"snakemake --snakefile '{GUAP_DIR}/workflows/{workflow}/Snakefile' --configfile '{all_args['working_dir']}/config.yaml' -j {all_args['threads']} --progress {all_args['smk_extra_args']}", shell=True)
                     else:
-                        subprocess.run(f"{snakemake_cmd}")
-                except Exception as E:
-                    glogger.prnt_error(f"Error in snakemake parsing:\n{RED_}{E}{NC}\n trying normal run using subprocess.run()")
+                        subprocess.run(snakemake_cmd, shell=True)
+                        subprocess.run(f"snakemake --snakefile '{GUAP_DIR}/workflows/{workflow}/Snakefile' --configfile '{all_args['working_dir']}/config.yaml' -j {all_args['threads']} --progress {all_args['smk_extra_args']}", shell=True)
+
+                    print(f"{PRP}{runtime.elapsed()}{NC}")
+                elif all_args['dry_run']:
                     try:
-                        subprocess.run(f"{snakemake_cmd}")
-                    except Exception as e:
-                        glogger.prnt_fatel(f"Error in snakemake run:\n{RED_}{e}{NC}")
+                        subprocess.run(snakemake_cmd, shell=True)
+                    except Exception as E:
+                        glogger.prnt_fatel(f"Error in Dry Run:\n{E}")
+                    subprocess.run(f"{snakemake_cmd} -q -n --rulegraph | dot -Tpng > '{all_args['working_dir']}/{all_args['name']}.png'", shell=True)
+                    print(f"{PRP}{runtime.elapsed()}{NC}") 
+
+                else:
+
+                    subprocess.run(f"{snakemake_cmd} -q -n --rulegraph | dot -Tpng > '{all_args['working_dir']}/{all_args['name']}.png'", shell=True)
+
+                    try:
+                        if args.parse_snakemake_output:
+                            process_snakemake_standard_output(snakemake_cmd, f"{all_args['working_dir']}/output.log")
+                        else:
+                            subprocess.run(f"{snakemake_cmd}")
+                    except Exception as E:
+                        glogger.prnt_error(f"Error in snakemake parsing:\n{RED_}{E}{NC}\n trying normal run using subprocess.run()")
+                        try:
+                            subprocess.run(f"{snakemake_cmd}")
+                        except Exception as e:
+                            glogger.prnt_fatel(f"Error in snakemake run:\n{RED_}{e}{NC}")
 
 
-                print(f"{PRP}{runtime.elapsed()}{NC}") 
-        except Exception as E:
-            glogger.prnt_fatel(f"Error in snakemake run:\n{RED_}{E}{NC}")
-            print(f"{PRP}{runtime.elapsed()}{NC}") 
+                    print(f"{PRP}{runtime.elapsed()}{NC}") 
+            except Exception as E:
+                glogger.prnt_fatel(f"Error in snakemake run:\n{RED_}{E}{NC}")
+                print(f"{PRP}{runtime.elapsed()}{NC}")  
