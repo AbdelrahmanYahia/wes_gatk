@@ -6,7 +6,7 @@ WES GATK is a Snakemake workflow that performs GATK workflow on Illumina short r
 
 ### Usage
 
-<still under dev>
+still under dev
 
 ### Workflow
 ![Alt text](workflow.png)
