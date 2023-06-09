@@ -1,6 +1,5 @@
 name: wes_gatk
 channels:
-  - bioconda
   - conda-forge
   - bioconda
   - defaults
