@@ -18,7 +18,7 @@ error_cheker(){
 
 # create env from yml file 
 echo -e "${YEL}Creating wes_gatk ENV${NC}"
-conda env create -f wes_gatk.yml
+conda env create -f ../env/wes_gatk.yml
 error_cheker $?
 
 # create dir for all dbs and sources

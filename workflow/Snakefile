@@ -1,0 +1,8 @@
+import os
+import pandas as pd
+
+include: "rules/common.smk"
+rule all:
+    input:
+        "multiqc/multiqc_report.html"
+
