@@ -329,9 +329,11 @@ class WES(WorkflowCli):
         other_conf.add_argument(
             '--print-last-run', 
             action='store_true', 
-            help="Prints last run on screen"
+            help="Prints last run on screen",
+            default=False
         )
 
+        other_conf.set_defaults(print_last_run=False)
 
     def run(self, args):
 

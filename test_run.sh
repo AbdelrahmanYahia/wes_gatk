@@ -1,0 +1,1 @@
+python3 wes.py WES --generate-confs-only -i dev/empty_sample_names/ -o test --bed-file file --reference-fasta fasta.fasta --reference-index indexpath --gff-file file --threads 12 --known-variants knownvariants
