@@ -12,12 +12,17 @@ else:
 
 TAIL = f"_{config['tail']}"
 sample_table_file=config.get('sampletable','samples.tsv')
-SampleTable = pd.read_table(sample_table_file,index_col=0)
-samples = list(SampleTable.index) # same as IDs
+SampleTable = pd.read_table(sample_table_file)
+
 files_R1s = list(SampleTable.iloc[:, 0])
-files_R2s = list(SampleTable.iloc[:, 8])
+files_R2s = list(SampleTable.iloc[:, 14])
+samples = list(SampleTable.iloc[:, 1]) # sample full name
+library_index = list(SampleTable.iloc[:, 3])
 samples_IDs = list(SampleTable.iloc[:, 2])
 samples_names = list(SampleTable.iloc[:, 1])
+
+
+
 ALL_THREADS = config["threads"]
 MEM = config["total_mem"]
 GUAP_FOLDER = config["GUAP_DIR"]
@@ -60,6 +65,7 @@ gff = config["gff_file"]
 
 
 workdir: out_dir
+
 include: "utils.smk"
 include: "alignment.smk"
 include: "bam_processing.smk"

@@ -74,7 +74,6 @@ class WES(WorkflowCli):
             '--nirvana-bath', 
             help='Path for Nirvana', 
             metavar='path',
-            type=os.path.abspath,
             default="$HOME/annDB/Nirvana"
 
         )
@@ -83,7 +82,6 @@ class WES(WorkflowCli):
             '--annovar-bath', 
             help='Path for annovar', 
             metavar='path',
-            type=os.path.abspath,
             default="$HOME/annDB/annovar_source/annovar"
         )
 

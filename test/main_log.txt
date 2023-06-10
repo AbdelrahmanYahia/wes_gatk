@@ -1,9 +1,0 @@
-[2023-06-10 02:39:59] WARNING: Found an exsiting sample.tsv file in output directory, will not override.
-[2023-06-10 02:40:36] WARNING: Found an exsiting sample.tsv file in output directory, will not override.
-[2023-06-10 02:40:36] CRITICAL: [;31;1mSorry still under dev :([;39;0m
-[2023-06-10 02:41:29] WARNING: Found an exsiting sample.tsv file in output directory, will not override.
-[2023-06-10 02:41:29] CRITICAL: [;31;1mSorry still under dev :(
-Make sure to include: [;32;1m--generate-confs-only[;39;0m
-[2023-06-10 02:41:42] WARNING: Found an exsiting sample.tsv file in output directory, will not override.
-[2023-06-10 02:41:42] CRITICAL: [;31;1mSorry still under dev :(
-[;33;1mMake sure to include: [;32;1m--generate-confs-only[;39;0m
