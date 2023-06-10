@@ -73,6 +73,7 @@ cd ~/annDB/ref/fa
 echo -e "${YEL}Downloading refrecne genome from : http://hgdownload.cse.ucsc.edu/goldenPath/hg38/bigZips/analysisSet/hg38.analysisSet.2bit${NC}"
 wget -c http://hgdownload.cse.ucsc.edu/goldenPath/hg38/bigZips/analysisSet/hg38.analysisSet.2bit
 error_cheker $?
+twoBitToFa hg38.analysisSet.2bit hg38.analysisSet.fa
 
 
 # downloading VEP db 

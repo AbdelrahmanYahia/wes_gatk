@@ -1,5 +1,3 @@
-
-
 rule index_ref:
     input: f"{ref_fasta}"
     
@@ -36,7 +34,7 @@ rule bwa_index:
 
     output: directory(f"{ref_bwa_path}/{ref_prefix}")
     params:
-        prefix = "hg38"
+        prefix = ref_prefix
     resources:
         mem_mb=8192,
         cores=4,
@@ -50,8 +48,7 @@ rule bwa_index:
 rule bwa_align:
     input:
         R1 = f"01_trimmomatic/{{sample}}_R1.{EXT}",
-        R2 = f"01_trimmomatic/{{sample}}_R2.{EXT}",
-
+        R2 = f"01_trimmomatic/{{sample}}_R2.{EXT}"
     
     conda: "env/wes_gatk.yml"
 

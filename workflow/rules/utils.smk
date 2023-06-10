@@ -42,6 +42,9 @@ def get_final_output(wildcards):
             sample = samples
     ))
 
-
-
     return final_output
+
+
+def get_raw_input(wildcards):
+    pass
+
