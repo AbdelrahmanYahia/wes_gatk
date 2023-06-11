@@ -2,72 +2,55 @@ import pandas as pd
 
 sample_table_file=('samples.tsv')
 SampleTable = pd.read_table(sample_table_file)
+
+
 files_R1s = list(SampleTable.iloc[:, 0])
-files_R2s = list(SampleTable.iloc[:, 14])
-samples = list(SampleTable.iloc[:, 1]) # sample full name
-library_index = list(SampleTable.iloc[:, 3])
-samples_IDs = list(SampleTable.iloc[:, 2])
-samples_names = list(SampleTable.iloc[:, 1])
+files_R2s = list(SampleTable.iloc[:, 15])
+samples = list(SampleTable.iloc[:, 2]) # sample full name
+units = list(SampleTable.iloc[:, 1])
+samples_IDs = list(SampleTable.iloc[:, 3])
+library_index = list(SampleTable.iloc[:, 4])
 
 units = (
     pd.read_csv('samples.tsv', sep="\t", dtype={"sample_id": str, "library_index": str, "lane": str})
-    .set_index(["sample_id", "library_index"], drop=False)
+    .set_index(["sample_id", "unit"], drop=False)
     .sort_index()
 )
 
-# def get_raw_fasta(wildcards):
-#     sample = wildcards.sample
-#     lanes = units.loc[sample, "lane"].unique().tolist()
-#     indexes = units.loc[sample, "library_index"].unique().tolist()
-#     EXT = "fq.gz"
-
+# def get_fastqs(wildcards):
 #     mydict = dict(
 #         zip(
 #             ["R1", "R2"],
 #                 [
-#                     expand(f"{sample}_{{libraryindex}}_{{lane}}_1.{EXT}", libraryindex = indexes, lane = lanes),
-#                     expand(f"{sample}_{{libraryindex}}_{{lane}}_2.{EXT}", libraryindex = indexes, lane = lanes)
+#                     expand(
+#                             "{sample}_{unit}_1.fq.gz",
+#                             unit=units.loc[wildcards.sample, "library_index"].tolist(),
+#                             sample=wildcards.sample,
+#                             lane=units.loc[wildcards.sample, "lane"].unique().tolist(),
+#                         ),
+
+#                     expand(
+#                             "{sample}_{unit}_2.fq.gz",
+#                             unit=units.loc[wildcards.sample, "library_index"].tolist(),
+#                             sample=wildcards.sample,
+#                             lane=units.loc[wildcards.sample, "lane"].unique().tolist()
+#                         )
 #                 ]
 #         )
 #     )
 #     return mydict
 
-# def get_merged(wildcards):
-#     def get_samples(sample):
-#         lanes = units.loc[sample, "lane"].unique().tolist()
-#         indexes = units.loc[sample, "library_index"].unique().tolist()
 
-#         return expand("align/{sample}_{libraryindex}_{lane}.bam", libraryindex = indexes, lane = lanes)
-    
-#     inputs = []
-#     for sample in samples_IDs:
-#         mysamples = get_samples(sample)
-#         inputs.extend(mysamples)
-    
-#     return(inputs)
 
-def get_fastqs(wildcards):
-    mydict = dict(
-        zip(
-            ["R1", "R2"],
-                [
-                    expand(
-                            "{sample}_{unit}_{lane}_1.fq.gz",
-                            unit=units.loc[wildcards.sample, "library_index"].tolist(),
-                            sample=wildcards.sample,
-                            lane=units.loc[wildcards.sample, "lane"].unique().tolist()
+def get_align_input(wildcards):
 
-                        ),
-                    expand(
-                            "{sample}_{unit}_{lane}_2.fq.gz",
-                            unit=units.loc[wildcards.sample, "library_index"].tolist(),
-                            sample=wildcards.sample,
-                            lane=units.loc[wildcards.sample, "lane"].unique().tolist()
-                        )
-                ]
+    return expand(
+            "align/{sample}_{unit}.bam",
+            unit=units.loc[wildcards.sample, "unit"].tolist(),
+            sample=wildcards.sample
         )
-    )
-    return mydict
+
+
 
 rule all:
     input:
@@ -75,22 +58,23 @@ rule all:
 
 rule trim:
     input:
-        unpack(get_fastqs)
+        R1 = "/home/marc/wes_gatk/dev/empty_sample_names/{sample}_{unit}_1.fq.gz",
+        R2 = "/home/marc/wes_gatk/dev/empty_sample_names/{sample}_{unit}_2.fq.gz"
     output:
-        R1 = "trimmed_reads/{sample}_{unit}_{lane}_1.trimmed.fq.gz",
-        R2 = "trimmed_reads/{sample}_{unit}_{lane}_2.trimmed.fq.gz"
+        R1 = "trimmed_reads/{sample}_{unit}_1.trimmed.fq.gz",
+        R2 = "trimmed_reads/{sample}_{unit}_2.trimmed.fq.gz"
     shell:
         """
         echo -e "{input.R1} >>> {output.R1}"
         echo -e "{input.R2} >>> {output.R2}"
         """
 
-rule test:
+rule align:
     input:
-        R1 = "trimmed_reads/{sample}_{unit}_{lane}_1.trimmed.fq.gz",
-        R2 = "trimmed_reads/{sample}_{unit}_{lane}_2.trimmed.fq.gz"
+        R1 = "trimmed_reads/{sample}_{unit}_1.trimmed.fq.gz",
+        R2 = "trimmed_reads/{sample}_{unit}_2.trimmed.fq.gz"
     output:
-        "align/{sample}_{unit}_{lane}.bam",
+        "align/{sample}_{unit}.bam",
     shell:
         """
         echo -e "{input.R1} , {input.R2} {output}"
@@ -98,12 +82,7 @@ rule test:
 
 rule merge:
     input:
-        lambda wildcards: expand(
-            "align/{sample}_{unit}_{lane}.bam",
-            unit=units.loc[wildcards.sample, "library_index"].tolist(),
-            sample=wildcards.sample,
-            lane=units.loc[wildcards.sample, "lane"].unique().tolist()
-        )
+        get_align_input
     output:
         "{sample}.merged"
     shell:
