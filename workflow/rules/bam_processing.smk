@@ -1,13 +1,13 @@
 
 rule mrk_duplicates:
     input:
-        "02_alignment/{sample}.sorted.bam"
+        "02_alignment/{sample}_{unit}.sorted.bam"
     
     conda: "env/wes_gatk.yml"
 
     output:
-        bam = "02_alignment/{sample}.dedub.bam",
-        matrix = "02_alignment/{sample}.dedub.matrix"
+        bam = "02_alignment/{sample}_{unit}.dedub.bam",
+        matrix = "02_alignment/{sample}_{unit}.dedub.matrix"
 
     resources:
         mem_mb=4096,
@@ -17,7 +17,7 @@ rule mrk_duplicates:
         time = lambda wildcards, attempt: 60 * 2 * attempt
 
     log: 
-        "logs/{sample}.dedub.log"
+        "logs/{sample}_{unit}.dedub.log"
 
     shell:
         """
@@ -27,17 +27,17 @@ rule mrk_duplicates:
         """
 
 rule BaseRecalibrator:
-    input: "02_alignment/{sample}.dedub.bam"
+    input: "02_alignment/{sample}_{unit}.dedub.bam"
     
     conda: "env/wes_gatk.yml"
 
-    output: "03_bamPrep/{sample}.report"
+    output: "03_bamPrep/{sample}_{unit}.report"
     params: 
         known_sites = known_variants,
         ref = ref_fasta,
 
     threads: 4
-    benchmark: "benchamrks/{sample}_GATK_pqsr.txt"
+    benchmark: "benchamrks/{sample}_{unit}_GATK_pqsr.txt"
     resources:
         mem_mb=2048,
         cores=4,
@@ -53,13 +53,13 @@ rule BaseRecalibrator:
 
 rule applyBaseRecalibrator:
     input: 
-        bam = "02_alignment/{sample}.dedub.bam",
-        report = "03_bamPrep/{sample}.report"
-    benchmark: "benchamrks/{sample}_GATK_apply_BQSR.txt"
+        bam = "02_alignment/{sample}_{unit}.dedub.bam",
+        report = "03_bamPrep/{sample}_{unit}.report"
+    benchmark: "benchamrks/{sample}_{unit}_GATK_apply_BQSR.txt"
     
     conda: "env/wes_gatk.yml"
 
-    output: "03_bamPrep/{sample}.pqsr.bam"
+    output: "03_bamPrep/{sample}_{unit}.pqsr.bam"
     threads: 1
     resources:
         mem_mb=2048,
@@ -79,11 +79,11 @@ rule applyBaseRecalibrator:
         """
 
 rule bqsr_calibrated_report:
-    input: "03_bamPrep/{sample}.pqsr.bam"
+    input: "03_bamPrep/{sample}_{unit}.pqsr.bam"
     
     conda: "env/wes_gatk.yml"
 
-    output: "03_bamPrep/{sample}_pqsr.report"
+    output: "03_bamPrep/{sample}_{unit}_pqsr.report"
     params: 
         known_sites = known_variants,
         ref = ref_fasta
@@ -103,13 +103,13 @@ rule bqsr_calibrated_report:
 
 rule AnalyzeCovariates:
     input: 
-        raw = "03_bamPrep/{sample}.report", 
-        bqsr = "03_bamPrep/{sample}_pqsr.report"
+        raw = "03_bamPrep/{sample}_{unit}.report", 
+        bqsr = "03_bamPrep/{sample}_{unit}_pqsr.report"
 
     
     conda: "env/wes_gatk.yml"
 
-    output: "03_bamPrep/QC/{sample}.pdf"
+    output: "03_bamPrep/QC/{sample}_{unit}.pdf"
 
     threads: 2
     resources:
@@ -127,12 +127,12 @@ rule AnalyzeCovariates:
 
 rule qualimap:
     input:
-        "03_bamPrep/{sample}.pqsr.bam"
+        "03_bamPrep/{sample}_{unit}.pqsr.bam"
     
     conda: "env/wes_gatk.yml"
 
     output:
-        directory("03_bamPrep/QC/{sample}_Qualimap")
+        directory("03_bamPrep/QC/{sample}_{unit}_Qualimap")
 
     threads: 2
     resources:
@@ -156,3 +156,30 @@ rule qualimap:
             -outformat HTML
         """
 
+rule GatherBamFiles:
+    input:
+        get_merge_input
+    
+    conda: "env/wes_gatk.yml"
+
+    output:
+        "03_bamPrep/merged_bams/{sample}.pqsr.bam"
+    params:
+        bams = lambda wildcards: [f" --INPUT 03_bamPrep/{wildcard.sample}_{b}.pqsr.bam" for b in units.loc[wildcards.sample, "unit"].tolist()],
+        ref = ref_fasta
+
+    threads: 1
+    resources:
+        mem_mb=2048,
+        cores=1,
+        mem_gb=2,
+        nodes = 1,
+        time = lambda wildcards, attempt: 60 * 2 * attempt
+    shell:
+        """
+        picard --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" MergeSamFiles  \
+            {params.bams} \
+            -OUTPUT {output} \
+            --CREATE_INDEX true \
+            --CREATE_MD5_FILE true
+        """

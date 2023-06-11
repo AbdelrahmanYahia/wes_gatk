@@ -10,16 +10,24 @@ if config["decompress"]:
 else:
     EXT = EXTT
 
-TAIL = f"_{config['tail']}"
+working_dir = config["working_dir"]
 sample_table_file=config.get('sampletable','samples.tsv')
 SampleTable = pd.read_table(sample_table_file)
 
+
 files_R1s = list(SampleTable.iloc[:, 0])
-files_R2s = list(SampleTable.iloc[:, 14])
-samples = list(SampleTable.iloc[:, 1]) # sample full name
-library_index = list(SampleTable.iloc[:, 3])
-samples_IDs = list(SampleTable.iloc[:, 2])
-samples_names = list(SampleTable.iloc[:, 1])
+files_R2s = list(SampleTable.iloc[:, 15])
+samples = list(SampleTable.iloc[:, 2]) # sample full name
+units = list(SampleTable.iloc[:, 1])
+samples_IDs = list(SampleTable.iloc[:, 3])
+library_index = list(SampleTable.iloc[:, 4])
+
+units = (
+    pd.read_csv('samples.tsv', sep="\t", dtype={"sample_id": str, "library_index": str, "lane": str})
+    .set_index(["sample_id", "unit"], drop=False)
+    .sort_index()
+)
+
 
 
 
@@ -33,24 +41,21 @@ working_dir = config["working_dir"]
 source_dir = config["GUAP_DIR"]
 common_rules = config["common_rules"]
 
-
-samples_dir = "/home/marc/WES_GATK/test/samples"
+samples_dir = config["input"]
 
 out_dir = config["output"]
 
-
 ref_bwa = config["reference_index"]
 
-ref_bwa_path = confi["reference_output_path"]
-ref_prefix = confi["reference_output_prefix"]
+ref_bwa_path = config["reference_output_path"]
+ref_prefix = config["reference_output_prefix"]
 
-ref_fasta = config["refence_fasta"]
+ref_fasta = config["reference_fasta"]
 ref_fasta_path = os.path.dirname(ref_fasta)
 
 bed_file = config["bed_file"]
 
 known_variants = config["known_variants"]
-
 
 nirvana_path = config["nirvana_path"]
 annovar_dir = config["annovar_path"]
@@ -60,11 +65,7 @@ Nirvana_supplementray = f"{nirvana_path}/DB/SupplementaryAnnotation/GRCh38/"
 Nirvana_ref = f"{nirvana_path}/DB/References/Homo_sapiens.GRCh38.Nirvana.dat"
 Nirvana_cache = f"{nirvana_path}/DB/Cache/GRCh38/Both"
 
-
 gff = config["gff_file"]
-
-
-workdir: out_dir
 
 include: "utils.smk"
 include: "alignment.smk"

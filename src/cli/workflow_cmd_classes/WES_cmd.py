@@ -38,8 +38,7 @@ class WES(WorkflowCli):
             '--threads', 
             metavar = "N",
             help= "Number of total threads to use [default = all]", 
-            type=int,
-            required = not any(arg in ["--print-last-run"] for arg in sys.argv)
+            type=int
 
         )
 
@@ -71,7 +70,7 @@ class WES(WorkflowCli):
         )
 
         workflow_conf.add_argument(
-            '--nirvana-bath', 
+            '--nirvana-path', 
             help='Path for Nirvana', 
             metavar='path',
             default="$HOME/annDB/Nirvana"
@@ -79,7 +78,7 @@ class WES(WorkflowCli):
         )
 
         workflow_conf.add_argument(
-            '--annovar-bath', 
+            '--annovar-path', 
             help='Path for annovar', 
             metavar='path',
             default="$HOME/annDB/annovar_source/annovar"
@@ -193,12 +192,25 @@ class WES(WorkflowCli):
         )
 
         aligner_conf.add_argument(
+            '--reference-output-path',
+            metavar='path/to/ref', 
+            type=os.path.abspath,
+            help="path to reference index"
+        )
+
+        aligner_conf.add_argument(
+            '--reference-output-prefix',
+            metavar='path/to/ref', 
+            type=os.path.abspath,
+            help="path to reference index"
+        )
+
+        aligner_conf.add_argument(
             '--index-fasta', 
             help='Index fasta file', 
             action='store_true', 
         )
 
-        aligner_conf.set_defaults(index_fasta=False)
 
         variant_caller_conf = parser.add_argument_group(f'{BLU}Variant caller configuration{NC}')
 
@@ -304,7 +316,7 @@ class WES(WorkflowCli):
 
         other_conf.add_argument(
             '-n',"--name", 
-            default=f"guap_run[{os.environ['start_time']}]", 
+            default=f"guap_run", 
             metavar = 'str',
             help=f"Name of files [ default = guap_run[date time] ]"
         )

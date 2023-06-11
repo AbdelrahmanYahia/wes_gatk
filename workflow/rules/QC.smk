@@ -3,19 +3,18 @@ rule trimmomatic:
     input:
         R1 = f"{samples_dir}/{{sample}}_R1.fastq",
         R2 = f"{samples_dir}/{{sample}}_R2.fastq"
-
     
     conda: "env/wes_gatk.yml"
 
     output:
-        log="logs/trimmomatic/{sample}.log",
+        log="logs/trimmomatic/{sample}_{unit}.log",
         summary="logs/trimmomatic/{sample}.summary",
-        nf1 = f"01_trimmomatic/{{sample}}_R1.{EXT}",
-        nf2 = f"01_trimmomatic/{{sample}}_R2.{EXT}",
-        nfu1=temp(f"01_trimmomatic/U/{{sample}}_R1_U.{EXT}"),
-        nfu2=temp(f"01_trimmomatic/U/{{sample}}_R2_U.{EXT}")
+        nf1 = "00_trimmomatic/{sample}_{unit}_1.trimmed.fastq.gz",
+        nf2 = "00_trimmomatic/{sample}_{unit}_2.trimmed.fastq.gz",
+        nfu1=temp("00_trimmomatic/{sample}_{unit}-U_1.trimmed.fastq.gz"),
+        nfu2=temp("00_trimmomatic/{sample}_{unit}-U_1.trimmed.fastq.gz")
 
-    benchmark: "benchamrks/QC/{sample}_trim.txt"
+    benchmark: "benchamrks/QC/{sample}_{unit}_trim.txt"
     threads: 4
     params:
         size = 4,
@@ -30,7 +29,7 @@ rule trimmomatic:
         nodes = 1,
         time = lambda wildcards, attempt: 60 * 2 * attempt
     log: 
-        "logs/trimmomatic/{sample}.txt"
+        "logs/trimmomatic/{sample}_{unit}.txt"
     shell:
         """
         trimmomatic PE -threads {threads} -phred33 -trimlog {output.log} \
@@ -40,20 +39,20 @@ rule trimmomatic:
 
 rule Fastqc:
     input:
-        f"01_trimmomatic/{{sample}}_R{{R}}.{EXT}"
+        "00_trimmomatic/{sample}_{unit}_{R}.trimmed.fastq.gz"
     log:
-        f"logs/QC/QC_{{sample}}_R{{R}}.log"
+        "logs/QC/QC_{sample}_{unit}_{R}.log"
     
     conda: "env/wes_gatk.yml"
 
     output:
-        zip=f"00_QC/{{sample}}_R{{R}}_fastqc.zip",
-        html=f"00_QC/{{sample}}_R{{R}}_fastqc.html"
+        zip="01_QC/{sample}_{unit}_{R}_fastqc.zip",
+        html="01_QC/{sample}_{unit}_{R}_fastqc.html"
         
-    benchmark: f"benchamrks/QC/{{sample}}_R{{R}}fastqc.txt"
+    benchmark: f"benchamrks/QC/{sample}_{unit}_{R}_fastqc.txt"
     threads: 2
     params:
-        path="00_QC"
+        path="01_QC"
     resources:
         mem_mb=2048,
         cores=2,

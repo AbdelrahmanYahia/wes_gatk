@@ -1,5 +1,4 @@
 
-
 rule consequence:
     input: "04_calling/variants_genotyped.gvcf.gz"
     

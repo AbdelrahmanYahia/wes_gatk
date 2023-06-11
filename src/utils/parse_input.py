@@ -61,8 +61,8 @@ def recogize_pattern(file_name): # takes string of fastq file name and returns d
     """ using re to recognize the naming pattern of samples (illumina, srr and general naming patten)"""
     # naming pattern for re 
     patterns = { # ! fix (_|\.) group for R pattern in dict config !
-        "Novagen1": "((((.+)_((.+)-(.+)))_(L\d+))((_)([1|2]))\.(fastq\.gz|fastq|fq\.gz|fq))",
-        "Novagen2": "((((.+)_((.+)-(.+)))_(L\d+))((-)(r[1|2]))\.(fastq\.gz|fastq|fq\.gz|fq))",
+        "Novagen1": "(((.+)_(((.+)-(.+))_(L\d+)))((_)([1|2]))\.(fastq\.gz|fastq|fq\.gz|fq))",
+        "Novagen2": "(((.+)_(((.+)-(.+))_(L\d+)))((-)(r[1|2]))\.(fastq\.gz|fastq|fq\.gz|fq))",
         "illumina": "(((.+)_(S\d+)_(L00\d))_(R1|R2|r1|r2|read1|read2)_(00\d)\.(fastq\.gz|fastq|fq\.gz|fq))",
         "SRR": "(((SRR)(\d+))(_|\.)(1|2|R1|R2|r1|r2|read1|read2)\.(fastq\.gz|fastq|fq\.gz|fq))",
         "general": "(((.+))(_|\.)(1|2|R1|R2|r1|r2|read1|read2)\.(fastq\.gz|fastq|fq\.gz|fq))"
@@ -86,11 +86,10 @@ def recogize_pattern(file_name): # takes string of fastq file name and returns d
             continue
 
     if matched_pattern == "Novagen1":
-        file_name, sample_name, sample_id, library_index, acc1, acc2, lane, R_pattern, R_sep, read_num, ext, tail, sample_number =  matched.groups()[0], matched.groups()[1], matched.groups()[2+1], matched.groups()[3+1], matched.groups()[4+1], matched.groups()[5+1], matched.groups()[6+1], matched.groups()[7+1] , matched.groups()[8+1] , matched.groups()[9+1], matched.groups()[10+1],"", ""
+        file_name, sample_name, sample_id, unit, library_index, acc1, acc2, lane, R_pattern, R_sep, read_num, ext, tail, sample_number =  matched.groups()[0], matched.groups()[1], matched.groups()[2], matched.groups()[2+1], matched.groups()[3+1], matched.groups()[4+1], matched.groups()[5+1], matched.groups()[6+1], matched.groups()[7+1] , matched.groups()[8+1] , matched.groups()[9+1], matched.groups()[10+1],"", ""
 
     elif matched_pattern == "Novagen2":
-        file_name, sample_name, sample_id, library_index, acc1, acc2, lane, R_pattern, R_sep, read_num, ext, tail, sample_number =  matched.groups()[0], matched.groups()[1], matched.groups()[2+1], matched.groups()[3+1], matched.groups()[4+1], matched.groups()[5+1], matched.groups()[6+1], matched.groups()[7+1] , matched.groups()[8+1] , matched.groups()[9+1], matched.groups()[10+1],"", ""
-
+        file_name, sample_name, sample_id, unit, library_index, acc1, acc2, lane, R_pattern, R_sep, read_num, ext, tail, sample_number =  matched.groups()[0], matched.groups()[1], matched.groups()[2], matched.groups()[2+1], matched.groups()[3+1], matched.groups()[4+1], matched.groups()[5+1], matched.groups()[6+1], matched.groups()[7+1] , matched.groups()[8+1] , matched.groups()[9+1], matched.groups()[10+1],"", ""
     elif matched_pattern == "illumina":
         file_name, sample_name, sample_id, sample_number, read_num, lane, tail, ext = matched.groups()[0], matched.groups()[1], matched.groups()[2], matched.groups()[3], matched.groups()[5], matched.groups()[4], matched.groups()[6], matched.groups()[7]
 
@@ -110,6 +109,7 @@ def recogize_pattern(file_name): # takes string of fastq file name and returns d
     if matched_pattern == "Novagen1" or matched_pattern == "Novagen2":
         return {
             "file_name": file_name,
+            "unit": unit,
             "sample_name": sample_name,
             "sample_id": sample_id,
             "library_index": library_index,
@@ -138,6 +138,7 @@ def recogize_pattern(file_name): # takes string of fastq file name and returns d
             "ext": ext,
             "matched_pattern": ptrn_name
         }
+
 
     
 def parse_samples(inpath): # takes path return contains fastq files, returns df contains sample information

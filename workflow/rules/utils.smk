@@ -1,30 +1,31 @@
 
 def get_gvcf(wildcards):
     return [f"04_calling/{sample}_raw.gvcf.gz" \
-        for sample in samples]
+        for sample in samples_IDs]
 
 def get_bams(wildcards):
     return [f"03_bamPrep/{sample}.pqsr.bam" \
-        for sample in samples]
+        for sample in samples_IDs]
 
 def get_final_output(wildcards):
     final_output = []
     final_output.extend(expand(
-        f"00_QC/{{sample}}_R{{R}}_fastqc.zip",
-            sample = samples,
-            R = [1,2]
-    ))
+            "01_QC/{sample}_{unit}_{R}_fastqc.zip",
+            unit=units.loc[wildcards.sample, "unit"].tolist(),
+            sample=wildcards.sample,
+            R=[1,2]
+        ))
     final_output.extend(expand(
         "02_alignment/QC/{sample}.cov",
-            sample = samples
+            sample = samples_IDs
     ))
     final_output.extend(expand(
         "03_bamPrep/QC/{sample}_Qualimap",
-        sample = samples
+        sample = samples_IDs
     ))
     final_output.extend(expand(
         "03_bamPrep/QC/{sample}.pdf",
-            sample = samples
+            sample = samples_IDs
     ))
     final_output.extend(
         [
@@ -39,12 +40,17 @@ def get_final_output(wildcards):
     )
     final_output.extend(expand(
         "04_calling/QC/{sample}.eval.grp",
-            sample = samples
+            sample = samples_IDs
     ))
 
     return final_output
 
 
-def get_raw_input(wildcards):
-    pass
+def get_merge_input(wildcards):
+
+    return expand(
+            "03_bamPrep/{sample}_{unit}.pqsr.bam",
+            unit=units.loc[wildcards.sample, "unit"].tolist(),
+            sample=wildcards.sample
+        )
 

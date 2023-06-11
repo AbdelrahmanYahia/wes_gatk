@@ -1,6 +1,6 @@
 
 rule HaplotypeCaller:
-    input: "03_bamPrep/{sample}.pqsr.bam"
+    input: "03_bamPrep/merged_bams/{sample}.pqsr.bam"
     
     conda: "env/wes_gatk.yml"
 
