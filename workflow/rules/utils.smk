@@ -9,24 +9,31 @@ def get_bams(wildcards):
 
 def get_final_output(wildcards):
     final_output = []
-    final_output.extend(expand(
+
+    for i in samples_IDs:
+        final_output.extend(expand(
             "01_QC/{sample}_{unit}_{R}_fastqc.zip",
-            unit=units.loc[wildcards.sample, "unit"].tolist(),
-            sample=wildcards.sample,
+            sample=i,
+            unit=units.loc[i, "unit"].tolist(),
             R=[1,2]
         ))
-    final_output.extend(expand(
-        "02_alignment/QC/{sample}.cov",
-            sample = samples_IDs
-    ))
-    final_output.extend(expand(
-        "03_bamPrep/QC/{sample}_Qualimap",
-        sample = samples_IDs
-    ))
-    final_output.extend(expand(
-        "03_bamPrep/QC/{sample}.pdf",
-            sample = samples_IDs
-    ))
+        final_output.extend(expand(
+            "02_alignment/QC/{sample}_{unit}.cov",
+                sample = i,
+                unit=units.loc[i, "unit"].tolist()
+        ))
+        final_output.extend(expand(
+            "03_bamPrep/QC/{sample}_{unit}_Qualimap",
+                sample = i,
+                unit=units.loc[i, "unit"].tolist()
+        ))
+
+        final_output.extend(expand(
+            "03_bamPrep/QC/{sample}_{unit}.pdf",
+                sample = i,
+                unit=units.loc[i, "unit"].tolist()
+        ))
+    
     final_output.extend(
         [
             "04_calling/QC/bcftools.stats",
@@ -44,6 +51,8 @@ def get_final_output(wildcards):
     ))
 
     return final_output
+
+
 
 
 def get_merge_input(wildcards):

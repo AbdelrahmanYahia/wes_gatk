@@ -165,7 +165,7 @@ rule GatherBamFiles:
     output:
         "03_bamPrep/merged_bams/{sample}.pqsr.bam"
     params:
-        bams = lambda wildcards: [f" --INPUT 03_bamPrep/{wildcard.sample}_{b}.pqsr.bam" for b in units.loc[wildcards.sample, "unit"].tolist()],
+        bams = lambda wildcards: [f" --INPUT 03_bamPrep/{wildcards.sample}_{b}.pqsr.bam" for b in units.loc[wildcards.sample, "unit"].tolist()],
         ref = ref_fasta
 
     threads: 1

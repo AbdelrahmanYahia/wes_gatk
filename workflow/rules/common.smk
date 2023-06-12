@@ -15,12 +15,12 @@ sample_table_file=config.get('sampletable','samples.tsv')
 SampleTable = pd.read_table(sample_table_file)
 
 
-files_R1s = list(SampleTable.iloc[:, 0])
-files_R2s = list(SampleTable.iloc[:, 15])
-samples = list(SampleTable.iloc[:, 2]) # sample full name
-units = list(SampleTable.iloc[:, 1])
-samples_IDs = list(SampleTable.iloc[:, 3])
-library_index = list(SampleTable.iloc[:, 4])
+files_R1s = list(SampleTable.iloc[:, 1])
+files_R2s = list(SampleTable.iloc[:, 16])
+samples = list(SampleTable.iloc[:, 3]) # sample full name
+units = list(SampleTable.iloc[:, 2])
+samples_IDs = list(SampleTable.iloc[:, 4])
+library_index = list(SampleTable.iloc[:, 5])
 
 units = (
     pd.read_csv('samples.tsv', sep="\t", dtype={"sample_id": str, "library_index": str, "lane": str})

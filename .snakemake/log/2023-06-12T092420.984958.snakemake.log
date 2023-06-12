@@ -1,0 +1,49 @@
+Building DAG of jobs...
+Full Traceback (most recent call last):
+  File "/home/marc/miniconda3/envs/GUAP/lib/python3.8/site-packages/snakemake/rules.py", line 760, in apply_input_function
+    value = func(Wildcards(fromdict=wildcards), **_aux_params)
+  File "/home/marc/wes_gatk/workflow/rules/alignment.smk", line 131, in <lambda>
+    samtools flagstat {input} > {output.stats}
+IndexError: list index out of range
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/marc/miniconda3/envs/GUAP/lib/python3.8/site-packages/snakemake/__init__.py", line 760, in snakemake
+    success = workflow.execute(
+  File "/home/marc/miniconda3/envs/GUAP/lib/python3.8/site-packages/snakemake/workflow.py", line 745, in execute
+    dag.init()
+  File "/home/marc/miniconda3/envs/GUAP/lib/python3.8/site-packages/snakemake/dag.py", line 228, in init
+    self.update_conda_envs()
+  File "/home/marc/miniconda3/envs/GUAP/lib/python3.8/site-packages/snakemake/dag.py", line 312, in update_conda_envs
+    env_set = {
+  File "/home/marc/miniconda3/envs/GUAP/lib/python3.8/site-packages/snakemake/dag.py", line 315, in <setcomp>
+    if job.conda_env_spec and (self.workflow.assume_shared_fs or job.is_local)
+  File "/home/marc/miniconda3/envs/GUAP/lib/python3.8/site-packages/snakemake/jobs.py", line 425, in conda_env_spec
+    self.wildcards_dict, self.params, self.input
+  File "/home/marc/miniconda3/envs/GUAP/lib/python3.8/site-packages/snakemake/jobs.py", line 353, in params
+    self._params = self.rule.expand_params(
+  File "/home/marc/miniconda3/envs/GUAP/lib/python3.8/site-packages/snakemake/rules.py", line 967, in expand_params
+    self._apply_wildcards(
+  File "/home/marc/miniconda3/envs/GUAP/lib/python3.8/site-packages/snakemake/rules.py", line 812, in _apply_wildcards
+    item, incomplete = self.apply_input_function(
+  File "/home/marc/miniconda3/envs/GUAP/lib/python3.8/site-packages/snakemake/rules.py", line 781, in apply_input_function
+    raise InputFunctionException(e, rule=self, wildcards=wildcards)
+snakemake.exceptions.InputFunctionException: Error:
+  IndexError: list index out of range
+Wildcards:
+  sample=father_ACC1-LIBR
+  unit=L1
+Traceback:
+  File "/home/marc/wes_gatk/workflow/rules/alignment.smk", line 61, in <lambda>
+
+InputFunctionException in rule bwa_align in file /home/marc/wes_gatk/workflow/rules/alignment.smk, line 48:
+Error:
+  IndexError: list index out of range
+Wildcards:
+  sample=father_ACC1-LIBR
+  unit=L1
+Traceback:
+  File "/home/marc/wes_gatk/workflow/rules/alignment.smk", line 61, in <lambda>
+unlocking
+removed all locks

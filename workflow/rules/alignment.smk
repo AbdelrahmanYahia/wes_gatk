@@ -1,3 +1,4 @@
+
 rule index_ref:
     input: f"{ref_fasta}"
     
@@ -47,8 +48,7 @@ rule bwa_index:
 rule bwa_align:
     input:
         R1 = "00_trimmomatic/{sample}_{unit}_1.trimmed.fastq.gz",
-        R2 = "00_trimmomatic/{sample}_{unit}_2.trimmed.fastq.gz",
-        index = lambda wildcards: ref_bwa if not config["index_fasta"] else rules.bwa_index.output
+        R2 = "00_trimmomatic/{sample}_{unit}_2.trimmed.fastq.gz"
     
     conda: "env/wes_gatk.yml"
 
@@ -58,8 +58,9 @@ rule bwa_align:
     threads: 4
     params:
         fa = ref_fasta,
-        library_index = lambda wildcards: units.loc[:, 'library_index'][units['unit'] == f"{wildcards.unit}"].tolist()[0],
-        lane = lambda wildcards: units.loc[:, 'lane'][units['unit'] == f"{wildcards.unit}"].tolist()[0]
+        # library_index = lambda wildcards: units.loc[:, 'library_index'][units['unit'] == f"{wildcards.unit}"].tolist()[0],
+        # lane = lambda wildcards: units.loc[:, 'lane'][units['unit'] == f"{wildcards.unit}"].tolist()[0],
+        index = lambda wildcards: ref_bwa if not config["index_fasta"] else rules.bwa_index.output
 
     log: 
         bwa = "logs/{sample}_{unit}_bwa.log",
@@ -82,7 +83,7 @@ rule bwa_align:
         RGID=$(head -n1 $R1 | sed 's/:/_/g' | cut -d "_" -f1,2,3,4)
         PU=$RGID.$LB 
         bwa mem -t {threads} -M \
-            -R "@RG\\tID:$RGID\\tSM:$SM\\tPL:$PL\\tLB:$LB\\tPU:$PU" {input.index} {input.R1} {input.R2} > {output} 2> {log.bwa}
+            -R "@RG\\tID:$RGID\\tSM:$SM\\tPL:$PL\\tLB:$LB\\tPU:$PU" {params.index} {input.R1} {input.R2} > {output} 2> {log.bwa}
         """
 
 

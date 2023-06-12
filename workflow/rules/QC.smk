@@ -1,18 +1,18 @@
 
 rule trimmomatic:
     input:
-        R1 = f"{samples_dir}/{{sample}}_R1.fastq",
-        R2 = f"{samples_dir}/{{sample}}_R2.fastq"
+        R1 = f"{samples_dir}/{{sample}}_{{unit}}_1.fq.gz",
+        R2 = f"{samples_dir}/{{sample}}_{{unit}}_2.fq.gz"
     
     conda: "env/wes_gatk.yml"
 
     output:
         log="logs/trimmomatic/{sample}_{unit}.log",
-        summary="logs/trimmomatic/{sample}.summary",
+        summary="logs/trimmomatic/{sample}_{unit}.summary",
         nf1 = "00_trimmomatic/{sample}_{unit}_1.trimmed.fastq.gz",
         nf2 = "00_trimmomatic/{sample}_{unit}_2.trimmed.fastq.gz",
         nfu1=temp("00_trimmomatic/{sample}_{unit}-U_1.trimmed.fastq.gz"),
-        nfu2=temp("00_trimmomatic/{sample}_{unit}-U_1.trimmed.fastq.gz")
+        nfu2=temp("00_trimmomatic/{sample}_{unit}-U_2.trimmed.fastq.gz")
 
     benchmark: "benchamrks/QC/{sample}_{unit}_trim.txt"
     threads: 4
@@ -49,7 +49,7 @@ rule Fastqc:
         zip="01_QC/{sample}_{unit}_{R}_fastqc.zip",
         html="01_QC/{sample}_{unit}_{R}_fastqc.html"
         
-    benchmark: f"benchamrks/QC/{sample}_{unit}_{R}_fastqc.txt"
+    benchmark: "benchamrks/QC/{sample}_{unit}_{R}_fastqc.txt"
     threads: 2
     params:
         path="01_QC"
