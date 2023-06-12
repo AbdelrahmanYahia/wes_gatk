@@ -2,7 +2,7 @@
 rule VariantEval:
     input: "04_calling/{sample}_raw.gvcf.gz"
     
-    conda: "env/wes_gatk.yml"
+    conda: "../env/wes_gatk.yml"
 
     output: "04_calling/QC/{sample}.eval.grp"
     threads:1
@@ -26,7 +26,7 @@ rule VariantEval:
 rule bcftools_stats:
     input: "04_calling/QC/bcftools_csq.vcf"
     
-    conda: "env/wes_gatk.yml"
+    conda: "../env/wes_gatk.yml"
 
     output: "04_calling/QC/bcftools.stats"
     threads: 1
@@ -44,7 +44,7 @@ rule bcftools_stats:
 rule plot_bcftools_stats:
     input: "04_calling/QC/bcftools.stats"
     
-    conda: "env/wes_gatk.yml"
+    conda: "../env/wes_gatk.yml"
 
     output: directory("04_calling/QC/bcftools_plots")
     threads: 1 
@@ -63,7 +63,7 @@ rule plot_bcftools_stats:
 rule Split_variants_idnel:
     input: "04_calling/variants_genotyped.gvcf.gz"
     
-    conda: "env/wes_gatk.yml"
+    conda: "../env/wes_gatk.yml"
 
     output: "04_calling/indels/variants_genotyped.gvcf.gz"
     params:
@@ -88,7 +88,7 @@ rule Split_variants_idnel:
 rule Split_variants_snp:
     input: "04_calling/variants_genotyped.gvcf.gz"
     
-    conda: "env/wes_gatk.yml"
+    conda: "../env/wes_gatk.yml"
 
     output: "04_calling/snvs/variants_genotyped.gvcf.gz"
     params:

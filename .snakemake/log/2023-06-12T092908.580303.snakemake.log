@@ -112,3 +112,36 @@ rule trimmomatic:
     threads: 4
     resources: tmpdir=/tmp, mem_mb=5120, mem_mib=4883, cores=4, mem_gb=5, nodes=1, time=120
 
+WorkflowError:
+Failed to open source file /home/marc/wes_gatk/workflow/rules/env/wes_gatk.yml
+FileNotFoundError: [Errno 2] No such file or directory: '/home/marc/wes_gatk/workflow/rules/env/wes_gatk.yml'
+Removing output files of failed job trimmomatic since they might be corrupted:
+logs/trimmomatic/mother_ACC2-LIBR2_L1.log, logs/trimmomatic/mother_ACC2-LIBR2_L1.summary, 00_trimmomatic/mother_ACC2-LIBR2_L1_1.trimmed.fastq.gz, 00_trimmomatic/mother_ACC2-LIBR2_L1_2.trimmed.fastq.gz, 00_trimmomatic/mother_ACC2-LIBR2_L1-U_1.trimmed.fastq.gz, 00_trimmomatic/mother_ACC2-LIBR2_L1-U_2.trimmed.fastq.gz
+WorkflowError:
+Failed to open source file /home/marc/wes_gatk/workflow/rules/env/wes_gatk.yml
+FileNotFoundError: [Errno 2] No such file or directory: '/home/marc/wes_gatk/workflow/rules/env/wes_gatk.yml'
+Removing output files of failed job trimmomatic since they might be corrupted:
+logs/trimmomatic/mother_ACC1-LIBR_L1.log, logs/trimmomatic/mother_ACC1-LIBR_L1.summary, 00_trimmomatic/mother_ACC1-LIBR_L1_1.trimmed.fastq.gz, 00_trimmomatic/mother_ACC1-LIBR_L1_2.trimmed.fastq.gz, 00_trimmomatic/mother_ACC1-LIBR_L1-U_1.trimmed.fastq.gz, 00_trimmomatic/mother_ACC1-LIBR_L1-U_2.trimmed.fastq.gz
+WorkflowError:
+Failed to open source file /home/marc/wes_gatk/workflow/rules/env/wes_gatk.yml
+FileNotFoundError: [Errno 2] No such file or directory: '/home/marc/wes_gatk/workflow/rules/env/wes_gatk.yml'
+Removing output files of failed job trimmomatic since they might be corrupted:
+logs/trimmomatic/father_ACC1-LIBR_L1.log, logs/trimmomatic/father_ACC1-LIBR_L1.summary, 00_trimmomatic/father_ACC1-LIBR_L1_1.trimmed.fastq.gz, 00_trimmomatic/father_ACC1-LIBR_L1_2.trimmed.fastq.gz, 00_trimmomatic/father_ACC1-LIBR_L1-U_1.trimmed.fastq.gz, 00_trimmomatic/father_ACC1-LIBR_L1-U_2.trimmed.fastq.gz
+WorkflowError:
+Failed to open source file /home/marc/wes_gatk/workflow/rules/env/wes_gatk.yml
+FileNotFoundError: [Errno 2] No such file or directory: '/home/marc/wes_gatk/workflow/rules/env/wes_gatk.yml'
+Removing output files of failed job trimmomatic since they might be corrupted:
+logs/trimmomatic/father_ACC1-LIBR_L2.log, logs/trimmomatic/father_ACC1-LIBR_L2.summary, 00_trimmomatic/father_ACC1-LIBR_L2_1.trimmed.fastq.gz, 00_trimmomatic/father_ACC1-LIBR_L2_2.trimmed.fastq.gz, 00_trimmomatic/father_ACC1-LIBR_L2-U_1.trimmed.fastq.gz, 00_trimmomatic/father_ACC1-LIBR_L2-U_2.trimmed.fastq.gz
+WorkflowError:
+Failed to open source file /home/marc/wes_gatk/workflow/rules/env/wes_gatk.yml
+FileNotFoundError: [Errno 2] No such file or directory: '/home/marc/wes_gatk/workflow/rules/env/wes_gatk.yml'
+Removing output files of failed job trimmomatic since they might be corrupted:
+logs/trimmomatic/proband_ACC2-LIBR2_L3.log, logs/trimmomatic/proband_ACC2-LIBR2_L3.summary, 00_trimmomatic/proband_ACC2-LIBR2_L3_1.trimmed.fastq.gz, 00_trimmomatic/proband_ACC2-LIBR2_L3_2.trimmed.fastq.gz, 00_trimmomatic/proband_ACC2-LIBR2_L3-U_1.trimmed.fastq.gz, 00_trimmomatic/proband_ACC2-LIBR2_L3-U_2.trimmed.fastq.gz
+WorkflowError:
+Failed to open source file /home/marc/wes_gatk/workflow/rules/env/wes_gatk.yml
+FileNotFoundError: [Errno 2] No such file or directory: '/home/marc/wes_gatk/workflow/rules/env/wes_gatk.yml'
+Removing output files of failed job trimmomatic since they might be corrupted:
+logs/trimmomatic/proband_ACC1-LIBR_L1.log, logs/trimmomatic/proband_ACC1-LIBR_L1.summary, 00_trimmomatic/proband_ACC1-LIBR_L1_1.trimmed.fastq.gz, 00_trimmomatic/proband_ACC1-LIBR_L1_2.trimmed.fastq.gz, 00_trimmomatic/proband_ACC1-LIBR_L1-U_1.trimmed.fastq.gz, 00_trimmomatic/proband_ACC1-LIBR_L1-U_2.trimmed.fastq.gz
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: ../../wes_gatk/.snakemake/log/2023-06-12T092908.580303.snakemake.log

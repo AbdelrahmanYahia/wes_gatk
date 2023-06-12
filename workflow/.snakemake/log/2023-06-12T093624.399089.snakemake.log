@@ -1,0 +1,5 @@
+NameError in line 37 of /home/marc/wes_gatk/workflow/rules/alignment.smk:
+name 'directory' is not defined
+  File "/home/marc/wes_gatk/workflow/Snakefile", line 7, in <module>
+  File "/home/marc/wes_gatk/workflow/rules/common.smk", line 71, in <module>
+  File "/home/marc/wes_gatk/workflow/rules/alignment.smk", line 37, in <module>

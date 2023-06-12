@@ -3,7 +3,7 @@ rule mrk_duplicates:
     input:
         "02_alignment/{sample}_{unit}.sorted.bam"
     
-    conda: "env/wes_gatk.yml"
+    conda: "../env/wes_gatk.yml"
 
     output:
         bam = "02_alignment/{sample}_{unit}.dedub.bam",
@@ -29,7 +29,7 @@ rule mrk_duplicates:
 rule BaseRecalibrator:
     input: "02_alignment/{sample}_{unit}.dedub.bam"
     
-    conda: "env/wes_gatk.yml"
+    conda: "../env/wes_gatk.yml"
 
     output: "03_bamPrep/{sample}_{unit}.report"
     params: 
@@ -57,7 +57,7 @@ rule applyBaseRecalibrator:
         report = "03_bamPrep/{sample}_{unit}.report"
     benchmark: "benchamrks/{sample}_{unit}_GATK_apply_BQSR.txt"
     
-    conda: "env/wes_gatk.yml"
+    conda: "../env/wes_gatk.yml"
 
     output: "03_bamPrep/{sample}_{unit}.pqsr.bam"
     threads: 1
@@ -81,7 +81,7 @@ rule applyBaseRecalibrator:
 rule bqsr_calibrated_report:
     input: "03_bamPrep/{sample}_{unit}.pqsr.bam"
     
-    conda: "env/wes_gatk.yml"
+    conda: "../env/wes_gatk.yml"
 
     output: "03_bamPrep/{sample}_{unit}_pqsr.report"
     params: 
@@ -107,7 +107,7 @@ rule AnalyzeCovariates:
         bqsr = "03_bamPrep/{sample}_{unit}_pqsr.report"
 
     
-    conda: "env/wes_gatk.yml"
+    conda: "../env/wes_gatk.yml"
 
     output: "03_bamPrep/QC/{sample}_{unit}.pdf"
 
@@ -129,7 +129,7 @@ rule qualimap:
     input:
         "03_bamPrep/{sample}_{unit}.pqsr.bam"
     
-    conda: "env/wes_gatk.yml"
+    conda: "../../env/wes_gatk.yml"
 
     output:
         directory("03_bamPrep/QC/{sample}_{unit}_Qualimap")
@@ -160,7 +160,7 @@ rule GatherBamFiles:
     input:
         get_merge_input
     
-    conda: "env/wes_gatk.yml"
+    conda: "../env/wes_gatk.yml"
 
     output:
         "03_bamPrep/merged_bams/{sample}.pqsr.bam"

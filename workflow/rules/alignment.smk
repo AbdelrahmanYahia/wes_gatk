@@ -2,7 +2,7 @@
 rule index_ref:
     input: f"{ref_fasta}"
     
-    conda: "env/wes_gatk.yml"
+    conda: "../env/wes_gatk.yml"
 
     output: f"{ref_fasta}.fai"
 
@@ -18,7 +18,7 @@ rule index_ref:
 rule refrence_dict:
     input: f"{ref_fasta}"
     
-    conda: "env/wes_gatk.yml"
+    conda: "../env/wes_gatk.yml"
 
     output: f"{ref_fasta}".replace(".fa", ".dict")
     resources:
@@ -32,7 +32,7 @@ rule refrence_dict:
 rule bwa_index:
     input: f"{ref_fasta}"
     
-    conda: "env/wes_gatk.yml"
+    conda: "../env/wes_gatk.yml"
 
     output: directory(f"{ref_bwa_path}/{ref_prefix}")
     resources:
@@ -50,7 +50,7 @@ rule bwa_align:
         R1 = "00_trimmomatic/{sample}_{unit}_1.trimmed.fastq.gz",
         R2 = "00_trimmomatic/{sample}_{unit}_2.trimmed.fastq.gz"
     
-    conda: "env/wes_gatk.yml"
+    conda: "../env/wes_gatk.yml"
 
     output:
         temp("02_alignment/{sample}_{unit}.sam")
@@ -92,7 +92,7 @@ rule sort_and_convert_sam:
         "02_alignment/{sample}_{unit}.sam"
 
     
-    conda: "env/wes_gatk.yml"
+    conda: "../env/wes_gatk.yml"
 
     output:
         "02_alignment/{sample}_{unit}.sorted.bam"
@@ -114,7 +114,7 @@ rule QC_alignment:
     input:
         "02_alignment/{sample}_{unit}.sorted.bam"
 
-    conda: "env/wes_gatk.yml"
+    conda: "../env/wes_gatk.yml"
 
     output:
         cov = "02_alignment/QC/{sample}_{unit}.cov",

@@ -2,7 +2,7 @@
 rule consequence:
     input: "04_calling/variants_genotyped.gvcf.gz"
     
-    conda: "env/wes_gatk.yml"
+    conda: "../env/wes_gatk.yml"
 
     output: "04_calling/QC/bcftools_csq.vcf"
     threads: 1
@@ -27,7 +27,7 @@ rule Nirvana:
     input:
         "04_calling/variants_genotyped.gvcf.gz"
     
-    conda: "env/wes_gatk.yml"
+    conda: "../env/wes_gatk.yml"
 
     output:
         "05_Annotation/Nirvana/Annotation.json.gz"
@@ -59,7 +59,7 @@ rule Annovar:
     input:
         "04_calling/variants_genotyped.gvcf.gz"
     
-    conda: "env/wes_gatk.yml"
+    conda: "../env/wes_gatk.yml"
 
     output:
         directory("05_Annotation/ANNOVAR")
