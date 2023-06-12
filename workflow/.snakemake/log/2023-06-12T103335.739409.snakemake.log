@@ -1,0 +1,62 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 32
+Rules claiming more threads will be scaled down.
+Conda environments: ignored
+Job stats:
+job                       count    min threads    max threads
+----------------------  -------  -------------  -------------
+AnalyzeCovariates             6              2              2
+Annovar                       1              4              4
+BaseRecalibrator              6              4              4
+GatherBamFiles                3              1              1
+HaplotypeCaller               3              4              4
+Nirvana                       1              1              1
+QC_alignment                  6              1              1
+Split_variants_idnel          1              1              1
+Split_variants_snp            1              1              1
+VariantEval                   3              1              1
+all                           1              1              1
+applyBaseRecalibrator         6              1              1
+bcftools_stats                1              1              1
+bqsr_calibrated_report        6              1              1
+bwa_align                     6              4              4
+combine_gvcf                  1              1              1
+consequence                   1              1              1
+genotype_gvcfs                1              4              4
+mrk_duplicates                6              1              1
+multiqc                       1              1              1
+plot_bcftools_stats           1              1              1
+qualimap                      6              2              2
+sort_and_convert_sam          6              1              1
+total                        74              1              4
+
+Select jobs to execute...
+
+[Mon Jun 12 10:33:36 2023]
+rule bwa_align:
+    input: 00_trimmomatic/proband_ACC2-LIBR2_L3_1.trimmed.fastq, 00_trimmomatic/proband_ACC2-LIBR2_L3_2.trimmed.fastq
+    output: 02_alignment/proband_ACC2-LIBR2_L3.sam
+    log: logs/proband_ACC2-LIBR2_L3_bwa.log
+    jobid: 66
+    benchmark: benchamrks/proband_ACC2-LIBR2_L3_bwa.txt
+    reason: Code has changed since last execution
+    wildcards: sample=proband_ACC2-LIBR2, unit=L3
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=32768, mem_mib=31250, cores=4, mem_gb=32, nodes=1, time=120
+
+RuleException in rule bwa_align in file /home/marc/wes_gatk/workflow/rules/alignment.smk, line 48:
+NameError: The name 'LB' is unknown in this context. Please make sure that you defined that variable. Also note that braces not used for variable access have to be escaped by repeating them, i.e. {{print $1}}, when formatting the following:
+
+        R1={input.R1}
+        SM={wildcards.sample}
+        PL="Illumina"
+        LB="{wildcards.sample}_{wildcards.unit}"
+
+        echo -e "${LB}"
+        
+        name=$(basename $R1 | cut -d'_' -f1)
+        RGID=$(head -n1 $R1 | sed 's/:/_/g' | cut -d "_" -f1,2,3,4)
+        PU=$RGID.$LB 
+        bwa mem -t {threads} -M             -R "@RG\tID:$RGID\tSM:$SM\tPL:$PL\tLB:$LB\tPU:$PU" {params.index} {input.R1} {input.R2} > {output} #2> {log.bwa}
+        

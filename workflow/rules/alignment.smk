@@ -76,9 +76,12 @@ rule bwa_align:
     shell:
         """
         R1={input.R1}
-        SM=$(basename $R1 | cut -d'_' -f1)
+        SM={wildcards.sample}
         PL="Illumina"
-        LB=$(basename $R1 | cut -d'_' -f1,2)
+        LB="{wildcards.sample}_{wildcards.unit}"
+
+        echo -e "$LB"
+
         name=$(basename $R1 | cut -d'_' -f1)
         RGID=$(head -n1 $R1 | sed 's/:/_/g' | cut -d "_" -f1,2,3,4)
         PU=$RGID.$LB 
