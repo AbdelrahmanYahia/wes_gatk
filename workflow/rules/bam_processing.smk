@@ -129,7 +129,7 @@ rule qualimap:
     input:
         "03_bamPrep/{sample}_{unit}.pqsr.bam"
     
-    conda: "../../env/wes_gatk.yml"
+    conda: "../env/wes_gatk.yml"
 
     output:
         directory("03_bamPrep/QC/{sample}_{unit}_Qualimap")
@@ -156,7 +156,7 @@ rule qualimap:
             -outformat HTML
         """
 
-rule GatherBamFiles:
+rule MergeSamFiles:
     input:
         get_merge_input
     
@@ -165,7 +165,7 @@ rule GatherBamFiles:
     output:
         "03_bamPrep/merged_bams/{sample}.pqsr.bam"
     params:
-        bams = lambda wildcards: [f" --INPUT 03_bamPrep/{wildcards.sample}_{b}.pqsr.bam" for b in units.loc[wildcards.sample, "unit"].tolist()],
+        bams = lambda wildcards: [f" -I 03_bamPrep/{wildcards.sample}_{b}.pqsr.bam" for b in units.loc[wildcards.sample, "unit"].tolist()],
         ref = ref_fasta
 
     threads: 1
@@ -177,7 +177,7 @@ rule GatherBamFiles:
         time = lambda wildcards, attempt: 60 * 2 * attempt
     shell:
         """
-        picard --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" MergeSamFiles  \
+        picard MergeSamFiles  \
             {params.bams} \
             -OUTPUT {output} \
             --CREATE_INDEX true \

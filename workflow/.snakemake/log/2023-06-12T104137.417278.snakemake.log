@@ -1,0 +1,216 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 32
+Rules claiming more threads will be scaled down.
+Conda environments: ignored
+Job stats:
+job                       count    min threads    max threads
+----------------------  -------  -------------  -------------
+AnalyzeCovariates             6              2              2
+Annovar                       1              4              4
+GatherBamFiles                3              1              1
+HaplotypeCaller               3              4              4
+Nirvana                       1              1              1
+Split_variants_idnel          1              1              1
+Split_variants_snp            1              1              1
+VariantEval                   3              1              1
+all                           1              1              1
+applyBaseRecalibrator         2              1              1
+bcftools_stats                1              1              1
+bqsr_calibrated_report        4              1              1
+combine_gvcf                  1              1              1
+consequence                   1              1              1
+genotype_gvcfs                1              4              4
+multiqc                       1              1              1
+plot_bcftools_stats           1              1              1
+qualimap                      6              2              2
+total                        38              1              4
+
+Select jobs to execute...
+
+[Mon Jun 12 10:41:38 2023]
+rule bqsr_calibrated_report:
+    input: 03_bamPrep/father_ACC1-LIBR_L2.pqsr.bam
+    output: 03_bamPrep/father_ACC1-LIBR_L2_pqsr.report
+    jobid: 27
+    reason: Missing output files: 03_bamPrep/father_ACC1-LIBR_L2_pqsr.report
+    wildcards: sample=father_ACC1-LIBR, unit=L2
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=4, mem_gb=2, nodes=1, time=120
+
+
+[Mon Jun 12 10:41:38 2023]
+rule qualimap:
+    input: 03_bamPrep/father_ACC1-LIBR_L2.pqsr.bam
+    output: 03_bamPrep/QC/father_ACC1-LIBR_L2_Qualimap
+    jobid: 20
+    reason: Missing output files: 03_bamPrep/QC/father_ACC1-LIBR_L2_Qualimap
+    wildcards: sample=father_ACC1-LIBR, unit=L2
+    threads: 2
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=2, mem_gb=2, nodes=1, time=120
+
+
+[Mon Jun 12 10:41:38 2023]
+rule AnalyzeCovariates:
+    input: 03_bamPrep/mother_ACC1-LIBR_L1.report, 03_bamPrep/mother_ACC1-LIBR_L1_pqsr.report
+    output: 03_bamPrep/QC/mother_ACC1-LIBR_L1.pdf
+    jobid: 50
+    reason: Missing output files: 03_bamPrep/QC/mother_ACC1-LIBR_L1.pdf
+    wildcards: sample=mother_ACC1-LIBR, unit=L1
+    threads: 2
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=2, mem_gb=2, nodes=1, time=120
+
+
+[Mon Jun 12 10:41:38 2023]
+rule qualimap:
+    input: 03_bamPrep/mother_ACC1-LIBR_L1.pqsr.bam
+    output: 03_bamPrep/QC/mother_ACC1-LIBR_L1_Qualimap
+    jobid: 42
+    reason: Missing output files: 03_bamPrep/QC/mother_ACC1-LIBR_L1_Qualimap
+    wildcards: sample=mother_ACC1-LIBR, unit=L1
+    threads: 2
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=2, mem_gb=2, nodes=1, time=120
+
+
+[Mon Jun 12 10:41:38 2023]
+rule AnalyzeCovariates:
+    input: 03_bamPrep/mother_ACC2-LIBR2_L1.report, 03_bamPrep/mother_ACC2-LIBR2_L1_pqsr.report
+    output: 03_bamPrep/QC/mother_ACC2-LIBR2_L1.pdf
+    jobid: 52
+    reason: Missing output files: 03_bamPrep/QC/mother_ACC2-LIBR2_L1.pdf
+    wildcards: sample=mother_ACC2-LIBR2, unit=L1
+    threads: 2
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=2, mem_gb=2, nodes=1, time=120
+
+
+[Mon Jun 12 10:41:38 2023]
+rule GatherBamFiles:
+    input: 03_bamPrep/father_ACC1-LIBR_L1.pqsr.bam, 03_bamPrep/father_ACC1-LIBR_L2.pqsr.bam
+    output: 03_bamPrep/merged_bams/father.pqsr.bam
+    jobid: 85
+    reason: Missing output files: 03_bamPrep/merged_bams/father.pqsr.bam
+    wildcards: sample=father
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=1, mem_gb=2, nodes=1, time=120
+
+
+[Mon Jun 12 10:41:38 2023]
+rule qualimap:
+    input: 03_bamPrep/mother_ACC2-LIBR2_L1.pqsr.bam
+    output: 03_bamPrep/QC/mother_ACC2-LIBR2_L1_Qualimap
+    jobid: 46
+    reason: Missing output files: 03_bamPrep/QC/mother_ACC2-LIBR2_L1_Qualimap
+    wildcards: sample=mother_ACC2-LIBR2, unit=L1
+    threads: 2
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=2, mem_gb=2, nodes=1, time=120
+
+
+[Mon Jun 12 10:41:38 2023]
+rule qualimap:
+    input: 03_bamPrep/father_ACC1-LIBR_L1.pqsr.bam
+    output: 03_bamPrep/QC/father_ACC1-LIBR_L1_Qualimap
+    jobid: 16
+    reason: Missing output files: 03_bamPrep/QC/father_ACC1-LIBR_L1_Qualimap
+    wildcards: sample=father_ACC1-LIBR, unit=L1
+    threads: 2
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=2, mem_gb=2, nodes=1, time=120
+
+
+[Mon Jun 12 10:41:38 2023]
+rule applyBaseRecalibrator:
+    input: 02_alignment/proband_ACC1-LIBR_L1.dedub.bam, 03_bamPrep/proband_ACC1-LIBR_L1.report
+    output: 03_bamPrep/proband_ACC1-LIBR_L1.pqsr.bam
+    jobid: 69
+    benchmark: benchamrks/proband_ACC1-LIBR_L1_GATK_apply_BQSR.txt
+    reason: Missing output files: 03_bamPrep/proband_ACC1-LIBR_L1.pqsr.bam
+    wildcards: sample=proband_ACC1-LIBR, unit=L1
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=4, mem_gb=2, nodes=1, time=120
+
+
+[Mon Jun 12 10:41:38 2023]
+rule bqsr_calibrated_report:
+    input: 03_bamPrep/father_ACC1-LIBR_L1.pqsr.bam
+    output: 03_bamPrep/father_ACC1-LIBR_L1_pqsr.report
+    jobid: 25
+    reason: Missing output files: 03_bamPrep/father_ACC1-LIBR_L1_pqsr.report
+    wildcards: sample=father_ACC1-LIBR, unit=L1
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=4, mem_gb=2, nodes=1, time=120
+
+
+[Mon Jun 12 10:41:38 2023]
+rule applyBaseRecalibrator:
+    input: 02_alignment/proband_ACC2-LIBR2_L3.dedub.bam, 03_bamPrep/proband_ACC2-LIBR2_L3.report
+    output: 03_bamPrep/proband_ACC2-LIBR2_L3.pqsr.bam
+    jobid: 73
+    benchmark: benchamrks/proband_ACC2-LIBR2_L3_GATK_apply_BQSR.txt
+    reason: Missing output files: 03_bamPrep/proband_ACC2-LIBR2_L3.pqsr.bam
+    wildcards: sample=proband_ACC2-LIBR2, unit=L3
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=4, mem_gb=2, nodes=1, time=120
+
+
+[Mon Jun 12 10:41:38 2023]
+rule GatherBamFiles:
+    input: 03_bamPrep/mother_ACC1-LIBR_L1.pqsr.bam, 03_bamPrep/mother_ACC2-LIBR2_L1.pqsr.bam
+    output: 03_bamPrep/merged_bams/mother.pqsr.bam
+    jobid: 87
+    reason: Missing output files: 03_bamPrep/merged_bams/mother.pqsr.bam
+    wildcards: sample=mother
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=1, mem_gb=2, nodes=1, time=120
+
+[Mon Jun 12 10:41:38 2023]
+Error in rule GatherBamFiles:
+    jobid: 85
+    input: 03_bamPrep/father_ACC1-LIBR_L1.pqsr.bam, 03_bamPrep/father_ACC1-LIBR_L2.pqsr.bam
+    output: 03_bamPrep/merged_bams/father.pqsr.bam
+    conda-env: /home/marc/Desktop/output_new_wes_gatk/.snakemake/conda/c3f02c60b62d43585716da5f0375f09d_
+    shell:
+        
+        echo  --INPUT 03_bamPrep/father_ACC1-LIBR_L1.pqsr.bam  --INPUT 03_bamPrep/father_ACC1-LIBR_L2.pqsr.bam
+        picard --java-options "-Xmx2G -XX:+UseParallelGC -XX:ParallelGCThreads=1" MergeSamFiles               --INPUT 03_bamPrep/father_ACC1-LIBR_L1.pqsr.bam  --INPUT 03_bamPrep/father_ACC1-LIBR_L2.pqsr.bam             -OUTPUT 03_bamPrep/merged_bams/father.pqsr.bam             --CREATE_INDEX true             --CREATE_MD5_FILE true
+        
+        (one of the commands exited with non-zero exit code; note that snakemake uses bash strict mode!)
+
+[Mon Jun 12 10:41:39 2023]
+Error in rule GatherBamFiles:
+    jobid: 87
+    input: 03_bamPrep/mother_ACC1-LIBR_L1.pqsr.bam, 03_bamPrep/mother_ACC2-LIBR2_L1.pqsr.bam
+    output: 03_bamPrep/merged_bams/mother.pqsr.bam
+    conda-env: /home/marc/Desktop/output_new_wes_gatk/.snakemake/conda/c3f02c60b62d43585716da5f0375f09d_
+    shell:
+        
+        echo  --INPUT 03_bamPrep/mother_ACC1-LIBR_L1.pqsr.bam  --INPUT 03_bamPrep/mother_ACC2-LIBR2_L1.pqsr.bam
+        picard --java-options "-Xmx2G -XX:+UseParallelGC -XX:ParallelGCThreads=1" MergeSamFiles               --INPUT 03_bamPrep/mother_ACC1-LIBR_L1.pqsr.bam  --INPUT 03_bamPrep/mother_ACC2-LIBR2_L1.pqsr.bam             -OUTPUT 03_bamPrep/merged_bams/mother.pqsr.bam             --CREATE_INDEX true             --CREATE_MD5_FILE true
+        
+        (one of the commands exited with non-zero exit code; note that snakemake uses bash strict mode!)
+
+[Mon Jun 12 10:41:48 2023]
+Finished job 50.
+1 of 38 steps (3%) done
+[Mon Jun 12 10:41:49 2023]
+Finished job 52.
+2 of 38 steps (5%) done
+[Mon Jun 12 10:42:25 2023]
+Finished job 42.
+3 of 38 steps (8%) done
+[Mon Jun 12 10:42:26 2023]
+Finished job 46.
+4 of 38 steps (11%) done
+[Mon Jun 12 10:42:27 2023]
+Finished job 16.
+5 of 38 steps (13%) done
+[Mon Jun 12 10:42:27 2023]
+Finished job 20.
+6 of 38 steps (16%) done
+[Mon Jun 12 10:42:42 2023]
+Finished job 27.
+7 of 38 steps (18%) done
+[Mon Jun 12 10:42:42 2023]
+Finished job 25.
+8 of 38 steps (21%) done
+[Mon Jun 12 10:43:00 2023]
+Finished job 73.
+9 of 38 steps (24%) done
+[Mon Jun 12 10:43:08 2023]
+Finished job 69.
+10 of 38 steps (26%) done
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: ../../wes_gatk/workflow/.snakemake/log/2023-06-12T104137.417278.snakemake.log
