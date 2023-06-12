@@ -47,8 +47,8 @@ rule bwa_index:
 ## lambda <arguments> : <statement1> if <condition> else <statement2>
 rule bwa_align:
     input:
-        R1 = "00_trimmomatic/{sample}_{unit}_1.trimmed.fastq.gz",
-        R2 = "00_trimmomatic/{sample}_{unit}_2.trimmed.fastq.gz"
+        R1 = "00_trimmomatic/{sample}_{unit}_1.trimmed.fastq",
+        R2 = "00_trimmomatic/{sample}_{unit}_2.trimmed.fastq"
     
     conda: "../env/wes_gatk.yml"
 
@@ -76,14 +76,14 @@ rule bwa_align:
     shell:
         """
         R1={input.R1}
-        SM={wildcards.sample}
+        SM=$(basename $R1 | cut -d'_' -f1)
         PL="Illumina"
-        LB={wildcards.unit}
+        LB=$(basename $R1 | cut -d'_' -f1,2)
         name=$(basename $R1 | cut -d'_' -f1)
         RGID=$(head -n1 $R1 | sed 's/:/_/g' | cut -d "_" -f1,2,3,4)
         PU=$RGID.$LB 
         bwa mem -t {threads} -M \
-            -R "@RG\\tID:$RGID\\tSM:$SM\\tPL:$PL\\tLB:$LB\\tPU:$PU" {params.index} {input.R1} {input.R2} > {output} 2> {log.bwa}
+            -R "@RG\\tID:$RGID\\tSM:$SM\\tPL:$PL\\tLB:$LB\\tPU:$PU" {params.index} {input.R1} {input.R2} > {output} #2> {log.bwa}
         """
 
 

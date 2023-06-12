@@ -245,3 +245,20 @@ Finished job 52.
 [Mon Jun 12 09:55:03 2023]
 Finished job 53.
 6 of 78 steps (8%) done
+[Mon Jun 12 09:55:18 2023]
+Finished job 33.
+7 of 78 steps (9%) done
+Removing temporary output 02_alignment/mother_ACC1-LIBR_L1.sam.
+[Mon Jun 12 09:55:20 2023]
+Finished job 36.
+8 of 78 steps (10%) done
+Removing temporary output 02_alignment/mother_ACC2-LIBR2_L1.sam.
+[Mon Jun 12 09:56:19 2023]
+Finished job 13.
+9 of 78 steps (12%) done
+[Mon Jun 12 09:56:24 2023]
+Finished job 10.
+10 of 78 steps (13%) done
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: ../../wes_gatk/workflow/.snakemake/log/2023-06-12T095441.062203.snakemake.log

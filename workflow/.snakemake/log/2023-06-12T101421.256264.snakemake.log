@@ -1,0 +1,171 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 32
+Rules claiming more threads will be scaled down.
+Conda environments: ignored
+Job stats:
+job                       count    min threads    max threads
+----------------------  -------  -------------  -------------
+AnalyzeCovariates             6              2              2
+Annovar                       1              4              4
+BaseRecalibrator              6              4              4
+GatherBamFiles                3              1              1
+HaplotypeCaller               3              4              4
+Nirvana                       1              1              1
+QC_alignment                  6              1              1
+Split_variants_idnel          1              1              1
+Split_variants_snp            1              1              1
+VariantEval                   3              1              1
+all                           1              1              1
+applyBaseRecalibrator         6              1              1
+bcftools_stats                1              1              1
+bqsr_calibrated_report        6              1              1
+bwa_align                     6              4              4
+combine_gvcf                  1              1              1
+consequence                   1              1              1
+genotype_gvcfs                1              4              4
+mrk_duplicates                6              1              1
+multiqc                       1              1              1
+plot_bcftools_stats           1              1              1
+qualimap                      6              2              2
+sort_and_convert_sam          6              1              1
+total                        74              1              4
+
+Select jobs to execute...
+
+[Mon Jun 12 10:14:22 2023]
+rule bwa_align:
+    input: 00_trimmomatic/mother_ACC2-LIBR2_L1_1.trimmed.fastq.gz, 00_trimmomatic/mother_ACC2-LIBR2_L1_2.trimmed.fastq.gz
+    output: 02_alignment/mother_ACC2-LIBR2_L1.sam
+    log: logs/mother_ACC2-LIBR2_L1_bwa.log
+    jobid: 37
+    benchmark: benchamrks/mother_ACC2-LIBR2_L1_bwa.txt
+    reason: Code has changed since last execution
+    wildcards: sample=mother_ACC2-LIBR2, unit=L1
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=32768, mem_mib=31250, cores=4, mem_gb=32, nodes=1, time=120
+
+
+[Mon Jun 12 10:14:22 2023]
+rule bwa_align:
+    input: 00_trimmomatic/proband_ACC1-LIBR_L1_1.trimmed.fastq.gz, 00_trimmomatic/proband_ACC1-LIBR_L1_2.trimmed.fastq.gz
+    output: 02_alignment/proband_ACC1-LIBR_L1.sam
+    log: logs/proband_ACC1-LIBR_L1_bwa.log
+    jobid: 58
+    benchmark: benchamrks/proband_ACC1-LIBR_L1_bwa.txt
+    reason: Missing output files: 02_alignment/proband_ACC1-LIBR_L1.sam
+    wildcards: sample=proband_ACC1-LIBR, unit=L1
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=32768, mem_mib=31250, cores=4, mem_gb=32, nodes=1, time=120
+
+
+[Mon Jun 12 10:14:22 2023]
+rule bwa_align:
+    input: 00_trimmomatic/father_ACC1-LIBR_L1_1.trimmed.fastq.gz, 00_trimmomatic/father_ACC1-LIBR_L1_2.trimmed.fastq.gz
+    output: 02_alignment/father_ACC1-LIBR_L1.sam
+    log: logs/father_ACC1-LIBR_L1_bwa.log
+    jobid: 10
+    benchmark: benchamrks/father_ACC1-LIBR_L1_bwa.txt
+    reason: Code has changed since last execution
+    wildcards: sample=father_ACC1-LIBR, unit=L1
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=32768, mem_mib=31250, cores=4, mem_gb=32, nodes=1, time=120
+
+[Mon Jun 12 10:14:22 2023]
+Error in rule bwa_align:
+    jobid: 58
+    input: 00_trimmomatic/proband_ACC1-LIBR_L1_1.trimmed.fastq.gz, 00_trimmomatic/proband_ACC1-LIBR_L1_2.trimmed.fastq.gz
+    output: 02_alignment/proband_ACC1-LIBR_L1.sam
+    log: logs/proband_ACC1-LIBR_L1_bwa.log (check log file(s) for error details)
+    conda-env: /home/marc/Desktop/output_new_wes_gatk/.snakemake/conda/c3f02c60b62d43585716da5f0375f09d_
+    shell:
+        
+        R1=00_trimmomatic/proband_ACC1-LIBR_L1_1.trimmed.fastq.gz
+        SM=$(basename $R1 | cut -d'_' -f1)
+        PL="Illumina"
+        LB=$(basename $R1 | cut -d'_' -f1,2)
+        name=$(basename $R1 | cut -d'_' -f1)
+        RGID=$(head -n1 $R1 | sed 's/:/_/g' | cut -d "_" -f1,2,3,4)
+        PU=$RGID.$LB 
+        bwa mem -t 4 -M             -R "@RG\tID:$RGID\tSM:$SM\tPL:$PL\tLB:$LB\tPU:$PU" /home/marc/Desktop/data/refs/indexes/bwa/hg38/hg38 00_trimmomatic/proband_ACC1-LIBR_L1_1.trimmed.fastq.gz 00_trimmomatic/proband_ACC1-LIBR_L1_2.trimmed.fastq.gz > 02_alignment/proband_ACC1-LIBR_L1.sam #2> logs/proband_ACC1-LIBR_L1_bwa.log
+        
+        (one of the commands exited with non-zero exit code; note that snakemake uses bash strict mode!)
+
+
+[Mon Jun 12 10:14:22 2023]
+rule bwa_align:
+    input: 00_trimmomatic/mother_ACC1-LIBR_L1_1.trimmed.fastq.gz, 00_trimmomatic/mother_ACC1-LIBR_L1_2.trimmed.fastq.gz
+    output: 02_alignment/mother_ACC1-LIBR_L1.sam
+    log: logs/mother_ACC1-LIBR_L1_bwa.log
+    jobid: 34
+    benchmark: benchamrks/mother_ACC1-LIBR_L1_bwa.txt
+    reason: Code has changed since last execution
+    wildcards: sample=mother_ACC1-LIBR, unit=L1
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=32768, mem_mib=31250, cores=4, mem_gb=32, nodes=1, time=120
+
+
+[Mon Jun 12 10:14:22 2023]
+rule bwa_align:
+    input: 00_trimmomatic/proband_ACC2-LIBR2_L3_1.trimmed.fastq.gz, 00_trimmomatic/proband_ACC2-LIBR2_L3_2.trimmed.fastq.gz
+    output: 02_alignment/proband_ACC2-LIBR2_L3.sam
+    log: logs/proband_ACC2-LIBR2_L3_bwa.log
+    jobid: 61
+    benchmark: benchamrks/proband_ACC2-LIBR2_L3_bwa.txt
+    reason: Missing output files: 02_alignment/proband_ACC2-LIBR2_L3.sam
+    wildcards: sample=proband_ACC2-LIBR2, unit=L3
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=32768, mem_mib=31250, cores=4, mem_gb=32, nodes=1, time=120
+
+
+[Mon Jun 12 10:14:22 2023]
+rule bwa_align:
+    input: 00_trimmomatic/father_ACC1-LIBR_L2_1.trimmed.fastq.gz, 00_trimmomatic/father_ACC1-LIBR_L2_2.trimmed.fastq.gz
+    output: 02_alignment/father_ACC1-LIBR_L2.sam
+    log: logs/father_ACC1-LIBR_L2_bwa.log
+    jobid: 13
+    benchmark: benchamrks/father_ACC1-LIBR_L2_bwa.txt
+    reason: Code has changed since last execution
+    wildcards: sample=father_ACC1-LIBR, unit=L2
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=32768, mem_mib=31250, cores=4, mem_gb=32, nodes=1, time=120
+
+[Mon Jun 12 10:14:22 2023]
+Error in rule bwa_align:
+    jobid: 61
+    input: 00_trimmomatic/proband_ACC2-LIBR2_L3_1.trimmed.fastq.gz, 00_trimmomatic/proband_ACC2-LIBR2_L3_2.trimmed.fastq.gz
+    output: 02_alignment/proband_ACC2-LIBR2_L3.sam
+    log: logs/proband_ACC2-LIBR2_L3_bwa.log (check log file(s) for error details)
+    conda-env: /home/marc/Desktop/output_new_wes_gatk/.snakemake/conda/c3f02c60b62d43585716da5f0375f09d_
+    shell:
+        
+        R1=00_trimmomatic/proband_ACC2-LIBR2_L3_1.trimmed.fastq.gz
+        SM=$(basename $R1 | cut -d'_' -f1)
+        PL="Illumina"
+        LB=$(basename $R1 | cut -d'_' -f1,2)
+        name=$(basename $R1 | cut -d'_' -f1)
+        RGID=$(head -n1 $R1 | sed 's/:/_/g' | cut -d "_" -f1,2,3,4)
+        PU=$RGID.$LB 
+        bwa mem -t 4 -M             -R "@RG\tID:$RGID\tSM:$SM\tPL:$PL\tLB:$LB\tPU:$PU" /home/marc/Desktop/data/refs/indexes/bwa/hg38/hg38 00_trimmomatic/proband_ACC2-LIBR2_L3_1.trimmed.fastq.gz 00_trimmomatic/proband_ACC2-LIBR2_L3_2.trimmed.fastq.gz > 02_alignment/proband_ACC2-LIBR2_L3.sam #2> logs/proband_ACC2-LIBR2_L3_bwa.log
+        
+        (one of the commands exited with non-zero exit code; note that snakemake uses bash strict mode!)
+
+Removing output files of failed job bwa_align since they might be corrupted:
+02_alignment/proband_ACC1-LIBR_L1.sam
+Removing output files of failed job bwa_align since they might be corrupted:
+02_alignment/proband_ACC2-LIBR2_L3.sam
+[Mon Jun 12 10:15:47 2023]
+Finished job 34.
+1 of 74 steps (1%) done
+[Mon Jun 12 10:15:48 2023]
+Finished job 37.
+2 of 74 steps (3%) done
+[Mon Jun 12 10:15:56 2023]
+Finished job 10.
+3 of 74 steps (4%) done
+[Mon Jun 12 10:15:59 2023]
+Finished job 13.
+4 of 74 steps (5%) done
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: ../../wes_gatk/workflow/.snakemake/log/2023-06-12T101421.256264.snakemake.log
