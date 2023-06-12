@@ -24,62 +24,173 @@ total                      20              1              4
 
 Select jobs to execute...
 
-[Mon Jun 12 10:46:53 2023]
+[Mon Jun 12 14:55:46 2023]
 rule GatherBamFiles:
-    input: 03_bamPrep/father_ACC1-LIBR_L1.pqsr.bam, 03_bamPrep/father_ACC1-LIBR_L2.pqsr.bam
+    input: 03_bamPrep/father/father_ACC1-LIBR_L1.pqsr.bam, 03_bamPrep/father/father_ACC1-LIBR_L2.pqsr.bam
     output: 03_bamPrep/merged_bams/father.pqsr.bam
     jobid: 85
-    reason: Missing output files: 03_bamPrep/merged_bams/father.pqsr.bam
+    reason: Code has changed since last execution
     wildcards: sample=father
     resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=1, mem_gb=2, nodes=1, time=120
 
 
-[Mon Jun 12 10:46:53 2023]
+[Mon Jun 12 14:55:46 2023]
 rule GatherBamFiles:
-    input: 03_bamPrep/proband_ACC1-LIBR_L1.pqsr.bam, 03_bamPrep/proband_ACC2-LIBR2_L3.pqsr.bam
-    output: 03_bamPrep/merged_bams/proband.pqsr.bam
-    jobid: 89
-    reason: Missing output files: 03_bamPrep/merged_bams/proband.pqsr.bam
-    wildcards: sample=proband
-    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=1, mem_gb=2, nodes=1, time=120
-
- -I 03_bamPrep/father_ACC1-LIBR_L1.pqsr.bam  -I 03_bamPrep/father_ACC1-LIBR_L2.pqsr.bam
-
-[Mon Jun 12 10:46:53 2023]
-rule GatherBamFiles:
-    input: 03_bamPrep/mother_ACC1-LIBR_L1.pqsr.bam, 03_bamPrep/mother_ACC2-LIBR2_L1.pqsr.bam
+    input: 03_bamPrep/mother/mother_ACC1-LIBR_L1.pqsr.bam, 03_bamPrep/mother/mother_ACC2-LIBR2_L1.pqsr.bam
     output: 03_bamPrep/merged_bams/mother.pqsr.bam
     jobid: 87
-    reason: Missing output files: 03_bamPrep/merged_bams/mother.pqsr.bam
+    reason: Code has changed since last execution
     wildcards: sample=mother
     resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=1, mem_gb=2, nodes=1, time=120
 
- -I 03_bamPrep/proband_ACC1-LIBR_L1.pqsr.bam  -I 03_bamPrep/proband_ACC2-LIBR2_L3.pqsr.bam
- -I 03_bamPrep/mother_ACC1-LIBR_L1.pqsr.bam  -I 03_bamPrep/mother_ACC2-LIBR2_L1.pqsr.bam
-09:46:54.300 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/marc/miniconda3/envs/GUAP/share/picard-2.27.5-0/picard.jar!/com/intel/gkl/native/libgkl_compression.so
-09:46:54.314 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/marc/miniconda3/envs/GUAP/share/picard-2.27.5-0/picard.jar!/com/intel/gkl/native/libgkl_compression.so
-[Mon Jun 12 09:46:54 EET 2023] MergeSamFiles --INPUT 03_bamPrep/father_ACC1-LIBR_L1.pqsr.bam --INPUT 03_bamPrep/father_ACC1-LIBR_L2.pqsr.bam --OUTPUT 03_bamPrep/merged_bams/father.pqsr.bam --CREATE_INDEX true --CREATE_MD5_FILE true --SORT_ORDER coordinate --ASSUME_SORTED false --MERGE_SEQUENCE_DICTIONARIES false --USE_THREADING false --VERBOSITY INFO --QUIET false --VALIDATION_STRINGENCY STRICT --COMPRESSION_LEVEL 5 --MAX_RECORDS_IN_RAM 500000 --GA4GH_CLIENT_SECRETS client_secrets.json --help false --version false --showHidden false --USE_JDK_DEFLATER false --USE_JDK_INFLATER false
-[Mon Jun 12 09:46:54 EET 2023] Executing as marc@marc on Linux 5.4.0-137-generic amd64; OpenJDK 64-Bit Server VM 11.0.9.1-internal+0-adhoc..src; Deflater: Intel; Inflater: Intel; Provider GCS is not available; Picard version: Version:2.27.5
-[Mon Jun 12 09:46:54 EET 2023] MergeSamFiles --INPUT 03_bamPrep/proband_ACC1-LIBR_L1.pqsr.bam --INPUT 03_bamPrep/proband_ACC2-LIBR2_L3.pqsr.bam --OUTPUT 03_bamPrep/merged_bams/proband.pqsr.bam --CREATE_INDEX true --CREATE_MD5_FILE true --SORT_ORDER coordinate --ASSUME_SORTED false --MERGE_SEQUENCE_DICTIONARIES false --USE_THREADING false --VERBOSITY INFO --QUIET false --VALIDATION_STRINGENCY STRICT --COMPRESSION_LEVEL 5 --MAX_RECORDS_IN_RAM 500000 --GA4GH_CLIENT_SECRETS client_secrets.json --help false --version false --showHidden false --USE_JDK_DEFLATER false --USE_JDK_INFLATER false
-[Mon Jun 12 09:46:54 EET 2023] Executing as marc@marc on Linux 5.4.0-137-generic amd64; OpenJDK 64-Bit Server VM 11.0.9.1-internal+0-adhoc..src; Deflater: Intel; Inflater: Intel; Provider GCS is not available; Picard version: Version:2.27.5
-09:46:54.339 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/marc/miniconda3/envs/GUAP/share/picard-2.27.5-0/picard.jar!/com/intel/gkl/native/libgkl_compression.so
-WARNING: BAM index file /home/marc/Desktop/output_new_wes_gatk/03_bamPrep/father_ACC1-LIBR_L1.pqsr.bai is older than BAM /home/marc/Desktop/output_new_wes_gatk/03_bamPrep/father_ACC1-LIBR_L1.pqsr.bam
-WARNING: BAM index file /home/marc/Desktop/output_new_wes_gatk/03_bamPrep/father_ACC1-LIBR_L2.pqsr.bai is older than BAM /home/marc/Desktop/output_new_wes_gatk/03_bamPrep/father_ACC1-LIBR_L2.pqsr.bam
-INFO	2023-06-12 09:46:54	MergeSamFiles	Input files are in same order as output so sorting to temp directory is not needed.
-[Mon Jun 12 09:46:54 EET 2023] MergeSamFiles --INPUT 03_bamPrep/mother_ACC1-LIBR_L1.pqsr.bam --INPUT 03_bamPrep/mother_ACC2-LIBR2_L1.pqsr.bam --OUTPUT 03_bamPrep/merged_bams/mother.pqsr.bam --CREATE_INDEX true --CREATE_MD5_FILE true --SORT_ORDER coordinate --ASSUME_SORTED false --MERGE_SEQUENCE_DICTIONARIES false --USE_THREADING false --VERBOSITY INFO --QUIET false --VALIDATION_STRINGENCY STRICT --COMPRESSION_LEVEL 5 --MAX_RECORDS_IN_RAM 500000 --GA4GH_CLIENT_SECRETS client_secrets.json --help false --version false --showHidden false --USE_JDK_DEFLATER false --USE_JDK_INFLATER false
-[Mon Jun 12 09:46:54 EET 2023] Executing as marc@marc on Linux 5.4.0-137-generic amd64; OpenJDK 64-Bit Server VM 11.0.9.1-internal+0-adhoc..src; Deflater: Intel; Inflater: Intel; Provider GCS is not available; Picard version: Version:2.27.5
-WARNING: BAM index file /home/marc/Desktop/output_new_wes_gatk/03_bamPrep/proband_ACC1-LIBR_L1.pqsr.bai is older than BAM /home/marc/Desktop/output_new_wes_gatk/03_bamPrep/proband_ACC1-LIBR_L1.pqsr.bam
-WARNING: BAM index file /home/marc/Desktop/output_new_wes_gatk/03_bamPrep/proband_ACC2-LIBR2_L3.pqsr.bai is older than BAM /home/marc/Desktop/output_new_wes_gatk/03_bamPrep/proband_ACC2-LIBR2_L3.pqsr.bam
-INFO	2023-06-12 09:46:54	MergeSamFiles	Input files are in same order as output so sorting to temp directory is not needed.
-WARNING: BAM index file /home/marc/Desktop/output_new_wes_gatk/03_bamPrep/mother_ACC1-LIBR_L1.pqsr.bai is older than BAM /home/marc/Desktop/output_new_wes_gatk/03_bamPrep/mother_ACC1-LIBR_L1.pqsr.bam
-WARNING: BAM index file /home/marc/Desktop/output_new_wes_gatk/03_bamPrep/mother_ACC2-LIBR2_L1.pqsr.bai is older than BAM /home/marc/Desktop/output_new_wes_gatk/03_bamPrep/mother_ACC2-LIBR2_L1.pqsr.bam
-INFO	2023-06-12 09:46:54	MergeSamFiles	Input files are in same order as output so sorting to temp directory is not needed.
-INFO	2023-06-12 09:47:08	MergeSamFiles	Processed     1,000,000 records.  Elapsed time: 00:00:14s.  Time for last 1,000,000:   14s.  Last read position: chr8:18,530,073
-INFO	2023-06-12 09:47:08	MergeSamFiles	Processed     1,000,000 records.  Elapsed time: 00:00:14s.  Time for last 1,000,000:   14s.  Last read position: chr8:17,891,755
-INFO	2023-06-12 09:47:08	MergeSamFiles	Processed     1,000,000 records.  Elapsed time: 00:00:14s.  Time for last 1,000,000:   14s.  Last read position: chr8:22,244,899
-INFO	2023-06-12 09:47:21	MergeSamFiles	Processed     2,000,000 records.  Elapsed time: 00:00:27s.  Time for last 1,000,000:   13s.  Last read position: chr8:33,500,742
-INFO	2023-06-12 09:47:21	MergeSamFiles	Processed     2,000,000 records.  Elapsed time: 00:00:27s.  Time for last 1,000,000:   13s.  Last read position: chr8:29,067,287
-INFO	2023-06-12 09:47:22	MergeSamFiles	Processed     2,000,000 records.  Elapsed time: 00:00:27s.  Time for last 1,000,000:   13s.  Last read position: chr8:39,475,442
-INFO	2023-06-12 09:47:34	MergeSamFiles	Processed     3,000,000 records.  Elapsed time: 00:00:40s.  Time for last 1,000,000:   12s.  Last read position: chr8:56,168,171
-INFO	2023-06-12 09:47:34	MergeSamFiles	Processed     3,000,000 records.  Elapsed time: 00:00:40s.  Time for last 1,000,000:   12s.  Last read position: chr8:47,440,547
-INFO	2023-06-12 09:47:35	MergeSamFiles	Processed     3,000,000 records.  Elapsed time: 00:00:40s.  Time for last 1,000,000:   12s.  Last read position: chr8:67,258,212
+
+[Mon Jun 12 14:55:46 2023]
+rule GatherBamFiles:
+    input: 03_bamPrep/proband/proband_ACC1-LIBR_L1.pqsr.bam, 03_bamPrep/proband/proband_ACC2-LIBR2_L3.pqsr.bam
+    output: 03_bamPrep/merged_bams/proband.pqsr.bam
+    jobid: 89
+    reason: Code has changed since last execution
+    wildcards: sample=proband
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=1, mem_gb=2, nodes=1, time=120
+
+13:55:49.028 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/marc/miniconda3/envs/GUAP/share/gatk4-4.3.0.0-0/gatk-package-4.3.0.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+13:55:49.044 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/marc/miniconda3/envs/GUAP/share/gatk4-4.3.0.0-0/gatk-package-4.3.0.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+[Mon Jun 12 13:55:49 EET 2023] GatherBamFiles --INPUT 03_bamPrep/father/father_ACC1-LIBR_L1.pqsr.bam --INPUT 03_bamPrep/father/father_ACC1-LIBR_L2.pqsr.bam --OUTPUT 03_bamPrep/merged_bams/father.pqsr.bam --CREATE_INDEX true --CREATE_MD5_FILE true --VERBOSITY INFO --QUIET false --VALIDATION_STRINGENCY STRICT --COMPRESSION_LEVEL 2 --MAX_RECORDS_IN_RAM 500000 --GA4GH_CLIENT_SECRETS client_secrets.json --help false --version false --showHidden false --USE_JDK_DEFLATER false --USE_JDK_INFLATER false
+[Mon Jun 12 13:55:49 EET 2023] GatherBamFiles --INPUT 03_bamPrep/proband/proband_ACC1-LIBR_L1.pqsr.bam --INPUT 03_bamPrep/proband/proband_ACC2-LIBR2_L3.pqsr.bam --OUTPUT 03_bamPrep/merged_bams/proband.pqsr.bam --CREATE_INDEX true --CREATE_MD5_FILE true --VERBOSITY INFO --QUIET false --VALIDATION_STRINGENCY STRICT --COMPRESSION_LEVEL 2 --MAX_RECORDS_IN_RAM 500000 --GA4GH_CLIENT_SECRETS client_secrets.json --help false --version false --showHidden false --USE_JDK_DEFLATER false --USE_JDK_INFLATER false
+13:55:49.119 INFO  NativeLibraryLoader - Loading libgkl_compression.so from jar:file:/home/marc/miniconda3/envs/GUAP/share/gatk4-4.3.0.0-0/gatk-package-4.3.0.0-local.jar!/com/intel/gkl/native/libgkl_compression.so
+[Mon Jun 12 13:55:49 EET 2023] GatherBamFiles --INPUT 03_bamPrep/mother/mother_ACC1-LIBR_L1.pqsr.bam --INPUT 03_bamPrep/mother/mother_ACC2-LIBR2_L1.pqsr.bam --OUTPUT 03_bamPrep/merged_bams/mother.pqsr.bam --CREATE_INDEX true --CREATE_MD5_FILE true --VERBOSITY INFO --QUIET false --VALIDATION_STRINGENCY STRICT --COMPRESSION_LEVEL 2 --MAX_RECORDS_IN_RAM 500000 --GA4GH_CLIENT_SECRETS client_secrets.json --help false --version false --showHidden false --USE_JDK_DEFLATER false --USE_JDK_INFLATER false
+[Mon Jun 12 13:55:49 EET 2023] Executing as marc@marc on Linux 5.4.0-137-generic amd64; OpenJDK 64-Bit Server VM 11.0.9.1-internal+0-adhoc..src; Deflater: Intel; Inflater: Intel; Provider GCS is available; Picard version: Version:4.3.0.0
+[Mon Jun 12 13:55:49 EET 2023] Executing as marc@marc on Linux 5.4.0-137-generic amd64; OpenJDK 64-Bit Server VM 11.0.9.1-internal+0-adhoc..src; Deflater: Intel; Inflater: Intel; Provider GCS is available; Picard version: Version:4.3.0.0
+INFO	2023-06-12 13:55:49	BamFileIoUtils	Block copying /home/marc/Desktop/output_new_wes_gatk/03_bamPrep/proband/proband_ACC1-LIBR_L1.pqsr.bam ...
+INFO	2023-06-12 13:55:49	BamFileIoUtils	Block copying /home/marc/Desktop/output_new_wes_gatk/03_bamPrep/father/father_ACC1-LIBR_L1.pqsr.bam ...
+Exception in thread "BamIndexingThread" htsjdk.samtools.SAMException: Indexing requires a coordinate-sorted input BAM.
+	at htsjdk.samtools.BAMIndexer.<init>(BAMIndexer.java:108)
+	at htsjdk.samtools.BAMIndexer.<init>(BAMIndexer.java:61)
+	at htsjdk.samtools.Indexer.run(StreamInflatingIndexingOutputStream.java:100)
+	at java.base/java.lang.Thread.run(Thread.java:834)
+Exception in thread "BamIndexingThread" htsjdk.samtools.SAMException: Indexing requires a coordinate-sorted input BAM.
+	at htsjdk.samtools.BAMIndexer.<init>(BAMIndexer.java:108)
+	at htsjdk.samtools.BAMIndexer.<init>(BAMIndexer.java:61)
+	at htsjdk.samtools.Indexer.run(StreamInflatingIndexingOutputStream.java:100)
+	at java.base/java.lang.Thread.run(Thread.java:834)
+[Mon Jun 12 13:55:49 EET 2023] Executing as marc@marc on Linux 5.4.0-137-generic amd64; OpenJDK 64-Bit Server VM 11.0.9.1-internal+0-adhoc..src; Deflater: Intel; Inflater: Intel; Provider GCS is available; Picard version: Version:4.3.0.0
+INFO	2023-06-12 13:55:49	BamFileIoUtils	Block copying /home/marc/Desktop/output_new_wes_gatk/03_bamPrep/mother/mother_ACC1-LIBR_L1.pqsr.bam ...
+Exception in thread "BamIndexingThread" htsjdk.samtools.SAMException: Indexing requires a coordinate-sorted input BAM.
+	at htsjdk.samtools.BAMIndexer.<init>(BAMIndexer.java:108)
+	at htsjdk.samtools.BAMIndexer.<init>(BAMIndexer.java:61)
+	at htsjdk.samtools.Indexer.run(StreamInflatingIndexingOutputStream.java:100)
+	at java.base/java.lang.Thread.run(Thread.java:834)
+[Mon Jun 12 13:55:50 EET 2023] picard.sam.GatherBamFiles done. Elapsed time: 0.02 minutes.
+Runtime.totalMemory()=2024275968
+To get help, see http://broadinstitute.github.io/picard/index.html#GettingHelp
+htsjdk.samtools.util.RuntimeIOException: java.io.IOException: Read end dead
+	at htsjdk.samtools.util.IOUtil.transferByStream(IOUtil.java:209)
+	at htsjdk.samtools.BamFileIoUtils.blockCopyBamFile(BamFileIoUtils.java:115)
+	at htsjdk.samtools.BamFileIoUtils.gatherWithBlockCopying(BamFileIoUtils.java:143)
+	at picard.sam.GatherBamFiles.doWork(GatherBamFiles.java:106)
+	at picard.cmdline.CommandLineProgram.instanceMain(CommandLineProgram.java:309)
+	at org.broadinstitute.hellbender.cmdline.PicardCommandLineProgramExecutor.instanceMain(PicardCommandLineProgramExecutor.java:37)
+	at org.broadinstitute.hellbender.Main.runCommandLineProgram(Main.java:160)
+	at org.broadinstitute.hellbender.Main.mainEntry(Main.java:203)
+	at org.broadinstitute.hellbender.Main.main(Main.java:289)
+Caused by: java.io.IOException: Read end dead
+	at java.base/java.io.PipedInputStream.checkStateForReceive(PipedInputStream.java:262)
+	at java.base/java.io.PipedInputStream.receive(PipedInputStream.java:226)
+	at java.base/java.io.PipedOutputStream.write(PipedOutputStream.java:149)
+	at htsjdk.samtools.StreamInflatingIndexingOutputStream.write(StreamInflatingIndexingOutputStream.java:56)
+	at htsjdk.samtools.util.IOUtil.transferByStream(IOUtil.java:204)
+	... 8 more
+[Mon Jun 12 13:55:50 EET 2023] picard.sam.GatherBamFiles done. Elapsed time: 0.02 minutes.
+Runtime.totalMemory()=2024275968
+To get help, see http://broadinstitute.github.io/picard/index.html#GettingHelp
+htsjdk.samtools.util.RuntimeIOException: java.io.IOException: Read end dead
+	at htsjdk.samtools.util.IOUtil.transferByStream(IOUtil.java:209)
+	at htsjdk.samtools.BamFileIoUtils.blockCopyBamFile(BamFileIoUtils.java:115)
+	at htsjdk.samtools.BamFileIoUtils.gatherWithBlockCopying(BamFileIoUtils.java:143)
+	at picard.sam.GatherBamFiles.doWork(GatherBamFiles.java:106)
+	at picard.cmdline.CommandLineProgram.instanceMain(CommandLineProgram.java:309)
+	at org.broadinstitute.hellbender.cmdline.PicardCommandLineProgramExecutor.instanceMain(PicardCommandLineProgramExecutor.java:37)
+	at org.broadinstitute.hellbender.Main.runCommandLineProgram(Main.java:160)
+	at org.broadinstitute.hellbender.Main.mainEntry(Main.java:203)
+	at org.broadinstitute.hellbender.Main.main(Main.java:289)
+Caused by: java.io.IOException: Read end dead
+	at java.base/java.io.PipedInputStream.checkStateForReceive(PipedInputStream.java:262)
+	at java.base/java.io.PipedInputStream.receive(PipedInputStream.java:226)
+	at java.base/java.io.PipedOutputStream.write(PipedOutputStream.java:149)
+	at htsjdk.samtools.StreamInflatingIndexingOutputStream.write(StreamInflatingIndexingOutputStream.java:56)
+	at htsjdk.samtools.util.IOUtil.transferByStream(IOUtil.java:204)
+	... 8 more
+Using GATK jar /home/marc/miniconda3/envs/GUAP/share/gatk4-4.3.0.0-0/gatk-package-4.3.0.0-local.jar
+Running:
+    java -Dsamjdk.use_async_io_read_samtools=false -Dsamjdk.use_async_io_write_samtools=true -Dsamjdk.use_async_io_write_tribble=false -Dsamjdk.compression_level=2 -Xmx2G -XX:+UseParallelGC -XX:ParallelGCThreads=1 -jar /home/marc/miniconda3/envs/GUAP/share/gatk4-4.3.0.0-0/gatk-package-4.3.0.0-local.jar GatherBamFiles -I 03_bamPrep/proband/proband_ACC1-LIBR_L1.pqsr.bam -I 03_bamPrep/proband/proband_ACC2-LIBR2_L3.pqsr.bam -OUTPUT 03_bamPrep/merged_bams/proband.pqsr.bam --CREATE_INDEX true --CREATE_MD5_FILE true
+Using GATK jar /home/marc/miniconda3/envs/GUAP/share/gatk4-4.3.0.0-0/gatk-package-4.3.0.0-local.jar
+Running:
+    java -Dsamjdk.use_async_io_read_samtools=false -Dsamjdk.use_async_io_write_samtools=true -Dsamjdk.use_async_io_write_tribble=false -Dsamjdk.compression_level=2 -Xmx2G -XX:+UseParallelGC -XX:ParallelGCThreads=1 -jar /home/marc/miniconda3/envs/GUAP/share/gatk4-4.3.0.0-0/gatk-package-4.3.0.0-local.jar GatherBamFiles -I 03_bamPrep/father/father_ACC1-LIBR_L1.pqsr.bam -I 03_bamPrep/father/father_ACC1-LIBR_L2.pqsr.bam -OUTPUT 03_bamPrep/merged_bams/father.pqsr.bam --CREATE_INDEX true --CREATE_MD5_FILE true
+[Mon Jun 12 14:55:50 2023]
+Error in rule GatherBamFiles:
+    jobid: 89
+    input: 03_bamPrep/proband/proband_ACC1-LIBR_L1.pqsr.bam, 03_bamPrep/proband/proband_ACC2-LIBR2_L3.pqsr.bam
+    output: 03_bamPrep/merged_bams/proband.pqsr.bam
+    conda-env: /home/marc/Desktop/output_new_wes_gatk/.snakemake/conda/c3f02c60b62d43585716da5f0375f09d_
+    shell:
+        
+        gatk --java-options "-Xmx2G -XX:+UseParallelGC -XX:ParallelGCThreads=1"             GatherBamFiles              -I 03_bamPrep/proband/proband_ACC1-LIBR_L1.pqsr.bam  -I 03_bamPrep/proband/proband_ACC2-LIBR2_L3.pqsr.bam             -OUTPUT 03_bamPrep/merged_bams/proband.pqsr.bam             --CREATE_INDEX true             --CREATE_MD5_FILE true
+        
+        (one of the commands exited with non-zero exit code; note that snakemake uses bash strict mode!)
+
+Removing output files of failed job GatherBamFiles since they might be corrupted:
+03_bamPrep/merged_bams/proband.pqsr.bam
+[Mon Jun 12 14:55:50 2023]
+Error in rule GatherBamFiles:
+    jobid: 85
+    input: 03_bamPrep/father/father_ACC1-LIBR_L1.pqsr.bam, 03_bamPrep/father/father_ACC1-LIBR_L2.pqsr.bam
+    output: 03_bamPrep/merged_bams/father.pqsr.bam
+    conda-env: /home/marc/Desktop/output_new_wes_gatk/.snakemake/conda/c3f02c60b62d43585716da5f0375f09d_
+    shell:
+        
+        gatk --java-options "-Xmx2G -XX:+UseParallelGC -XX:ParallelGCThreads=1"             GatherBamFiles              -I 03_bamPrep/father/father_ACC1-LIBR_L1.pqsr.bam  -I 03_bamPrep/father/father_ACC1-LIBR_L2.pqsr.bam             -OUTPUT 03_bamPrep/merged_bams/father.pqsr.bam             --CREATE_INDEX true             --CREATE_MD5_FILE true
+        
+        (one of the commands exited with non-zero exit code; note that snakemake uses bash strict mode!)
+
+Removing output files of failed job GatherBamFiles since they might be corrupted:
+03_bamPrep/merged_bams/father.pqsr.bam
+[Mon Jun 12 13:55:50 EET 2023] picard.sam.GatherBamFiles done. Elapsed time: 0.02 minutes.
+Runtime.totalMemory()=2024275968
+To get help, see http://broadinstitute.github.io/picard/index.html#GettingHelp
+htsjdk.samtools.util.RuntimeIOException: java.io.IOException: Read end dead
+	at htsjdk.samtools.util.IOUtil.transferByStream(IOUtil.java:209)
+	at htsjdk.samtools.BamFileIoUtils.blockCopyBamFile(BamFileIoUtils.java:115)
+	at htsjdk.samtools.BamFileIoUtils.gatherWithBlockCopying(BamFileIoUtils.java:143)
+	at picard.sam.GatherBamFiles.doWork(GatherBamFiles.java:106)
+	at picard.cmdline.CommandLineProgram.instanceMain(CommandLineProgram.java:309)
+	at org.broadinstitute.hellbender.cmdline.PicardCommandLineProgramExecutor.instanceMain(PicardCommandLineProgramExecutor.java:37)
+	at org.broadinstitute.hellbender.Main.runCommandLineProgram(Main.java:160)
+	at org.broadinstitute.hellbender.Main.mainEntry(Main.java:203)
+	at org.broadinstitute.hellbender.Main.main(Main.java:289)
+Caused by: java.io.IOException: Read end dead
+	at java.base/java.io.PipedInputStream.checkStateForReceive(PipedInputStream.java:262)
+	at java.base/java.io.PipedInputStream.receive(PipedInputStream.java:226)
+	at java.base/java.io.PipedOutputStream.write(PipedOutputStream.java:149)
+	at htsjdk.samtools.StreamInflatingIndexingOutputStream.write(StreamInflatingIndexingOutputStream.java:56)
+	at htsjdk.samtools.util.IOUtil.transferByStream(IOUtil.java:204)
+	... 8 more
+Using GATK jar /home/marc/miniconda3/envs/GUAP/share/gatk4-4.3.0.0-0/gatk-package-4.3.0.0-local.jar
+Running:
+    java -Dsamjdk.use_async_io_read_samtools=false -Dsamjdk.use_async_io_write_samtools=true -Dsamjdk.use_async_io_write_tribble=false -Dsamjdk.compression_level=2 -Xmx2G -XX:+UseParallelGC -XX:ParallelGCThreads=1 -jar /home/marc/miniconda3/envs/GUAP/share/gatk4-4.3.0.0-0/gatk-package-4.3.0.0-local.jar GatherBamFiles -I 03_bamPrep/mother/mother_ACC1-LIBR_L1.pqsr.bam -I 03_bamPrep/mother/mother_ACC2-LIBR2_L1.pqsr.bam -OUTPUT 03_bamPrep/merged_bams/mother.pqsr.bam --CREATE_INDEX true --CREATE_MD5_FILE true
+[Mon Jun 12 14:55:50 2023]
+Error in rule GatherBamFiles:
+    jobid: 87
+    input: 03_bamPrep/mother/mother_ACC1-LIBR_L1.pqsr.bam, 03_bamPrep/mother/mother_ACC2-LIBR2_L1.pqsr.bam
+    output: 03_bamPrep/merged_bams/mother.pqsr.bam
+    conda-env: /home/marc/Desktop/output_new_wes_gatk/.snakemake/conda/c3f02c60b62d43585716da5f0375f09d_
+    shell:
+        
+        gatk --java-options "-Xmx2G -XX:+UseParallelGC -XX:ParallelGCThreads=1"             GatherBamFiles              -I 03_bamPrep/mother/mother_ACC1-LIBR_L1.pqsr.bam  -I 03_bamPrep/mother/mother_ACC2-LIBR2_L1.pqsr.bam             -OUTPUT 03_bamPrep/merged_bams/mother.pqsr.bam             --CREATE_INDEX true             --CREATE_MD5_FILE true
+        
+        (one of the commands exited with non-zero exit code; note that snakemake uses bash strict mode!)
+
+Removing output files of failed job GatherBamFiles since they might be corrupted:
+03_bamPrep/merged_bams/mother.pqsr.bam
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: ../../wes_gatk/workflow/.snakemake/log/2023-06-12T145545.643430.snakemake.log
