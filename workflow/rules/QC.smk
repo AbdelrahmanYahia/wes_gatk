@@ -46,8 +46,8 @@ rule Fastqc:
     conda: "../env/wes_gatk.yml"
 
     output:
-        zip="01_QC/{sample}_{unit}_{R}_fastqc.zip",
-        html="01_QC/{sample}_{unit}_{R}_fastqc.html"
+        zip="01_QC/{sample}_{unit}_{R}.trimmed_fastqc.zip",
+        html="01_QC/{sample}_{unit}_{R}.trimmed_fastqc.html"
         
     benchmark: "benchamrks/QC/{sample}_{unit}_{R}_fastqc.txt"
     threads: 2

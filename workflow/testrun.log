@@ -1,0 +1,253 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 32
+Rules claiming more threads will be scaled down.
+Conda environments: ignored
+Job stats:
+job                       count    min threads    max threads
+----------------------  -------  -------------  -------------
+AnalyzeCovariates             6              2              2
+Annovar                       1              4              4
+BaseRecalibrator              6              4              4
+Fastqc                        6              2              2
+GatherBamFiles                3              1              1
+HaplotypeCaller               3              4              4
+Nirvana                       1              1              1
+QC_alignment                  6              1              1
+Split_variants_idnel          1              1              1
+Split_variants_snp            1              1              1
+VariantEval                   3              1              1
+all                           1              1              1
+applyBaseRecalibrator         6              1              1
+bcftools_stats                1              1              1
+bqsr_calibrated_report        6              1              1
+bwa_align                     4              4              4
+combine_gvcf                  1              1              1
+consequence                   1              1              1
+genotype_gvcfs                1              4              4
+mrk_duplicates                6              1              1
+multiqc                       1              1              1
+plot_bcftools_stats           1              1              1
+qualimap                      6              2              2
+sort_and_convert_sam          6              1              1
+total                        78              1              4
+
+Select jobs to execute...
+
+[Mon Jun 12 09:54:41 2023]
+rule Fastqc:
+    input: 00_trimmomatic/proband_ACC2-LIBR2_L3_2.trimmed.fastq.gz
+    output: 01_QC/proband_ACC2-LIBR2_L3_2.trimmed_fastqc.zip, 01_QC/proband_ACC2-LIBR2_L3_2.trimmed_fastqc.html
+    log: logs/QC/QC_proband_ACC2-LIBR2_L3_2.log
+    jobid: 55
+    benchmark: benchamrks/QC/proband_ACC2-LIBR2_L3_2_fastqc.txt
+    reason: Missing output files: 01_QC/proband_ACC2-LIBR2_L3_2.trimmed_fastqc.zip
+    wildcards: sample=proband_ACC2-LIBR2, unit=L3, R=2
+    threads: 2
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=2, mem_gb=2, nodes=1, time=120
+
+
+[Mon Jun 12 09:54:41 2023]
+rule Fastqc:
+    input: 00_trimmomatic/father_ACC1-LIBR_L1_2.trimmed.fastq.gz
+    output: 01_QC/father_ACC1-LIBR_L1_2.trimmed_fastqc.zip, 01_QC/father_ACC1-LIBR_L1_2.trimmed_fastqc.html
+    log: logs/QC/QC_father_ACC1-LIBR_L1_2.log
+    jobid: 4
+    benchmark: benchamrks/QC/father_ACC1-LIBR_L1_2_fastqc.txt
+    reason: Missing output files: 01_QC/father_ACC1-LIBR_L1_2.trimmed_fastqc.zip
+    wildcards: sample=father_ACC1-LIBR, unit=L1, R=2
+    threads: 2
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=2, mem_gb=2, nodes=1, time=120
+
+
+[Mon Jun 12 09:54:41 2023]
+rule bwa_align:
+    input: 00_trimmomatic/proband_ACC1-LIBR_L1_1.trimmed.fastq.gz, 00_trimmomatic/proband_ACC1-LIBR_L1_2.trimmed.fastq.gz
+    output: 02_alignment/proband_ACC1-LIBR_L1.sam
+    log: logs/proband_ACC1-LIBR_L1_bwa.log
+    jobid: 58
+    benchmark: benchamrks/proband_ACC1-LIBR_L1_bwa.txt
+    reason: Missing output files: 02_alignment/proband_ACC1-LIBR_L1.sam
+    wildcards: sample=proband_ACC1-LIBR, unit=L1
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=32768, mem_mib=31250, cores=4, mem_gb=32, nodes=1, time=120
+
+
+[Mon Jun 12 09:54:42 2023]
+rule bwa_align:
+    input: 00_trimmomatic/father_ACC1-LIBR_L1_1.trimmed.fastq.gz, 00_trimmomatic/father_ACC1-LIBR_L1_2.trimmed.fastq.gz
+    output: 02_alignment/father_ACC1-LIBR_L1.sam
+    log: logs/father_ACC1-LIBR_L1_bwa.log
+    jobid: 10
+    benchmark: benchamrks/father_ACC1-LIBR_L1_bwa.txt
+    reason: Missing output files: 02_alignment/father_ACC1-LIBR_L1.sam
+    wildcards: sample=father_ACC1-LIBR, unit=L1
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=32768, mem_mib=31250, cores=4, mem_gb=32, nodes=1, time=120
+
+/bin/bash: line 6: warning: command substitution: ignored null byte in input
+
+[Mon Jun 12 09:54:42 2023]
+rule Fastqc:
+    input: 00_trimmomatic/proband_ACC1-LIBR_L1_1.trimmed.fastq.gz
+    output: 01_QC/proband_ACC1-LIBR_L1_1.trimmed_fastqc.zip, 01_QC/proband_ACC1-LIBR_L1_1.trimmed_fastqc.html
+    log: logs/QC/QC_proband_ACC1-LIBR_L1_1.log
+    jobid: 50
+    benchmark: benchamrks/QC/proband_ACC1-LIBR_L1_1_fastqc.txt
+    reason: Missing output files: 01_QC/proband_ACC1-LIBR_L1_1.trimmed_fastqc.zip
+    wildcards: sample=proband_ACC1-LIBR, unit=L1, R=1
+    threads: 2
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=2, mem_gb=2, nodes=1, time=120
+
+/bin/bash: line 6: warning: command substitution: ignored null byte in input
+
+[Mon Jun 12 09:54:42 2023]
+rule Fastqc:
+    input: 00_trimmomatic/father_ACC1-LIBR_L1_1.trimmed.fastq.gz
+    output: 01_QC/father_ACC1-LIBR_L1_1.trimmed_fastqc.zip, 01_QC/father_ACC1-LIBR_L1_1.trimmed_fastqc.html
+    log: logs/QC/QC_father_ACC1-LIBR_L1_1.log
+    jobid: 2
+    benchmark: benchamrks/QC/father_ACC1-LIBR_L1_1_fastqc.txt
+    reason: Missing output files: 01_QC/father_ACC1-LIBR_L1_1.trimmed_fastqc.zip
+    wildcards: sample=father_ACC1-LIBR, unit=L1, R=1
+    threads: 2
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=2, mem_gb=2, nodes=1, time=120
+
+
+[Mon Jun 12 09:54:42 2023]
+rule Fastqc:
+    input: 00_trimmomatic/proband_ACC1-LIBR_L1_2.trimmed.fastq.gz
+    output: 01_QC/proband_ACC1-LIBR_L1_2.trimmed_fastqc.zip, 01_QC/proband_ACC1-LIBR_L1_2.trimmed_fastqc.html
+    log: logs/QC/QC_proband_ACC1-LIBR_L1_2.log
+    jobid: 52
+    benchmark: benchamrks/QC/proband_ACC1-LIBR_L1_2_fastqc.txt
+    reason: Missing output files: 01_QC/proband_ACC1-LIBR_L1_2.trimmed_fastqc.zip
+    wildcards: sample=proband_ACC1-LIBR, unit=L1, R=2
+    threads: 2
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=2, mem_gb=2, nodes=1, time=120
+
+
+[Mon Jun 12 09:54:42 2023]
+rule sort_and_convert_sam:
+    input: 02_alignment/mother_ACC2-LIBR2_L1.sam
+    output: 02_alignment/mother_ACC2-LIBR2_L1.sorted.bam
+    jobid: 36
+    reason: Missing output files: 02_alignment/mother_ACC2-LIBR2_L1.sorted.bam
+    wildcards: sample=mother_ACC2-LIBR2, unit=L1
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=1, mem_gb=2, nodes=1, time=120
+
+
+[Mon Jun 12 09:54:42 2023]
+rule bwa_align:
+    input: 00_trimmomatic/proband_ACC2-LIBR2_L3_1.trimmed.fastq.gz, 00_trimmomatic/proband_ACC2-LIBR2_L3_2.trimmed.fastq.gz
+    output: 02_alignment/proband_ACC2-LIBR2_L3.sam
+    log: logs/proband_ACC2-LIBR2_L3_bwa.log
+    jobid: 61
+    benchmark: benchamrks/proband_ACC2-LIBR2_L3_bwa.txt
+    reason: Missing output files: 02_alignment/proband_ACC2-LIBR2_L3.sam
+    wildcards: sample=proband_ACC2-LIBR2, unit=L3
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=32768, mem_mib=31250, cores=4, mem_gb=32, nodes=1, time=120
+
+
+[Mon Jun 12 09:54:42 2023]
+rule bwa_align:
+    input: 00_trimmomatic/father_ACC1-LIBR_L2_1.trimmed.fastq.gz, 00_trimmomatic/father_ACC1-LIBR_L2_2.trimmed.fastq.gz
+    output: 02_alignment/father_ACC1-LIBR_L2.sam
+    log: logs/father_ACC1-LIBR_L2_bwa.log
+    jobid: 13
+    benchmark: benchamrks/father_ACC1-LIBR_L2_bwa.txt
+    reason: Missing output files: 02_alignment/father_ACC1-LIBR_L2.sam
+    wildcards: sample=father_ACC1-LIBR, unit=L2
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=32768, mem_mib=31250, cores=4, mem_gb=32, nodes=1, time=120
+
+/bin/bash: line 6: warning: command substitution: ignored null byte in input
+
+[Mon Jun 12 09:54:42 2023]
+rule sort_and_convert_sam:
+    input: 02_alignment/mother_ACC1-LIBR_L1.sam
+    output: 02_alignment/mother_ACC1-LIBR_L1.sorted.bam
+    jobid: 33
+    reason: Missing output files: 02_alignment/mother_ACC1-LIBR_L1.sorted.bam
+    wildcards: sample=mother_ACC1-LIBR, unit=L1
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=1, mem_gb=2, nodes=1, time=120
+
+/bin/bash: line 6: warning: command substitution: ignored null byte in input
+
+[Mon Jun 12 09:54:42 2023]
+rule Fastqc:
+    input: 00_trimmomatic/proband_ACC2-LIBR2_L3_1.trimmed.fastq.gz
+    output: 01_QC/proband_ACC2-LIBR2_L3_1.trimmed_fastqc.zip, 01_QC/proband_ACC2-LIBR2_L3_1.trimmed_fastqc.html
+    log: logs/QC/QC_proband_ACC2-LIBR2_L3_1.log
+    jobid: 53
+    benchmark: benchamrks/QC/proband_ACC2-LIBR2_L3_1_fastqc.txt
+    reason: Missing output files: 01_QC/proband_ACC2-LIBR2_L3_1.trimmed_fastqc.zip
+    wildcards: sample=proband_ACC2-LIBR2, unit=L3, R=1
+    threads: 2
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=2, mem_gb=2, nodes=1, time=120
+
+[Mon Jun 12 09:54:42 2023]
+Error in rule bwa_align:
+    jobid: 58
+    input: 00_trimmomatic/proband_ACC1-LIBR_L1_1.trimmed.fastq.gz, 00_trimmomatic/proband_ACC1-LIBR_L1_2.trimmed.fastq.gz
+    output: 02_alignment/proband_ACC1-LIBR_L1.sam
+    log: logs/proband_ACC1-LIBR_L1_bwa.log (check log file(s) for error details)
+    conda-env: /home/marc/Desktop/output_new_wes_gatk/.snakemake/conda/c3f02c60b62d43585716da5f0375f09d_
+    shell:
+        
+        R1=00_trimmomatic/proband_ACC1-LIBR_L1_1.trimmed.fastq.gz
+        SM=proband_ACC1-LIBR
+        PL="Illumina"
+        LB=L1
+        name=$(basename $R1 | cut -d'_' -f1)
+        RGID=$(head -n1 $R1 | sed 's/:/_/g' | cut -d "_" -f1,2,3,4)
+        PU=$RGID.$LB 
+        bwa mem -t 4 -M             -R "@RG\tID:$RGID\tSM:$SM\tPL:$PL\tLB:$LB\tPU:$PU" /home/marc/Desktop/data/refs/indexes/bwa/hg38/hg38 00_trimmomatic/proband_ACC1-LIBR_L1_1.trimmed.fastq.gz 00_trimmomatic/proband_ACC1-LIBR_L1_2.trimmed.fastq.gz > 02_alignment/proband_ACC1-LIBR_L1.sam 2> logs/proband_ACC1-LIBR_L1_bwa.log
+        
+        (one of the commands exited with non-zero exit code; note that snakemake uses bash strict mode!)
+
+Removing output files of failed job bwa_align since they might be corrupted:
+02_alignment/proband_ACC1-LIBR_L1.sam
+[Mon Jun 12 09:54:42 2023]
+Error in rule bwa_align:
+    jobid: 61
+    input: 00_trimmomatic/proband_ACC2-LIBR2_L3_1.trimmed.fastq.gz, 00_trimmomatic/proband_ACC2-LIBR2_L3_2.trimmed.fastq.gz
+    output: 02_alignment/proband_ACC2-LIBR2_L3.sam
+    log: logs/proband_ACC2-LIBR2_L3_bwa.log (check log file(s) for error details)
+    conda-env: /home/marc/Desktop/output_new_wes_gatk/.snakemake/conda/c3f02c60b62d43585716da5f0375f09d_
+    shell:
+        
+        R1=00_trimmomatic/proband_ACC2-LIBR2_L3_1.trimmed.fastq.gz
+        SM=proband_ACC2-LIBR2
+        PL="Illumina"
+        LB=L3
+        name=$(basename $R1 | cut -d'_' -f1)
+        RGID=$(head -n1 $R1 | sed 's/:/_/g' | cut -d "_" -f1,2,3,4)
+        PU=$RGID.$LB 
+        bwa mem -t 4 -M             -R "@RG\tID:$RGID\tSM:$SM\tPL:$PL\tLB:$LB\tPU:$PU" /home/marc/Desktop/data/refs/indexes/bwa/hg38/hg38 00_trimmomatic/proband_ACC2-LIBR2_L3_1.trimmed.fastq.gz 00_trimmomatic/proband_ACC2-LIBR2_L3_2.trimmed.fastq.gz > 02_alignment/proband_ACC2-LIBR2_L3.sam 2> logs/proband_ACC2-LIBR2_L3_bwa.log
+        
+        (one of the commands exited with non-zero exit code; note that snakemake uses bash strict mode!)
+
+Removing output files of failed job bwa_align since they might be corrupted:
+02_alignment/proband_ACC2-LIBR2_L3.sam
+[bam_sort_core] merging from 1 files and 1 in-memory blocks...
+[bam_sort_core] merging from 1 files and 1 in-memory blocks...
+[Mon Jun 12 09:55:00 2023]
+Finished job 4.
+1 of 78 steps (1%) done
+[Mon Jun 12 09:55:00 2023]
+Finished job 2.
+2 of 78 steps (3%) done
+[Mon Jun 12 09:55:03 2023]
+Finished job 55.
+3 of 78 steps (4%) done
+[Mon Jun 12 09:55:03 2023]
+Finished job 50.
+4 of 78 steps (5%) done
+[Mon Jun 12 09:55:03 2023]
+Finished job 52.
+5 of 78 steps (6%) done
+[Mon Jun 12 09:55:03 2023]
+Finished job 53.
+6 of 78 steps (8%) done

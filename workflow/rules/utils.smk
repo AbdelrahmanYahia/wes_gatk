@@ -12,7 +12,7 @@ def get_final_output(wildcards):
 
     for i in samples_IDs:
         final_output.extend(expand(
-            "01_QC/{sample}_{unit}_{R}_fastqc.zip",
+            "01_QC/{sample}_{unit}_{R}.trimmed_fastqc.zip",
             sample=i,
             unit=units.loc[i, "unit"].tolist(),
             R=[1,2]

@@ -1,0 +1,17 @@
+Building DAG of jobs...
+MissingInputException in rule multiqc in file /home/marc/wes_gatk/workflow/rules/QC.smk, line 66:
+Missing input files for rule multiqc:
+    output: multiqc/multiqc_report.html
+    affected files:
+        01_QC/mother_ACC1-LIBR_L1_2_fastqc.zip
+        01_QC/mother_ACC1-LIBR_L1_1_fastqc.zip
+        01_QC/mother_ACC2-LIBR2_L1_1_fastqc.zip
+        01_QC/proband_ACC1-LIBR_L1_2_fastqc.zip
+        01_QC/proband_ACC2-LIBR2_L3_2_fastqc.zip
+        01_QC/mother_ACC2-LIBR2_L1_2_fastqc.zip
+        01_QC/proband_ACC1-LIBR_L1_1_fastqc.zip
+        01_QC/proband_ACC2-LIBR2_L3_1_fastqc.zip
+        01_QC/father_ACC1-LIBR_L2_2_fastqc.zip
+        01_QC/father_ACC1-LIBR_L2_1_fastqc.zip
+        01_QC/father_ACC1-LIBR_L1_2_fastqc.zip
+        01_QC/father_ACC1-LIBR_L1_1_fastqc.zip
