@@ -16,7 +16,7 @@ WES GATK is a flexible and user-friendly whole exome sequencing workflow based o
 
 Clone the repository:
 ```
-git clone https://github.com/your-username/wes_gatk.git
+git clone https://github.com/AbdelrahmanYahia/wes_gatk.git
 ```
 
 
