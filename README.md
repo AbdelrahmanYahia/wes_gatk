@@ -1,9 +1,6 @@
-# wes_gatk
 ## THIS WORKFLOW IS STILL UNDER DEVELOPMENT AND IS NOT READY YET!
-# WES GATK (Replace with your preferred name)
 
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/your-username/wes_gatk/CI)
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 ## Introduction
 
