@@ -1,0 +1,99 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 32
+Rules claiming more threads will be scaled down.
+Conda environments: ignored
+Job stats:
+job                     count    min threads    max threads
+--------------------  -------  -------------  -------------
+AnalyzeCovariates           2              2              2
+Annovar                     1              4              4
+HaplotypeCaller             3              4              4
+MergeSamFiles               3              1              1
+Nirvana                     1              1              1
+Split_variants_idnel        1              1              1
+Split_variants_snp          1              1              1
+VariantEval                 3              1              1
+all                         1              1              1
+bcftools_stats              1              1              1
+combine_gvcf                1              1              1
+consequence                 1              1              1
+genotype_gvcfs              1              4              4
+multiqc                     1              1              1
+plot_bcftools_stats         1              1              1
+total                      22              1              4
+
+Select jobs to execute...
+
+[Tue Jun 13 04:17:07 2023]
+rule MergeSamFiles:
+    input: 03_bamPrep/father/father_ACC1-LIBR_L1.pqsr.bam, 03_bamPrep/father/father_ACC1-LIBR_L2.pqsr.bam
+    output: 03_bamPrep/merged_bams/father.pqsr.bam
+    jobid: 85
+    reason: Missing output files: 03_bamPrep/merged_bams/father.pqsr.bam
+    wildcards: sample=father
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=1, mem_gb=2, nodes=1, time=120
+
+
+[Tue Jun 13 04:17:07 2023]
+rule MergeSamFiles:
+    input: 03_bamPrep/mother/mother_ACC1-LIBR_L1.pqsr.bam, 03_bamPrep/mother/mother_ACC2-LIBR2_L1.pqsr.bam
+    output: 03_bamPrep/merged_bams/mother.pqsr.bam
+    jobid: 87
+    reason: Missing output files: 03_bamPrep/merged_bams/mother.pqsr.bam
+    wildcards: sample=mother
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=1, mem_gb=2, nodes=1, time=120
+
+
+[Tue Jun 13 04:17:07 2023]
+rule MergeSamFiles:
+    input: 03_bamPrep/proband/proband_ACC1-LIBR_L1.pqsr.bam, 03_bamPrep/proband/proband_ACC2-LIBR2_L3.pqsr.bam
+    output: 03_bamPrep/merged_bams/proband.pqsr.bam
+    jobid: 89
+    reason: Missing output files: 03_bamPrep/merged_bams/proband.pqsr.bam
+    wildcards: sample=proband
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=1, mem_gb=2, nodes=1, time=120
+
+
+[Tue Jun 13 04:17:07 2023]
+rule AnalyzeCovariates:
+    input: 03_bamPrep/proband/proband_ACC2-LIBR2_L3.report, 03_bamPrep/proband/proband_ACC2-LIBR2_L3_pqsr.report
+    output: 03_bamPrep/proband/QC/proband_ACC2-LIBR2_L3.pdf
+    jobid: 78
+    reason: Missing output files: 03_bamPrep/proband/QC/proband_ACC2-LIBR2_L3.pdf
+    wildcards: sample=proband, unit=ACC2-LIBR2_L3
+    threads: 2
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=2, mem_gb=2, nodes=1, time=120
+
+
+[Tue Jun 13 04:17:07 2023]
+rule AnalyzeCovariates:
+    input: 03_bamPrep/proband/proband_ACC1-LIBR_L1.report, 03_bamPrep/proband/proband_ACC1-LIBR_L1_pqsr.report
+    output: 03_bamPrep/proband/QC/proband_ACC1-LIBR_L1.pdf
+    jobid: 76
+    reason: Missing output files: 03_bamPrep/proband/QC/proband_ACC1-LIBR_L1.pdf
+    wildcards: sample=proband, unit=ACC1-LIBR_L1
+    threads: 2
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=2, mem_gb=2, nodes=1, time=120
+
+[Tue Jun 13 04:17:16 2023]
+Finished job 78.
+1 of 22 steps (5%) done
+[Tue Jun 13 04:17:16 2023]
+Finished job 76.
+2 of 22 steps (9%) done
+[Tue Jun 13 04:19:12 2023]
+Finished job 87.
+3 of 22 steps (14%) done
+Select jobs to execute...
+
+[Tue Jun 13 04:19:12 2023]
+rule HaplotypeCaller:
+    input: 03_bamPrep/merged_bams/mother.pqsr.bam
+    output: 04_calling/mother_raw.gvcf.gz
+    jobid: 86
+    reason: Missing output files: 04_calling/mother_raw.gvcf.gz; Input files updated by another job: 03_bamPrep/merged_bams/mother.pqsr.bam
+    wildcards: sample=mother
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=8192, mem_mib=7813, cores=4, mem_gb=8, nodes=1, time=120
+

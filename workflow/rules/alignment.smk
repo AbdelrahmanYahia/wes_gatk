@@ -90,7 +90,6 @@ rule bwa_align:
 rule sort_and_convert_sam:
     input:
         "02_alignment/{sample}/{sample}_{unit}.bam"
-
     
     conda: "../env/wes_gatk.yml"
 

@@ -53,8 +53,6 @@ def get_final_output(wildcards):
     return final_output
 
 
-
-
 def get_merge_input(wildcards):
 
     return expand(

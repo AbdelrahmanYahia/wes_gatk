@@ -37,6 +37,45 @@ rule trimmomatic:
                 SLIDINGWINDOW:{params.size}:{params.quality} MINLEN:{params.minlen} > {log} 2>&1
         """
 
+rule FqtoUBam:
+    input:
+        R1 = "00_trimmomatic/{sample}/{sample}_{unit}_1.trimmed.fastq",
+        R2 = "00_trimmomatic/{sample}/{sample}_{unit}_2.trimmed.fastq"
+    
+    conda: "../env/wes_gatk.yml"
+
+    output:
+        ubam = "0_samples/{sample}/{sample}_{unit}.ubam"
+
+    benchmark: "benchamrks/FastqToSam/{sample}/{sample}_{unit}.txt"
+    threads: 4
+
+    resources:
+        mem_mb=5120,
+        cores=4,
+        mem_gb=5,
+        nodes = 1,
+        time = lambda wildcards, attempt: 60 * 2 * attempt
+    log: 
+        "logs/trimmomatic/{sample}/{sample}_{unit}.txt"
+    params:
+        extra_args = ""
+    shell:
+        """
+        R1={input.R1}
+        SM={wildcards.sample}
+        LB="{wildcards.sample}_{wildcards.unit}"
+        RGID=$(head -n1 $R1 | sed 's/:/_/g' | cut -d "_" -f1,2,3,4)
+
+        picard FastqToSam \
+            -F1 {input.R1} -F2 {input.R2} \
+            -O {output.ubam} \
+            -SM $SM \
+            -PL  "illumina" \
+            -RG $RGID \
+            -LB $LB \
+            {params.extra_args}
+        """
 
 rule gunzip_trimmomatic:
     input:
