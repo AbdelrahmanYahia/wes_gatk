@@ -61,7 +61,7 @@ rule combine_gvcf:
         time = lambda wildcards, attempt: 60 * 2 * attempt
     shell:
         """
-        gatk CombineGVCFs \
+        gatk --java-options '-DGATK_STACKTRACE_ON_USER_EXCEPTION=true' CombineGVCFs \
             -R {params.ref} \
             {params.gvcfs} \
             -O {output}
