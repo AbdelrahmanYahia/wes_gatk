@@ -1,7 +1,5 @@
 ## THIS WORKFLOW IS STILL UNDER DEVELOPMENT AND IS NOT READY YET!
 
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/your-username/wes_gatk/CI)
-
 ## Introduction
 
 **Note: This workflow is still under development.**
