@@ -253,7 +253,7 @@ CODE
 # HaplotypeCaller per-sample in GVCF mode
 
     set -e
-  
+  ## TODO: use make_gvcfs args 
     ~{gatk_path} --java-options "-Xmx~{command_mem_gb}G ~{java_opt}" \
       HaplotypeCaller \
       -R ~{ref_fasta} \

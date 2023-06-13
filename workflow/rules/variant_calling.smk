@@ -11,6 +11,7 @@
 #           ~{if defined(gcs_project_for_requester_pays) then "--gcs-project-for-requester-pays ~{gcs_project_for_requester_pays}" else ""} \
 #           ~{bamout_arg}
 
+## TODO: update 
 rule HaplotypeCaller:
     input: "03_bamPrep/merged_bams/{sample}.pqsr.bam"
     
@@ -32,7 +33,11 @@ rule HaplotypeCaller:
 
     shell:
         """
-        gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" HaplotypeCaller -R {params.ref} \
+        gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
+            HaplotypeCaller -R {params.ref} \
+            -G StandardAnnotation -G StandardHCAnnotation \
+            -G AS_StandardAnnotation \
+
             -L {params.bed} \
             -I {input} --native-pair-hmm-threads {threads} -ERC GVCF -O {output}
         """
@@ -61,7 +66,8 @@ rule combine_gvcf:
         time = lambda wildcards, attempt: 60 * 2 * attempt
     shell:
         """
-        gatk --java-options '-DGATK_STACKTRACE_ON_USER_EXCEPTION=true' CombineGVCFs \
+        gatk --java-options '-DGATK_STACKTRACE_ON_USER_EXCEPTION=true' \
+            CombineGVCFs \
             -R {params.ref} \
             {params.gvcfs} \
             -O {output}
@@ -87,6 +93,7 @@ rule genotype_gvcfs:
 
     shell:
         """
-        gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" GenotypeGVCFs \
+        gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
+            GenotypeGVCFs \
             -R {params.ref} -V {input} -O {output}
         """
