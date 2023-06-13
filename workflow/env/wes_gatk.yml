@@ -15,16 +15,12 @@ dependencies:
   - bcftools 
   - multiqc 
   - bedtools 
-  - ensembl-vep 
   - pip
   - snakemake
-  - dotnet=6.0.408
-  - makehub
   - r-ggplot2
   - r-gplots
   - r-gsalib
   - ucsc-twobittofa
-  - perl-compress-raw-zlib=2.202
   
   - pip:
     - pandas 

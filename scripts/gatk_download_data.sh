@@ -23,5 +23,5 @@ wget -c "https://storage.googleapis.com/genomics-public-data/resources/broad/hg3
 wget -c "https://storage.googleapis.com/genomics-public-data/resources/broad/hg38/v0/Homo_sapiens_assembly38.known_indels.vcf.gz.tbi" 
 wget -c "https://storage.googleapis.com/genomics-public-data/resources/broad/hg38/v0/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz" 
 wget -c "https://storage.googleapis.com/genomics-public-data/resources/broad/hg38/v0/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz.tbi" 
-wget -c "https://storage.googleapis.com/genomics-public-data/resources/broad/hg38/v0/scattered_calling_intervals" 
+#wget -c "https://storage.googleapis.com/genomics-public-data/resources/broad/hg38/v0/scattered_calling_intervals" 
 wget -c "https://storage.googleapis.com/genomics-public-data/resources/broad/hg38/v0/wgs_calling_regions.hg38.interval_list" 

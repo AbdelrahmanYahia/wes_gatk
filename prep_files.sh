@@ -1,12 +1,12 @@
 python3 ./wes.py WES \
-    -i /home/marc/Desktop/data/samples/complex_wes/ \
-    -o /home/marc/Desktop/output_new_wes_gatk \
-    --reference-fasta /home/marc/Desktop/data/refs/fa/hg38/hg38.fa \
-    --bed-file /home/marc/Desktop/data/refs/BED/Twist_Exome_Core_Covered_Targets_hg38.bed \
-    --gff-file /home/marc/Desktop/data/refs/gtf/Homo_sapiens.GRCh38.109.gff3.gz \
-    --nirvana-path /home/marc/Nirvana \
-    --annovar-path /home/marc/annovar \
-    --known-variants /home/marc/Desktop/data/refs/vcf/resources_broad_hg38_v0_1000G_omni2.5.hg38.vcf.gz \
-    --reference-index /home/marc/Desktop/data/refs/indexes/bwa/hg38/hg38 \
+    -i /mnt/gs21/scratch/mansourt/wes_gatk/raw_data_temp \
+    -o /mnt/gs21/scratch/mansourt/wes_gatk/output \
+    --reference-fasta /mnt/home/mansourt/annDB/broad_hg38/Homo_sapiens_assembly38.fasta \
+    --bed-file /mnt/gs21/scratch/mansourt/wes_gatk/exome_bed/S07604715_Padded.bed \
+    --gff-file /mnt/home/mansourt/annDB/broad_hg38/Homo_sapiens.GRCh38.109.gff3.gz \
+    --nirvana-path /mnt/home/mansourt/annDB/Nirvana \
+    --annovar-path /mnt/home/mansourt/annDB/annovar_source/annovar \
+    --known-variants /mnt/home/mansourt/annDB/broad_hg38/1000G_omni2.5.hg38.vcf.gz \
+    --reference-index /mnt/home/mansourt/annDB/broad_hg38/Homo_sapiens_assembly38.fasta \
     --generate-confs-only \
     --threads 12

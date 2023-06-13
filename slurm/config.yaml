@@ -1,0 +1,34 @@
+cluster:
+  mkdir -p logs/{rule}/ &&
+  sbatch
+    --cpus-per-task={threads}
+    --mem={resources.mem_mb}
+    --time={resources.time}
+    --job-name=smk-{rule}
+    --ntasks={resources.threads}
+    --nodes={resources.nodes}
+    --qos=scavenger
+    --parsable
+    --output=logs/{rule}/%j.out
+    --error=logs/{rule}/%j.%N.err
+default-resources:
+  - mem_mb=2000
+  - disk_mb=1000000
+  - runtime=60
+  - threads=1
+  - nodes=1
+jobs: 400
+latency-wait: 120
+local-cores: 1
+#restart-times: 3
+max-jobs-per-second: 4
+max-status-checks-per-second: 4
+keep-going: True
+#rerun-incomplete: True
+printshellcmds: True
+#scheduler: greedy
+use-conda: True
+conda-prefix: /mnt/home/mansourt/miniconda3
+conda-frontend: mamba
+cluster-status: /mnt/gs21/scratch/mansourt/wes_gatk/slurm/slurm-status.py
+#shadow-prefix: /group/ctbrowngrp/scratch/mhussien/snakemake-slurm
