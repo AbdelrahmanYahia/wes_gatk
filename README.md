@@ -13,16 +13,16 @@ WES GATK is a flexible and user-friendly whole exome sequencing workflow based o
 
 ## Workflow
 
-![Workflow](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/805b96c1-a771-4745-bbd6-c9098169f302/Untitled.png)
+![Workflow](workflow.png)
 
 ## Quick Start
 
 ### Installation
 
 Clone the repository:
-
+```
 git clone https://github.com/your-username/wes_gatk.git
-
+```
 
 
 If you prefer to download the dependencies manually, you can find them [here].
@@ -34,17 +34,17 @@ If you prefer to download the dependencies manually, you can find them [here].
 To obtain the link, you need to register at [Annovar website](https://www.openbioinformatics.org/annovar/annovar_download_form.php).
 
 Make sure you have Conda and Mamba installed. If not, follow these steps:
-
+```
 wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
 bash Miniconda3-latest-Linux-x86_64.sh # Follow the prompts
-
+```
 
 
 Install Mamba:
-
+```
 conda install mamba -n base -c conda-forge
 
-
+```
 
 Restart your terminal.
 
