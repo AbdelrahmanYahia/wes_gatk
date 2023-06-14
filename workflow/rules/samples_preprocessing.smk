@@ -33,8 +33,15 @@ rule FastqToSam:
         PL="Illumina"
         LB="{wildcards.sample}_{wildcards.unit}"
         name=$(basename $R1 | cut -d'_' -f1)
-        RGID=$(head -n1 $R1 | sed 's/:/_/g' | cut -d "_" -f1,2,3,4)
+        RGID=$(zcat $R1 | head -n1 | sed 's/:/_/g' |cut -d "_" -f1,2,3,4)
         PU=$RGID.$LB 
+
+        echo -e "Using names:"
+        echo -e "SM $SM:"
+        echo -e "LB $LB:"
+        echo -e "RGID $RGID:"
+        echo -e "PU $RGID.$LB "
+
 
         gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
             FastqToSam \
