@@ -54,10 +54,13 @@ rule MarkIlluminaAdapters:
     output:
         bam="0_samples/{sample}/{sample}_{unit}.adab.ubam",
         metrics="0_samples/{sample}/{sample}_{unit}.adap_metrics.txt"
+    threads:4
     resources:
-        walltime = lambda wildcards, attempt: 2**(attempt - 1) * 60 * 60 * 2,
-        mem = lambda wildcards, attempt: 2**(attempt - 1) * 1000000000 * 8
-    threads:1
+        mem_mb=5120,
+        cores=4,
+        mem_gb=5,
+        nodes = 1,
+        time = lambda wildcards, attempt: 60 * 2 * attempt
     shell:
         '''
         gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \

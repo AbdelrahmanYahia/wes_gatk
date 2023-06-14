@@ -122,7 +122,7 @@ rule ubam_align:
         bam="0_samples/{sample}/{sample}_{unit}.adab.ubam"
 
     output:
-        "02_alignment/{sample}/{sample}_{unit}_mergedUnmapped.bam"
+        bam="02_alignment/{sample}/{sample}_{unit}_mergedUnmapped.bam"
 
     threads: 4
     params:
@@ -162,8 +162,7 @@ rule ubam_align:
             -R={params.fa} --CREATE_INDEX=true --ADD_MATE_CIGAR=true \
             --CLIP_ADAPTERS=false --CLIP_OVERLAPPING_READS=true \
             --INCLUDE_SECONDARY_ALIGNMENTS=true --MAX_INSERTIONS_OR_DELETIONS=-1 \
-            --PRIMARY_ALIGNMENT_STRATEGY=MostDistant --ATTRIBUTES_TO_RETAIN=XS \
-            --TMP_DIR="tmp4/{wildcards.fragment}"
+            --PRIMARY_ALIGNMENT_STRATEGY=MostDistant --ATTRIBUTES_TO_RETAIN=XS 
         '''
 
 rule QC_alignment:

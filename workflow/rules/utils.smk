@@ -11,14 +11,14 @@ def get_final_output(wildcards):
     final_output = []
 
     for i in samples_IDs:
+        # final_output.extend(expand(
+        #     "01_QC/{sample}/{sample}_{unit}_{R}.trimmed_fastqc.zip",
+        #     sample=i,
+        #     unit=units.loc[i, "unit"].tolist(),
+        #     R=[1,2]
+        # ))
         final_output.extend(expand(
-            "01_QC/{sample}/{sample}_{unit}_{R}.trimmed_fastqc.zip",
-            sample=i,
-            unit=units.loc[i, "unit"].tolist(),
-            R=[1,2]
-        ))
-        final_output.extend(expand(
-            "02_alignment/{sample}/QC/{sample}_{unit}.cov",
+            "02_alignment/{sample}/QC/{sample}_{unit}_mergedUnmapped.cov",
                 sample = i,
                 unit=units.loc[i, "unit"].tolist()
         ))
