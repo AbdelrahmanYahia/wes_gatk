@@ -165,3 +165,12 @@ Finished job 79.
 [Thu Jun 15 00:15:30 2023]
 Finished job 85.
 6 of 16 steps (38%) done
+[Thu Jun 15 00:17:24 2023]
+Finished job 88.
+7 of 16 steps (44%) done
+[Thu Jun 15 00:17:28 2023]
+Finished job 87.
+8 of 16 steps (50%) done
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: ../../wes_gatk/workflow/.snakemake/log/2023-06-15T001450.764107.snakemake.log
