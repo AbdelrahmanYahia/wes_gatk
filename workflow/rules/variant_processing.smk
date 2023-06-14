@@ -23,42 +23,6 @@ rule VariantEval:
             -O {output}
         """
 
-rule bcftools_stats:
-    input: "04_calling/QC/{type}/bcftools_csq.vcf"
-    
-    conda: "../env/wes_gatk.yml"
-
-    output: "04_calling/QC/{type}/bcftools.stats"
-    threads: 1
-    resources:
-        mem_mb=2048,
-        cores=1,
-        mem_gb=2,
-        nodes = 1,
-        time = lambda wildcards, attempt: 60 * 2 * attempt
-    shell:
-        """
-            bcftools stats {input} > {output}
-        """
-
-rule plot_bcftools_stats:
-    input: "04_calling/QC/{type}/bcftools.stats"
-    
-    conda: "../env/wes_gatk.yml"
-
-    output: directory("04_calling/QC/{type}/bcftools_plots")
-    threads: 1 
-    resources:
-        mem_mb=2048,
-        cores=1,
-        mem_gb=2,
-        nodes = 1,
-        time = lambda wildcards, attempt: 60 * 2 * attempt
-    shell:
-        """
-        plot-vcfstats -p {output} {input}
-        """
-
 rule variant_filteration:
     input: "04_calling/variants_genotyped.gvcf.gz"
     
