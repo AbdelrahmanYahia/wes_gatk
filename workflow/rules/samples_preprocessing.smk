@@ -38,14 +38,14 @@ rule FastqToSam:
 
         gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
             FastqToSam \
-            -F1={input.R1} \
-            -F2={input.R2} \
-            -O={output} \
-            -SM=$SM \
-            -LB=$LB \
-            -PL=$PL \
-            -RG=$RGID \
-            -PU=$PU 
+            -F1 {input.R1} \
+            -F2 {input.R2} \
+            -O {output} \
+            -SM $SM \
+            -LB $LB \
+            -PL $PL \
+            -RG $RGID \
+            -PU $PU 
         '''
 
 rule MarkIlluminaAdapters:
@@ -65,7 +65,7 @@ rule MarkIlluminaAdapters:
         '''
         gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
             MarkIlluminaAdapters \
-            -I={input} \
-            -O={output.bam} \
-            -M={output.metrics} 
+            -I {input} \
+            -O {output.bam} \
+            -M {output.metrics} 
         '''

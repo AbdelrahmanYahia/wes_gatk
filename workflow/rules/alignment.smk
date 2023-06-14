@@ -149,20 +149,20 @@ rule ubam_align:
         '''
         gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
             SamToFastq \
-            -I={input.bam} \
-            --FASTQ=/dev/stdout \
-            --CLIPPING_ATTRIBUTE=XT --CLIPPING_ACTION=2 \
-            --INTERLEAVE=true -NON_PF=true | bwa mem \
+            -I {input.bam} \
+            --FASTQ /dev/stdout \
+            --CLIPPING_ATTRIBUTE XT --CLIPPING_ACTION 2 \
+            --INTERLEAVE true -NON_PF true | bwa mem \
             -M -t {threads} -p {params.index} /dev/stdin | gatk \
             --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
             MergeBamAlignment \
-            --ALIGNED_BAM=/dev/stdin \
-            --UNMAPPED_BAM={input.bam} \
-            --OUTPUT={output.bam} \
-            -R={params.fa} --CREATE_INDEX=true --ADD_MATE_CIGAR=true \
-            --CLIP_ADAPTERS=false --CLIP_OVERLAPPING_READS=true \
-            --INCLUDE_SECONDARY_ALIGNMENTS=true --MAX_INSERTIONS_OR_DELETIONS=-1 \
-            --PRIMARY_ALIGNMENT_STRATEGY=MostDistant --ATTRIBUTES_TO_RETAIN=XS 
+            --ALIGNED_BAM /dev/stdin \
+            --UNMAPPED_BAM {input.bam} \
+            --OUTPUT {output.bam} \
+            -R {params.fa} --CREATE_INDEX true --ADD_MATE_CIGAR true \
+            --CLIP_ADAPTERS false --CLIP_OVERLAPPING_READS true \
+            --INCLUDE_SECONDARY_ALIGNMENTS true --MAX_INSERTIONS_OR_DELETIONS -1 \
+            --PRIMARY_ALIGNMENT_STRATEGY MostDistant --ATTRIBUTES_TO_RETAIN XS 
         '''
 
 rule QC_alignment:
