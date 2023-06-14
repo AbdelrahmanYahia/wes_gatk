@@ -17,10 +17,10 @@ SampleTable = pd.read_table(sample_table_file)
 
 files_R1s = list(SampleTable.iloc[:, 1])
 files_R2s = list(SampleTable.iloc[:, 16])
-samples = list(SampleTable.iloc[:, 3]) # sample full name
-units = list(SampleTable.iloc[:, 2])
-samples_IDs = list(SampleTable.iloc[:, 4])
-library_index = list(SampleTable.iloc[:, 5])
+samples = set(SampleTable.iloc[:, 3]) # sample full name
+units = set(SampleTable.iloc[:, 2])
+samples_IDs = set(SampleTable.iloc[:, 4])
+library_index = set(SampleTable.iloc[:, 5])
 
 units = (
     pd.read_csv('samples.tsv', sep="\t", dtype={"sample_id": str, "library_index": str, "lane": str})

@@ -332,3 +332,213 @@ rule QC_alignment:
 [Wed Jun 14 22:25:54 2023]
 Finished job 28.
 14 of 86 steps (16%) done
+[Wed Jun 14 22:26:08 2023]
+Finished job 25.
+15 of 86 steps (17%) done
+Select jobs to execute...
+
+[Wed Jun 14 22:26:08 2023]
+rule QC_alignment:
+    input: 02_alignment/mother/mother_ACC1-LIBR_L1_mergedUnmapped.bam
+    output: 02_alignment/mother/QC/mother_ACC1-LIBR_L1_mergedUnmapped.cov, 02_alignment/mother/QC/mother_ACC1-LIBR_L1_mergedUnmapped.stats
+    jobid: 24
+    reason: Input files updated by another job: 02_alignment/mother/mother_ACC1-LIBR_L1_mergedUnmapped.bam
+    wildcards: sample=mother, unit=ACC1-LIBR_L1
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=1, mem_gb=2, nodes=1, time=120
+
+
+[Wed Jun 14 22:26:08 2023]
+rule SortNFix:
+    input: 02_alignment/mother/mother_ACC1-LIBR_L1_mergedUnmapped.bam
+    output: 02_alignment/mother/mother_ACC1-LIBR_L1_mergedUnmapped_sorted.bam
+    jobid: 35
+    reason: Input files updated by another job: 02_alignment/mother/mother_ACC1-LIBR_L1_mergedUnmapped.bam
+    wildcards: sample=mother, unit=ACC1-LIBR_L1
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=4096, mem_mib=3907, cores=4, mem_gb=4, nodes=1, time=120
+
+[Wed Jun 14 22:26:16 2023]
+Finished job 24.
+16 of 86 steps (19%) done
+[Wed Jun 14 22:26:26 2023]
+Finished job 3.
+17 of 86 steps (20%) done
+Select jobs to execute...
+
+[Wed Jun 14 22:26:26 2023]
+rule SortNFix:
+    input: 02_alignment/father/father_ACC1-LIBR_L1_mergedUnmapped.bam
+    output: 02_alignment/father/father_ACC1-LIBR_L1_mergedUnmapped_sorted.bam
+    jobid: 13
+    reason: Input files updated by another job: 02_alignment/father/father_ACC1-LIBR_L1_mergedUnmapped.bam
+    wildcards: sample=father, unit=ACC1-LIBR_L1
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=4096, mem_mib=3907, cores=4, mem_gb=4, nodes=1, time=120
+
+
+[Wed Jun 14 22:26:26 2023]
+rule QC_alignment:
+    input: 02_alignment/father/father_ACC1-LIBR_L1_mergedUnmapped.bam
+    output: 02_alignment/father/QC/father_ACC1-LIBR_L1_mergedUnmapped.cov, 02_alignment/father/QC/father_ACC1-LIBR_L1_mergedUnmapped.stats
+    jobid: 2
+    reason: Input files updated by another job: 02_alignment/father/father_ACC1-LIBR_L1_mergedUnmapped.bam
+    wildcards: sample=father, unit=ACC1-LIBR_L1
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=1, mem_gb=2, nodes=1, time=120
+
+[Wed Jun 14 22:26:32 2023]
+Finished job 7.
+18 of 86 steps (21%) done
+Select jobs to execute...
+
+[Wed Jun 14 22:26:32 2023]
+rule QC_alignment:
+    input: 02_alignment/father/father_ACC1-LIBR_L2_mergedUnmapped.bam
+    output: 02_alignment/father/QC/father_ACC1-LIBR_L2_mergedUnmapped.cov, 02_alignment/father/QC/father_ACC1-LIBR_L2_mergedUnmapped.stats
+    jobid: 6
+    reason: Input files updated by another job: 02_alignment/father/father_ACC1-LIBR_L2_mergedUnmapped.bam
+    wildcards: sample=father, unit=ACC1-LIBR_L2
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=1, mem_gb=2, nodes=1, time=120
+
+
+[Wed Jun 14 22:26:32 2023]
+rule SortNFix:
+    input: 02_alignment/father/father_ACC1-LIBR_L2_mergedUnmapped.bam
+    output: 02_alignment/father/father_ACC1-LIBR_L2_mergedUnmapped_sorted.bam
+    jobid: 18
+    reason: Input files updated by another job: 02_alignment/father/father_ACC1-LIBR_L2_mergedUnmapped.bam
+    wildcards: sample=father, unit=ACC1-LIBR_L2
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=4096, mem_mib=3907, cores=4, mem_gb=4, nodes=1, time=120
+
+[Wed Jun 14 22:26:34 2023]
+Finished job 2.
+19 of 86 steps (22%) done
+[Wed Jun 14 22:26:41 2023]
+Finished job 6.
+20 of 86 steps (23%) done
+[Wed Jun 14 22:26:51 2023]
+Finished job 40.
+21 of 86 steps (24%) done
+Select jobs to execute...
+
+[Wed Jun 14 22:26:51 2023]
+rule mrk_duplicates:
+    input: 02_alignment/mother/mother_ACC2-LIBR2_L1_mergedUnmapped_sorted.bam
+    output: 02_alignment/mother/mother_ACC2-LIBR2_L1.dedub.bam, 02_alignment/mother/mother_ACC2-LIBR2_L1.dedub.matrix
+    log: logs/mrk-dub/mother/mother_ACC2-LIBR2_L1.dedub.log
+    jobid: 39
+    reason: Input files updated by another job: 02_alignment/mother/mother_ACC2-LIBR2_L1_mergedUnmapped_sorted.bam
+    wildcards: sample=mother, unit=ACC2-LIBR2_L1
+    resources: tmpdir=/tmp, mem_mb=4096, mem_mib=3907, cores=4, mem_gb=4, nodes=1, time=120
+
+[Wed Jun 14 22:27:10 2023]
+Finished job 35.
+22 of 86 steps (26%) done
+Select jobs to execute...
+
+[Wed Jun 14 22:27:10 2023]
+rule mrk_duplicates:
+    input: 02_alignment/mother/mother_ACC1-LIBR_L1_mergedUnmapped_sorted.bam
+    output: 02_alignment/mother/mother_ACC1-LIBR_L1.dedub.bam, 02_alignment/mother/mother_ACC1-LIBR_L1.dedub.matrix
+    log: logs/mrk-dub/mother/mother_ACC1-LIBR_L1.dedub.log
+    jobid: 34
+    reason: Input files updated by another job: 02_alignment/mother/mother_ACC1-LIBR_L1_mergedUnmapped_sorted.bam
+    wildcards: sample=mother, unit=ACC1-LIBR_L1
+    resources: tmpdir=/tmp, mem_mb=4096, mem_mib=3907, cores=4, mem_gb=4, nodes=1, time=120
+
+[Wed Jun 14 22:27:18 2023]
+Finished job 47.
+23 of 86 steps (27%) done
+Select jobs to execute...
+
+[Wed Jun 14 22:27:18 2023]
+rule QC_alignment:
+    input: 02_alignment/proband/proband_ACC1-LIBR_L1_mergedUnmapped.bam
+    output: 02_alignment/proband/QC/proband_ACC1-LIBR_L1_mergedUnmapped.cov, 02_alignment/proband/QC/proband_ACC1-LIBR_L1_mergedUnmapped.stats
+    jobid: 46
+    reason: Input files updated by another job: 02_alignment/proband/proband_ACC1-LIBR_L1_mergedUnmapped.bam
+    wildcards: sample=proband, unit=ACC1-LIBR_L1
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=1, mem_gb=2, nodes=1, time=120
+
+
+[Wed Jun 14 22:27:18 2023]
+rule SortNFix:
+    input: 02_alignment/proband/proband_ACC1-LIBR_L1_mergedUnmapped.bam
+    output: 02_alignment/proband/proband_ACC1-LIBR_L1_mergedUnmapped_sorted.bam
+    jobid: 57
+    reason: Input files updated by another job: 02_alignment/proband/proband_ACC1-LIBR_L1_mergedUnmapped.bam
+    wildcards: sample=proband, unit=ACC1-LIBR_L1
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=4096, mem_mib=3907, cores=4, mem_gb=4, nodes=1, time=120
+
+[Wed Jun 14 22:27:21 2023]
+Finished job 51.
+24 of 86 steps (28%) done
+Select jobs to execute...
+
+[Wed Jun 14 22:27:21 2023]
+rule QC_alignment:
+    input: 02_alignment/proband/proband_ACC2-LIBR2_L3_mergedUnmapped.bam
+    output: 02_alignment/proband/QC/proband_ACC2-LIBR2_L3_mergedUnmapped.cov, 02_alignment/proband/QC/proband_ACC2-LIBR2_L3_mergedUnmapped.stats
+    jobid: 50
+    reason: Input files updated by another job: 02_alignment/proband/proband_ACC2-LIBR2_L3_mergedUnmapped.bam
+    wildcards: sample=proband, unit=ACC2-LIBR2_L3
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=1, mem_gb=2, nodes=1, time=120
+
+
+[Wed Jun 14 22:27:21 2023]
+rule SortNFix:
+    input: 02_alignment/proband/proband_ACC2-LIBR2_L3_mergedUnmapped.bam
+    output: 02_alignment/proband/proband_ACC2-LIBR2_L3_mergedUnmapped_sorted.bam
+    jobid: 62
+    reason: Input files updated by another job: 02_alignment/proband/proband_ACC2-LIBR2_L3_mergedUnmapped.bam
+    wildcards: sample=proband, unit=ACC2-LIBR2_L3
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=4096, mem_mib=3907, cores=4, mem_gb=4, nodes=1, time=120
+
+[Wed Jun 14 22:27:27 2023]
+Finished job 46.
+25 of 86 steps (29%) done
+[Wed Jun 14 22:27:31 2023]
+Finished job 50.
+26 of 86 steps (30%) done
+[Wed Jun 14 22:27:34 2023]
+Finished job 13.
+27 of 86 steps (31%) done
+Select jobs to execute...
+
+[Wed Jun 14 22:27:34 2023]
+rule mrk_duplicates:
+    input: 02_alignment/father/father_ACC1-LIBR_L1_mergedUnmapped_sorted.bam
+    output: 02_alignment/father/father_ACC1-LIBR_L1.dedub.bam, 02_alignment/father/father_ACC1-LIBR_L1.dedub.matrix
+    log: logs/mrk-dub/father/father_ACC1-LIBR_L1.dedub.log
+    jobid: 12
+    reason: Input files updated by another job: 02_alignment/father/father_ACC1-LIBR_L1_mergedUnmapped_sorted.bam
+    wildcards: sample=father, unit=ACC1-LIBR_L1
+    resources: tmpdir=/tmp, mem_mb=4096, mem_mib=3907, cores=4, mem_gb=4, nodes=1, time=120
+
+[Wed Jun 14 22:27:43 2023]
+Error in rule SortNFix:
+    jobid: 18
+    input: 02_alignment/father/father_ACC1-LIBR_L2_mergedUnmapped.bam
+    output: 02_alignment/father/father_ACC1-LIBR_L2_mergedUnmapped_sorted.bam
+    conda-env: /home/marc/Desktop/output_new_wes_gatk3/.snakemake/conda/1c7a8fa2005ccf2c5acb6f802e7b8c70_
+    shell:
+        
+    gatk --java-options "-Xmx4G -XX:+UseParallelGC -XX:ParallelGCThreads=4"       SortSam       --INPUT 02_alignment/father/father_ACC1-LIBR_L2_mergedUnmapped.bam       --OUTPUT /dev/stdout       --SORT_ORDER "coordinate"       --CREATE_INDEX false       --CREATE_MD5_FILE false | gatk       --java-options "-Xmx4G -XX:+UseParallelGC -XX:ParallelGCThreads=4"       SetNmMdAndUqTags       --INPUT /dev/stdin       --OUTPUT 02_alignment/father/father_ACC1-LIBR_L2_mergedUnmapped_sorted.bam       --CREATE_INDEX true       --CREATE_MD5_FILE true       --REFERENCE_SEQUENCE /home/marc/Desktop/data/refs/fa/hg38/hg38.fa
+        
+        (one of the commands exited with non-zero exit code; note that snakemake uses bash strict mode!)
+
+[Wed Jun 14 22:27:54 2023]
+Error in rule mrk_duplicates:
+    jobid: 12
+    input: 02_alignment/father/father_ACC1-LIBR_L1_mergedUnmapped_sorted.bam
+    output: 02_alignment/father/father_ACC1-LIBR_L1.dedub.bam, 02_alignment/father/father_ACC1-LIBR_L1.dedub.matrix
+    log: logs/mrk-dub/father/father_ACC1-LIBR_L1.dedub.log (check log file(s) for error details)
+    conda-env: /home/marc/Desktop/output_new_wes_gatk3/.snakemake/conda/1c7a8fa2005ccf2c5acb6f802e7b8c70_
+    shell:
+        
+        picard MarkDuplicates -I 02_alignment/father/father_ACC1-LIBR_L1_mergedUnmapped_sorted.bam             -O 02_alignment/father/father_ACC1-LIBR_L1.dedub.bam             -M 02_alignment/father/father_ACC1-LIBR_L1.dedub.matrix             --VALIDATION_STRINGENCY SILENT                         --OPTICAL_DUPLICATE_PIXEL_DISTANCE 2500                         --ASSUME_SORT_ORDER "queryname"                         --CREATE_MD5_FILE true > logs/mrk-dub/father/father_ACC1-LIBR_L1.dedub.log
+        
+        (one of the commands exited with non-zero exit code; note that snakemake uses bash strict mode!)
+

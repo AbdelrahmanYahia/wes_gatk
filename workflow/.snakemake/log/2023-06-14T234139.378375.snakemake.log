@@ -1,0 +1,8 @@
+Building DAG of jobs...
+InputFunctionException in rule multiqc in file /home/marc/wes_gatk/workflow/rules/QC.smk, line 135:
+Error:
+  TypeError: 'str' object is not callable
+Wildcards:
+
+Traceback:
+  File "/home/marc/wes_gatk/workflow/rules/utils.smk", line 49, in get_final_output

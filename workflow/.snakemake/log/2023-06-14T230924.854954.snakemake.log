@@ -1,0 +1,1063 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 32
+Rules claiming more threads will be scaled down.
+Conda environments: ignored
+Job stats:
+job                       count    min threads    max threads
+----------------------  -------  -------------  -------------
+AnalyzeCovariates             6              2              2
+Annovar                       1              4              4
+BaseRecalibrator              6              4              4
+FastqToSam                    6              4              4
+HaplotypeCaller               3              4              4
+MarkIlluminaAdapters          6              4              4
+MergeSamFiles                 3              1              1
+Nirvana                       1              1              1
+QC_alignment                  6              1              1
+SortNFix                      6              4              4
+Split_variants_idnel          1              1              1
+Split_variants_snp            1              1              1
+VariantEval                   3              1              1
+all                           1              1              1
+applyBaseRecalibrator         6              1              1
+bcftools_stats                1              1              1
+bqsr_calibrated_report        6              1              1
+combine_gvcf                  1              1              1
+consequence                   1              1              1
+genotype_gvcfs                1              4              4
+mrk_duplicates                6              1              1
+multiqc                       1              1              1
+plot_bcftools_stats           1              1              1
+qualimap                      6              2              2
+ubam_align                    6              4              4
+total                        86              1              4
+
+Select jobs to execute...
+
+[Wed Jun 14 23:09:25 2023]
+rule FastqToSam:
+    input: /home/marc/Desktop/data/samples/complex_wes/mother_ACC2-LIBR2_L1_1.fq, /home/marc/Desktop/data/samples/complex_wes/mother_ACC2-LIBR2_L1_2.fq
+    output: 0_samples/mother/mother_ACC2-LIBR2_L1.ubam
+    log: logs/trimmomatic/mother/mother_ACC2-LIBR2_L1.txt
+    jobid: 31
+    benchmark: benchamrks/QC/mother/mother_ACC2-LIBR2_L1_trim.txt
+    reason: Missing output files: 0_samples/mother/mother_ACC2-LIBR2_L1.ubam
+    wildcards: sample=mother, unit=ACC2-LIBR2_L1
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=5120, mem_mib=4883, cores=4, mem_gb=5, nodes=1, time=120
+
+
+[Wed Jun 14 23:09:25 2023]
+rule FastqToSam:
+    input: /home/marc/Desktop/data/samples/complex_wes/father_ACC1-LIBR_L1_1.fq, /home/marc/Desktop/data/samples/complex_wes/father_ACC1-LIBR_L1_2.fq
+    output: 0_samples/father/father_ACC1-LIBR_L1.ubam
+    log: logs/trimmomatic/father/father_ACC1-LIBR_L1.txt
+    jobid: 5
+    benchmark: benchamrks/QC/father/father_ACC1-LIBR_L1_trim.txt
+    reason: Missing output files: 0_samples/father/father_ACC1-LIBR_L1.ubam
+    wildcards: sample=father, unit=ACC1-LIBR_L1
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=5120, mem_mib=4883, cores=4, mem_gb=5, nodes=1, time=120
+
+
+[Wed Jun 14 23:09:25 2023]
+rule FastqToSam:
+    input: /home/marc/Desktop/data/samples/complex_wes/proband_ACC2-LIBR2_L3_1.fq, /home/marc/Desktop/data/samples/complex_wes/proband_ACC2-LIBR2_L3_2.fq
+    output: 0_samples/proband/proband_ACC2-LIBR2_L3.ubam
+    log: logs/trimmomatic/proband/proband_ACC2-LIBR2_L3.txt
+    jobid: 53
+    benchmark: benchamrks/QC/proband/proband_ACC2-LIBR2_L3_trim.txt
+    reason: Missing output files: 0_samples/proband/proband_ACC2-LIBR2_L3.ubam
+    wildcards: sample=proband, unit=ACC2-LIBR2_L3
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=5120, mem_mib=4883, cores=4, mem_gb=5, nodes=1, time=120
+
+
+[Wed Jun 14 23:09:25 2023]
+rule FastqToSam:
+    input: /home/marc/Desktop/data/samples/complex_wes/mother_ACC1-LIBR_L1_1.fq, /home/marc/Desktop/data/samples/complex_wes/mother_ACC1-LIBR_L1_2.fq
+    output: 0_samples/mother/mother_ACC1-LIBR_L1.ubam
+    log: logs/trimmomatic/mother/mother_ACC1-LIBR_L1.txt
+    jobid: 27
+    benchmark: benchamrks/QC/mother/mother_ACC1-LIBR_L1_trim.txt
+    reason: Missing output files: 0_samples/mother/mother_ACC1-LIBR_L1.ubam
+    wildcards: sample=mother, unit=ACC1-LIBR_L1
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=5120, mem_mib=4883, cores=4, mem_gb=5, nodes=1, time=120
+
+
+[Wed Jun 14 23:09:25 2023]
+rule FastqToSam:
+    input: /home/marc/Desktop/data/samples/complex_wes/father_ACC1-LIBR_L2_1.fq, /home/marc/Desktop/data/samples/complex_wes/father_ACC1-LIBR_L2_2.fq
+    output: 0_samples/father/father_ACC1-LIBR_L2.ubam
+    log: logs/trimmomatic/father/father_ACC1-LIBR_L2.txt
+    jobid: 9
+    benchmark: benchamrks/QC/father/father_ACC1-LIBR_L2_trim.txt
+    reason: Missing output files: 0_samples/father/father_ACC1-LIBR_L2.ubam
+    wildcards: sample=father, unit=ACC1-LIBR_L2
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=5120, mem_mib=4883, cores=4, mem_gb=5, nodes=1, time=120
+
+
+[Wed Jun 14 23:09:25 2023]
+rule FastqToSam:
+    input: /home/marc/Desktop/data/samples/complex_wes/proband_ACC1-LIBR_L1_1.fq, /home/marc/Desktop/data/samples/complex_wes/proband_ACC1-LIBR_L1_2.fq
+    output: 0_samples/proband/proband_ACC1-LIBR_L1.ubam
+    log: logs/trimmomatic/proband/proband_ACC1-LIBR_L1.txt
+    jobid: 49
+    benchmark: benchamrks/QC/proband/proband_ACC1-LIBR_L1_trim.txt
+    reason: Missing output files: 0_samples/proband/proband_ACC1-LIBR_L1.ubam
+    wildcards: sample=proband, unit=ACC1-LIBR_L1
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=5120, mem_mib=4883, cores=4, mem_gb=5, nodes=1, time=120
+
+[Wed Jun 14 23:10:05 2023]
+Finished job 31.
+1 of 86 steps (1%) done
+Select jobs to execute...
+
+[Wed Jun 14 23:10:05 2023]
+rule MarkIlluminaAdapters:
+    input: 0_samples/mother/mother_ACC2-LIBR2_L1.ubam
+    output: 0_samples/mother/mother_ACC2-LIBR2_L1.adab.ubam, 0_samples/mother/mother_ACC2-LIBR2_L1.adap_metrics.txt
+    jobid: 30
+    reason: Missing output files: 0_samples/mother/mother_ACC2-LIBR2_L1.adab.ubam; Input files updated by another job: 0_samples/mother/mother_ACC2-LIBR2_L1.ubam
+    wildcards: sample=mother, unit=ACC2-LIBR2_L1
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=5120, mem_mib=4883, cores=4, mem_gb=5, nodes=1, time=120
+
+[Wed Jun 14 23:10:05 2023]
+Finished job 27.
+2 of 86 steps (2%) done
+Select jobs to execute...
+
+[Wed Jun 14 23:10:05 2023]
+rule MarkIlluminaAdapters:
+    input: 0_samples/mother/mother_ACC1-LIBR_L1.ubam
+    output: 0_samples/mother/mother_ACC1-LIBR_L1.adab.ubam, 0_samples/mother/mother_ACC1-LIBR_L1.adap_metrics.txt
+    jobid: 26
+    reason: Missing output files: 0_samples/mother/mother_ACC1-LIBR_L1.adab.ubam; Input files updated by another job: 0_samples/mother/mother_ACC1-LIBR_L1.ubam
+    wildcards: sample=mother, unit=ACC1-LIBR_L1
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=5120, mem_mib=4883, cores=4, mem_gb=5, nodes=1, time=120
+
+[Wed Jun 14 23:10:06 2023]
+Finished job 5.
+3 of 86 steps (3%) done
+Select jobs to execute...
+
+[Wed Jun 14 23:10:06 2023]
+rule MarkIlluminaAdapters:
+    input: 0_samples/father/father_ACC1-LIBR_L1.ubam
+    output: 0_samples/father/father_ACC1-LIBR_L1.adab.ubam, 0_samples/father/father_ACC1-LIBR_L1.adap_metrics.txt
+    jobid: 4
+    reason: Missing output files: 0_samples/father/father_ACC1-LIBR_L1.adab.ubam; Input files updated by another job: 0_samples/father/father_ACC1-LIBR_L1.ubam
+    wildcards: sample=father, unit=ACC1-LIBR_L1
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=5120, mem_mib=4883, cores=4, mem_gb=5, nodes=1, time=120
+
+[Wed Jun 14 23:10:06 2023]
+Finished job 9.
+4 of 86 steps (5%) done
+Select jobs to execute...
+
+[Wed Jun 14 23:10:06 2023]
+rule MarkIlluminaAdapters:
+    input: 0_samples/father/father_ACC1-LIBR_L2.ubam
+    output: 0_samples/father/father_ACC1-LIBR_L2.adab.ubam, 0_samples/father/father_ACC1-LIBR_L2.adap_metrics.txt
+    jobid: 8
+    reason: Missing output files: 0_samples/father/father_ACC1-LIBR_L2.adab.ubam; Input files updated by another job: 0_samples/father/father_ACC1-LIBR_L2.ubam
+    wildcards: sample=father, unit=ACC1-LIBR_L2
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=5120, mem_mib=4883, cores=4, mem_gb=5, nodes=1, time=120
+
+[Wed Jun 14 23:10:14 2023]
+Finished job 53.
+5 of 86 steps (6%) done
+Select jobs to execute...
+
+[Wed Jun 14 23:10:14 2023]
+rule MarkIlluminaAdapters:
+    input: 0_samples/proband/proband_ACC2-LIBR2_L3.ubam
+    output: 0_samples/proband/proband_ACC2-LIBR2_L3.adab.ubam, 0_samples/proband/proband_ACC2-LIBR2_L3.adap_metrics.txt
+    jobid: 52
+    reason: Missing output files: 0_samples/proband/proband_ACC2-LIBR2_L3.adab.ubam; Input files updated by another job: 0_samples/proband/proband_ACC2-LIBR2_L3.ubam
+    wildcards: sample=proband, unit=ACC2-LIBR2_L3
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=5120, mem_mib=4883, cores=4, mem_gb=5, nodes=1, time=120
+
+[Wed Jun 14 23:10:18 2023]
+Finished job 49.
+6 of 86 steps (7%) done
+Select jobs to execute...
+
+[Wed Jun 14 23:10:18 2023]
+rule MarkIlluminaAdapters:
+    input: 0_samples/proband/proband_ACC1-LIBR_L1.ubam
+    output: 0_samples/proband/proband_ACC1-LIBR_L1.adab.ubam, 0_samples/proband/proband_ACC1-LIBR_L1.adap_metrics.txt
+    jobid: 48
+    reason: Missing output files: 0_samples/proband/proband_ACC1-LIBR_L1.adab.ubam; Input files updated by another job: 0_samples/proband/proband_ACC1-LIBR_L1.ubam
+    wildcards: sample=proband, unit=ACC1-LIBR_L1
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=5120, mem_mib=4883, cores=4, mem_gb=5, nodes=1, time=120
+
+[Wed Jun 14 23:10:41 2023]
+Finished job 30.
+7 of 86 steps (8%) done
+Select jobs to execute...
+
+[Wed Jun 14 23:10:41 2023]
+rule ubam_align:
+    input: 0_samples/mother/mother_ACC2-LIBR2_L1.adab.ubam
+    output: 02_alignment/mother/mother_ACC2-LIBR2_L1_mergedUnmapped.bam
+    log: logs/bwa/mother/mother_ACC2-LIBR2_L1_gatk-bwa.log
+    jobid: 29
+    benchmark: benchamrks/mother/mother_ACC2-LIBR2_L1_gatk-bwa.txt
+    reason: Missing output files: 02_alignment/mother/mother_ACC2-LIBR2_L1_mergedUnmapped.bam; Input files updated by another job: 0_samples/mother/mother_ACC2-LIBR2_L1.adab.ubam
+    wildcards: sample=mother, unit=ACC2-LIBR2_L1
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=32768, mem_mib=31250, cores=4, mem_gb=32, nodes=1, time=120
+
+[Wed Jun 14 23:10:42 2023]
+Finished job 26.
+8 of 86 steps (9%) done
+Select jobs to execute...
+
+[Wed Jun 14 23:10:42 2023]
+rule ubam_align:
+    input: 0_samples/mother/mother_ACC1-LIBR_L1.adab.ubam
+    output: 02_alignment/mother/mother_ACC1-LIBR_L1_mergedUnmapped.bam
+    log: logs/bwa/mother/mother_ACC1-LIBR_L1_gatk-bwa.log
+    jobid: 25
+    benchmark: benchamrks/mother/mother_ACC1-LIBR_L1_gatk-bwa.txt
+    reason: Missing output files: 02_alignment/mother/mother_ACC1-LIBR_L1_mergedUnmapped.bam; Input files updated by another job: 0_samples/mother/mother_ACC1-LIBR_L1.adab.ubam
+    wildcards: sample=mother, unit=ACC1-LIBR_L1
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=32768, mem_mib=31250, cores=4, mem_gb=32, nodes=1, time=120
+
+[Wed Jun 14 23:10:47 2023]
+Finished job 8.
+9 of 86 steps (10%) done
+Select jobs to execute...
+
+[Wed Jun 14 23:10:47 2023]
+rule ubam_align:
+    input: 0_samples/father/father_ACC1-LIBR_L2.adab.ubam
+    output: 02_alignment/father/father_ACC1-LIBR_L2_mergedUnmapped.bam
+    log: logs/bwa/father/father_ACC1-LIBR_L2_gatk-bwa.log
+    jobid: 7
+    benchmark: benchamrks/father/father_ACC1-LIBR_L2_gatk-bwa.txt
+    reason: Missing output files: 02_alignment/father/father_ACC1-LIBR_L2_mergedUnmapped.bam; Input files updated by another job: 0_samples/father/father_ACC1-LIBR_L2.adab.ubam
+    wildcards: sample=father, unit=ACC1-LIBR_L2
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=32768, mem_mib=31250, cores=4, mem_gb=32, nodes=1, time=120
+
+[Wed Jun 14 23:10:48 2023]
+Finished job 4.
+10 of 86 steps (12%) done
+Select jobs to execute...
+
+[Wed Jun 14 23:10:48 2023]
+rule ubam_align:
+    input: 0_samples/father/father_ACC1-LIBR_L1.adab.ubam
+    output: 02_alignment/father/father_ACC1-LIBR_L1_mergedUnmapped.bam
+    log: logs/bwa/father/father_ACC1-LIBR_L1_gatk-bwa.log
+    jobid: 3
+    benchmark: benchamrks/father/father_ACC1-LIBR_L1_gatk-bwa.txt
+    reason: Missing output files: 02_alignment/father/father_ACC1-LIBR_L1_mergedUnmapped.bam; Input files updated by another job: 0_samples/father/father_ACC1-LIBR_L1.adab.ubam
+    wildcards: sample=father, unit=ACC1-LIBR_L1
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=32768, mem_mib=31250, cores=4, mem_gb=32, nodes=1, time=120
+
+[Wed Jun 14 23:10:59 2023]
+Finished job 48.
+11 of 86 steps (13%) done
+Select jobs to execute...
+
+[Wed Jun 14 23:10:59 2023]
+rule ubam_align:
+    input: 0_samples/proband/proband_ACC1-LIBR_L1.adab.ubam
+    output: 02_alignment/proband/proband_ACC1-LIBR_L1_mergedUnmapped.bam
+    log: logs/bwa/proband/proband_ACC1-LIBR_L1_gatk-bwa.log
+    jobid: 47
+    benchmark: benchamrks/proband/proband_ACC1-LIBR_L1_gatk-bwa.txt
+    reason: Missing output files: 02_alignment/proband/proband_ACC1-LIBR_L1_mergedUnmapped.bam; Input files updated by another job: 0_samples/proband/proband_ACC1-LIBR_L1.adab.ubam
+    wildcards: sample=proband, unit=ACC1-LIBR_L1
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=32768, mem_mib=31250, cores=4, mem_gb=32, nodes=1, time=120
+
+[Wed Jun 14 23:11:03 2023]
+Finished job 52.
+12 of 86 steps (14%) done
+Select jobs to execute...
+
+[Wed Jun 14 23:11:03 2023]
+rule ubam_align:
+    input: 0_samples/proband/proband_ACC2-LIBR2_L3.adab.ubam
+    output: 02_alignment/proband/proband_ACC2-LIBR2_L3_mergedUnmapped.bam
+    log: logs/bwa/proband/proband_ACC2-LIBR2_L3_gatk-bwa.log
+    jobid: 51
+    benchmark: benchamrks/proband/proband_ACC2-LIBR2_L3_gatk-bwa.txt
+    reason: Missing output files: 02_alignment/proband/proband_ACC2-LIBR2_L3_mergedUnmapped.bam; Input files updated by another job: 0_samples/proband/proband_ACC2-LIBR2_L3.adab.ubam
+    wildcards: sample=proband, unit=ACC2-LIBR2_L3
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=32768, mem_mib=31250, cores=4, mem_gb=32, nodes=1, time=120
+
+[Wed Jun 14 23:15:04 2023]
+Finished job 25.
+13 of 86 steps (15%) done
+Select jobs to execute...
+
+[Wed Jun 14 23:15:04 2023]
+rule SortNFix:
+    input: 02_alignment/mother/mother_ACC1-LIBR_L1_mergedUnmapped.bam
+    output: 02_alignment/mother/mother_ACC1-LIBR_L1_mergedUnmapped_sorted.bam
+    jobid: 35
+    reason: Missing output files: 02_alignment/mother/mother_ACC1-LIBR_L1_mergedUnmapped_sorted.bam; Input files updated by another job: 02_alignment/mother/mother_ACC1-LIBR_L1_mergedUnmapped.bam
+    wildcards: sample=mother, unit=ACC1-LIBR_L1
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=4096, mem_mib=3907, cores=4, mem_gb=4, nodes=1, time=120
+
+
+[Wed Jun 14 23:15:04 2023]
+rule QC_alignment:
+    input: 02_alignment/mother/mother_ACC1-LIBR_L1_mergedUnmapped.bam
+    output: 02_alignment/mother/QC/mother_ACC1-LIBR_L1_mergedUnmapped.cov, 02_alignment/mother/QC/mother_ACC1-LIBR_L1_mergedUnmapped.stats
+    jobid: 24
+    reason: Missing output files: 02_alignment/mother/QC/mother_ACC1-LIBR_L1_mergedUnmapped.cov; Input files updated by another job: 02_alignment/mother/mother_ACC1-LIBR_L1_mergedUnmapped.bam
+    wildcards: sample=mother, unit=ACC1-LIBR_L1
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=1, mem_gb=2, nodes=1, time=120
+
+[Wed Jun 14 23:15:10 2023]
+Finished job 29.
+14 of 86 steps (16%) done
+Select jobs to execute...
+
+[Wed Jun 14 23:15:10 2023]
+rule SortNFix:
+    input: 02_alignment/mother/mother_ACC2-LIBR2_L1_mergedUnmapped.bam
+    output: 02_alignment/mother/mother_ACC2-LIBR2_L1_mergedUnmapped_sorted.bam
+    jobid: 40
+    reason: Missing output files: 02_alignment/mother/mother_ACC2-LIBR2_L1_mergedUnmapped_sorted.bam; Input files updated by another job: 02_alignment/mother/mother_ACC2-LIBR2_L1_mergedUnmapped.bam
+    wildcards: sample=mother, unit=ACC2-LIBR2_L1
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=4096, mem_mib=3907, cores=4, mem_gb=4, nodes=1, time=120
+
+
+[Wed Jun 14 23:15:10 2023]
+rule QC_alignment:
+    input: 02_alignment/mother/mother_ACC2-LIBR2_L1_mergedUnmapped.bam
+    output: 02_alignment/mother/QC/mother_ACC2-LIBR2_L1_mergedUnmapped.cov, 02_alignment/mother/QC/mother_ACC2-LIBR2_L1_mergedUnmapped.stats
+    jobid: 28
+    reason: Missing output files: 02_alignment/mother/QC/mother_ACC2-LIBR2_L1_mergedUnmapped.cov; Input files updated by another job: 02_alignment/mother/mother_ACC2-LIBR2_L1_mergedUnmapped.bam
+    wildcards: sample=mother, unit=ACC2-LIBR2_L1
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=1, mem_gb=2, nodes=1, time=120
+
+[Wed Jun 14 23:15:12 2023]
+Finished job 24.
+15 of 86 steps (17%) done
+[Wed Jun 14 23:15:18 2023]
+Finished job 28.
+16 of 86 steps (19%) done
+[Wed Jun 14 23:15:23 2023]
+Finished job 3.
+17 of 86 steps (20%) done
+Select jobs to execute...
+
+[Wed Jun 14 23:15:23 2023]
+rule SortNFix:
+    input: 02_alignment/father/father_ACC1-LIBR_L1_mergedUnmapped.bam
+    output: 02_alignment/father/father_ACC1-LIBR_L1_mergedUnmapped_sorted.bam
+    jobid: 13
+    reason: Missing output files: 02_alignment/father/father_ACC1-LIBR_L1_mergedUnmapped_sorted.bam; Input files updated by another job: 02_alignment/father/father_ACC1-LIBR_L1_mergedUnmapped.bam
+    wildcards: sample=father, unit=ACC1-LIBR_L1
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=4096, mem_mib=3907, cores=4, mem_gb=4, nodes=1, time=120
+
+
+[Wed Jun 14 23:15:23 2023]
+rule QC_alignment:
+    input: 02_alignment/father/father_ACC1-LIBR_L1_mergedUnmapped.bam
+    output: 02_alignment/father/QC/father_ACC1-LIBR_L1_mergedUnmapped.cov, 02_alignment/father/QC/father_ACC1-LIBR_L1_mergedUnmapped.stats
+    jobid: 2
+    reason: Missing output files: 02_alignment/father/QC/father_ACC1-LIBR_L1_mergedUnmapped.cov; Input files updated by another job: 02_alignment/father/father_ACC1-LIBR_L1_mergedUnmapped.bam
+    wildcards: sample=father, unit=ACC1-LIBR_L1
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=1, mem_gb=2, nodes=1, time=120
+
+[Wed Jun 14 23:15:31 2023]
+Finished job 2.
+18 of 86 steps (21%) done
+[Wed Jun 14 23:15:39 2023]
+Finished job 7.
+19 of 86 steps (22%) done
+Select jobs to execute...
+
+[Wed Jun 14 23:15:39 2023]
+rule QC_alignment:
+    input: 02_alignment/father/father_ACC1-LIBR_L2_mergedUnmapped.bam
+    output: 02_alignment/father/QC/father_ACC1-LIBR_L2_mergedUnmapped.cov, 02_alignment/father/QC/father_ACC1-LIBR_L2_mergedUnmapped.stats
+    jobid: 6
+    reason: Missing output files: 02_alignment/father/QC/father_ACC1-LIBR_L2_mergedUnmapped.cov; Input files updated by another job: 02_alignment/father/father_ACC1-LIBR_L2_mergedUnmapped.bam
+    wildcards: sample=father, unit=ACC1-LIBR_L2
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=1, mem_gb=2, nodes=1, time=120
+
+
+[Wed Jun 14 23:15:39 2023]
+rule SortNFix:
+    input: 02_alignment/father/father_ACC1-LIBR_L2_mergedUnmapped.bam
+    output: 02_alignment/father/father_ACC1-LIBR_L2_mergedUnmapped_sorted.bam
+    jobid: 18
+    reason: Missing output files: 02_alignment/father/father_ACC1-LIBR_L2_mergedUnmapped_sorted.bam; Input files updated by another job: 02_alignment/father/father_ACC1-LIBR_L2_mergedUnmapped.bam
+    wildcards: sample=father, unit=ACC1-LIBR_L2
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=4096, mem_mib=3907, cores=4, mem_gb=4, nodes=1, time=120
+
+[Wed Jun 14 23:15:47 2023]
+Finished job 6.
+20 of 86 steps (23%) done
+[Wed Jun 14 23:16:10 2023]
+Finished job 35.
+21 of 86 steps (24%) done
+Select jobs to execute...
+
+[Wed Jun 14 23:16:10 2023]
+rule mrk_duplicates:
+    input: 02_alignment/mother/mother_ACC1-LIBR_L1_mergedUnmapped_sorted.bam
+    output: 02_alignment/mother/mother_ACC1-LIBR_L1.dedub.bam, 02_alignment/mother/mother_ACC1-LIBR_L1.dedub.matrix
+    log: logs/mrk-dub/mother/mother_ACC1-LIBR_L1.dedub.log
+    jobid: 34
+    reason: Missing output files: 02_alignment/mother/mother_ACC1-LIBR_L1.dedub.bam; Input files updated by another job: 02_alignment/mother/mother_ACC1-LIBR_L1_mergedUnmapped_sorted.bam
+    wildcards: sample=mother, unit=ACC1-LIBR_L1
+    resources: tmpdir=/tmp, mem_mb=4096, mem_mib=3907, cores=4, mem_gb=4, nodes=1, time=120
+
+[Wed Jun 14 23:16:12 2023]
+Finished job 40.
+22 of 86 steps (26%) done
+Select jobs to execute...
+
+[Wed Jun 14 23:16:12 2023]
+rule mrk_duplicates:
+    input: 02_alignment/mother/mother_ACC2-LIBR2_L1_mergedUnmapped_sorted.bam
+    output: 02_alignment/mother/mother_ACC2-LIBR2_L1.dedub.bam, 02_alignment/mother/mother_ACC2-LIBR2_L1.dedub.matrix
+    log: logs/mrk-dub/mother/mother_ACC2-LIBR2_L1.dedub.log
+    jobid: 39
+    reason: Missing output files: 02_alignment/mother/mother_ACC2-LIBR2_L1.dedub.bam; Input files updated by another job: 02_alignment/mother/mother_ACC2-LIBR2_L1_mergedUnmapped_sorted.bam
+    wildcards: sample=mother, unit=ACC2-LIBR2_L1
+    resources: tmpdir=/tmp, mem_mb=4096, mem_mib=3907, cores=4, mem_gb=4, nodes=1, time=120
+
+[Wed Jun 14 23:16:17 2023]
+Finished job 47.
+23 of 86 steps (27%) done
+Select jobs to execute...
+
+[Wed Jun 14 23:16:17 2023]
+rule SortNFix:
+    input: 02_alignment/proband/proband_ACC1-LIBR_L1_mergedUnmapped.bam
+    output: 02_alignment/proband/proband_ACC1-LIBR_L1_mergedUnmapped_sorted.bam
+    jobid: 57
+    reason: Missing output files: 02_alignment/proband/proband_ACC1-LIBR_L1_mergedUnmapped_sorted.bam; Input files updated by another job: 02_alignment/proband/proband_ACC1-LIBR_L1_mergedUnmapped.bam
+    wildcards: sample=proband, unit=ACC1-LIBR_L1
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=4096, mem_mib=3907, cores=4, mem_gb=4, nodes=1, time=120
+
+
+[Wed Jun 14 23:16:17 2023]
+rule QC_alignment:
+    input: 02_alignment/proband/proband_ACC1-LIBR_L1_mergedUnmapped.bam
+    output: 02_alignment/proband/QC/proband_ACC1-LIBR_L1_mergedUnmapped.cov, 02_alignment/proband/QC/proband_ACC1-LIBR_L1_mergedUnmapped.stats
+    jobid: 46
+    reason: Missing output files: 02_alignment/proband/QC/proband_ACC1-LIBR_L1_mergedUnmapped.cov; Input files updated by another job: 02_alignment/proband/proband_ACC1-LIBR_L1_mergedUnmapped.bam
+    wildcards: sample=proband, unit=ACC1-LIBR_L1
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=1, mem_gb=2, nodes=1, time=120
+
+[Wed Jun 14 23:16:18 2023]
+Finished job 51.
+24 of 86 steps (28%) done
+Select jobs to execute...
+
+[Wed Jun 14 23:16:18 2023]
+rule QC_alignment:
+    input: 02_alignment/proband/proband_ACC2-LIBR2_L3_mergedUnmapped.bam
+    output: 02_alignment/proband/QC/proband_ACC2-LIBR2_L3_mergedUnmapped.cov, 02_alignment/proband/QC/proband_ACC2-LIBR2_L3_mergedUnmapped.stats
+    jobid: 50
+    reason: Missing output files: 02_alignment/proband/QC/proband_ACC2-LIBR2_L3_mergedUnmapped.cov; Input files updated by another job: 02_alignment/proband/proband_ACC2-LIBR2_L3_mergedUnmapped.bam
+    wildcards: sample=proband, unit=ACC2-LIBR2_L3
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=1, mem_gb=2, nodes=1, time=120
+
+
+[Wed Jun 14 23:16:18 2023]
+rule SortNFix:
+    input: 02_alignment/proband/proband_ACC2-LIBR2_L3_mergedUnmapped.bam
+    output: 02_alignment/proband/proband_ACC2-LIBR2_L3_mergedUnmapped_sorted.bam
+    jobid: 62
+    reason: Missing output files: 02_alignment/proband/proband_ACC2-LIBR2_L3_mergedUnmapped_sorted.bam; Input files updated by another job: 02_alignment/proband/proband_ACC2-LIBR2_L3_mergedUnmapped.bam
+    wildcards: sample=proband, unit=ACC2-LIBR2_L3
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=4096, mem_mib=3907, cores=4, mem_gb=4, nodes=1, time=120
+
+[Wed Jun 14 23:16:21 2023]
+Finished job 46.
+25 of 86 steps (29%) done
+[Wed Jun 14 23:16:28 2023]
+Finished job 50.
+26 of 86 steps (30%) done
+[Wed Jun 14 23:16:32 2023]
+Finished job 13.
+27 of 86 steps (31%) done
+Select jobs to execute...
+
+[Wed Jun 14 23:16:32 2023]
+rule mrk_duplicates:
+    input: 02_alignment/father/father_ACC1-LIBR_L1_mergedUnmapped_sorted.bam
+    output: 02_alignment/father/father_ACC1-LIBR_L1.dedub.bam, 02_alignment/father/father_ACC1-LIBR_L1.dedub.matrix
+    log: logs/mrk-dub/father/father_ACC1-LIBR_L1.dedub.log
+    jobid: 12
+    reason: Missing output files: 02_alignment/father/father_ACC1-LIBR_L1.dedub.bam; Input files updated by another job: 02_alignment/father/father_ACC1-LIBR_L1_mergedUnmapped_sorted.bam
+    wildcards: sample=father, unit=ACC1-LIBR_L1
+    resources: tmpdir=/tmp, mem_mb=4096, mem_mib=3907, cores=4, mem_gb=4, nodes=1, time=120
+
+[Wed Jun 14 23:16:46 2023]
+Finished job 18.
+28 of 86 steps (33%) done
+Select jobs to execute...
+
+[Wed Jun 14 23:16:46 2023]
+rule mrk_duplicates:
+    input: 02_alignment/father/father_ACC1-LIBR_L2_mergedUnmapped_sorted.bam
+    output: 02_alignment/father/father_ACC1-LIBR_L2.dedub.bam, 02_alignment/father/father_ACC1-LIBR_L2.dedub.matrix
+    log: logs/mrk-dub/father/father_ACC1-LIBR_L2.dedub.log
+    jobid: 17
+    reason: Missing output files: 02_alignment/father/father_ACC1-LIBR_L2.dedub.bam; Input files updated by another job: 02_alignment/father/father_ACC1-LIBR_L2_mergedUnmapped_sorted.bam
+    wildcards: sample=father, unit=ACC1-LIBR_L2
+    resources: tmpdir=/tmp, mem_mb=4096, mem_mib=3907, cores=4, mem_gb=4, nodes=1, time=120
+
+[Wed Jun 14 23:17:20 2023]
+Finished job 34.
+29 of 86 steps (34%) done
+Select jobs to execute...
+
+[Wed Jun 14 23:17:20 2023]
+rule BaseRecalibrator:
+    input: 02_alignment/mother/mother_ACC1-LIBR_L1.dedub.bam
+    output: 03_bamPrep/mother/mother_ACC1-LIBR_L1.report
+    jobid: 36
+    benchmark: benchamrks/mother/mother_ACC1-LIBR_L1_GATK_pqsr.txt
+    reason: Missing output files: 03_bamPrep/mother/mother_ACC1-LIBR_L1.report; Input files updated by another job: 02_alignment/mother/mother_ACC1-LIBR_L1.dedub.bam
+    wildcards: sample=mother, unit=ACC1-LIBR_L1
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=4, mem_gb=2, nodes=1, time=120
+
+[Wed Jun 14 23:17:22 2023]
+Finished job 39.
+30 of 86 steps (35%) done
+Select jobs to execute...
+
+[Wed Jun 14 23:17:22 2023]
+rule BaseRecalibrator:
+    input: 02_alignment/mother/mother_ACC2-LIBR2_L1.dedub.bam
+    output: 03_bamPrep/mother/mother_ACC2-LIBR2_L1.report
+    jobid: 41
+    benchmark: benchamrks/mother/mother_ACC2-LIBR2_L1_GATK_pqsr.txt
+    reason: Missing output files: 03_bamPrep/mother/mother_ACC2-LIBR2_L1.report; Input files updated by another job: 02_alignment/mother/mother_ACC2-LIBR2_L1.dedub.bam
+    wildcards: sample=mother, unit=ACC2-LIBR2_L1
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=4, mem_gb=2, nodes=1, time=120
+
+[Wed Jun 14 23:17:24 2023]
+Finished job 57.
+31 of 86 steps (36%) done
+Select jobs to execute...
+
+[Wed Jun 14 23:17:24 2023]
+rule mrk_duplicates:
+    input: 02_alignment/proband/proband_ACC1-LIBR_L1_mergedUnmapped_sorted.bam
+    output: 02_alignment/proband/proband_ACC1-LIBR_L1.dedub.bam, 02_alignment/proband/proband_ACC1-LIBR_L1.dedub.matrix
+    log: logs/mrk-dub/proband/proband_ACC1-LIBR_L1.dedub.log
+    jobid: 56
+    reason: Missing output files: 02_alignment/proband/proband_ACC1-LIBR_L1.dedub.bam; Input files updated by another job: 02_alignment/proband/proband_ACC1-LIBR_L1_mergedUnmapped_sorted.bam
+    wildcards: sample=proband, unit=ACC1-LIBR_L1
+    resources: tmpdir=/tmp, mem_mb=4096, mem_mib=3907, cores=4, mem_gb=4, nodes=1, time=120
+
+[Wed Jun 14 23:17:34 2023]
+Finished job 62.
+32 of 86 steps (37%) done
+Select jobs to execute...
+
+[Wed Jun 14 23:17:34 2023]
+rule mrk_duplicates:
+    input: 02_alignment/proband/proband_ACC2-LIBR2_L3_mergedUnmapped_sorted.bam
+    output: 02_alignment/proband/proband_ACC2-LIBR2_L3.dedub.bam, 02_alignment/proband/proband_ACC2-LIBR2_L3.dedub.matrix
+    log: logs/mrk-dub/proband/proband_ACC2-LIBR2_L3.dedub.log
+    jobid: 61
+    reason: Missing output files: 02_alignment/proband/proband_ACC2-LIBR2_L3.dedub.bam; Input files updated by another job: 02_alignment/proband/proband_ACC2-LIBR2_L3_mergedUnmapped_sorted.bam
+    wildcards: sample=proband, unit=ACC2-LIBR2_L3
+    resources: tmpdir=/tmp, mem_mb=4096, mem_mib=3907, cores=4, mem_gb=4, nodes=1, time=120
+
+[Wed Jun 14 23:17:46 2023]
+Finished job 12.
+33 of 86 steps (38%) done
+Select jobs to execute...
+
+[Wed Jun 14 23:17:46 2023]
+rule BaseRecalibrator:
+    input: 02_alignment/father/father_ACC1-LIBR_L1.dedub.bam
+    output: 03_bamPrep/father/father_ACC1-LIBR_L1.report
+    jobid: 14
+    benchmark: benchamrks/father/father_ACC1-LIBR_L1_GATK_pqsr.txt
+    reason: Missing output files: 03_bamPrep/father/father_ACC1-LIBR_L1.report; Input files updated by another job: 02_alignment/father/father_ACC1-LIBR_L1.dedub.bam
+    wildcards: sample=father, unit=ACC1-LIBR_L1
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=4, mem_gb=2, nodes=1, time=120
+
+[Wed Jun 14 23:18:01 2023]
+Finished job 17.
+34 of 86 steps (40%) done
+Select jobs to execute...
+
+[Wed Jun 14 23:18:01 2023]
+rule BaseRecalibrator:
+    input: 02_alignment/father/father_ACC1-LIBR_L2.dedub.bam
+    output: 03_bamPrep/father/father_ACC1-LIBR_L2.report
+    jobid: 19
+    benchmark: benchamrks/father/father_ACC1-LIBR_L2_GATK_pqsr.txt
+    reason: Missing output files: 03_bamPrep/father/father_ACC1-LIBR_L2.report; Input files updated by another job: 02_alignment/father/father_ACC1-LIBR_L2.dedub.bam
+    wildcards: sample=father, unit=ACC1-LIBR_L2
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=4, mem_gb=2, nodes=1, time=120
+
+[Wed Jun 14 23:18:14 2023]
+Finished job 36.
+35 of 86 steps (41%) done
+Select jobs to execute...
+
+[Wed Jun 14 23:18:14 2023]
+rule applyBaseRecalibrator:
+    input: 02_alignment/mother/mother_ACC1-LIBR_L1.dedub.bam, 03_bamPrep/mother/mother_ACC1-LIBR_L1.report
+    output: 03_bamPrep/mother/mother_ACC1-LIBR_L1.pqsr.bam
+    jobid: 33
+    benchmark: benchamrks/mother/mother_ACC1-LIBR_L1_GATK_apply_BQSR.txt
+    reason: Missing output files: 03_bamPrep/mother/mother_ACC1-LIBR_L1.pqsr.bam; Input files updated by another job: 02_alignment/mother/mother_ACC1-LIBR_L1.dedub.bam, 03_bamPrep/mother/mother_ACC1-LIBR_L1.report
+    wildcards: sample=mother, unit=ACC1-LIBR_L1
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=4, mem_gb=2, nodes=1, time=120
+
+[Wed Jun 14 23:18:16 2023]
+Finished job 41.
+36 of 86 steps (42%) done
+Select jobs to execute...
+
+[Wed Jun 14 23:18:16 2023]
+rule applyBaseRecalibrator:
+    input: 02_alignment/mother/mother_ACC2-LIBR2_L1.dedub.bam, 03_bamPrep/mother/mother_ACC2-LIBR2_L1.report
+    output: 03_bamPrep/mother/mother_ACC2-LIBR2_L1.pqsr.bam
+    jobid: 38
+    benchmark: benchamrks/mother/mother_ACC2-LIBR2_L1_GATK_apply_BQSR.txt
+    reason: Missing output files: 03_bamPrep/mother/mother_ACC2-LIBR2_L1.pqsr.bam; Input files updated by another job: 02_alignment/mother/mother_ACC2-LIBR2_L1.dedub.bam, 03_bamPrep/mother/mother_ACC2-LIBR2_L1.report
+    wildcards: sample=mother, unit=ACC2-LIBR2_L1
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=4, mem_gb=2, nodes=1, time=120
+
+[Wed Jun 14 23:18:44 2023]
+Finished job 14.
+37 of 86 steps (43%) done
+Select jobs to execute...
+
+[Wed Jun 14 23:18:44 2023]
+rule applyBaseRecalibrator:
+    input: 02_alignment/father/father_ACC1-LIBR_L1.dedub.bam, 03_bamPrep/father/father_ACC1-LIBR_L1.report
+    output: 03_bamPrep/father/father_ACC1-LIBR_L1.pqsr.bam
+    jobid: 11
+    benchmark: benchamrks/father/father_ACC1-LIBR_L1_GATK_apply_BQSR.txt
+    reason: Missing output files: 03_bamPrep/father/father_ACC1-LIBR_L1.pqsr.bam; Input files updated by another job: 03_bamPrep/father/father_ACC1-LIBR_L1.report, 02_alignment/father/father_ACC1-LIBR_L1.dedub.bam
+    wildcards: sample=father, unit=ACC1-LIBR_L1
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=4, mem_gb=2, nodes=1, time=120
+
+[Wed Jun 14 23:18:50 2023]
+Finished job 56.
+38 of 86 steps (44%) done
+Select jobs to execute...
+
+[Wed Jun 14 23:18:50 2023]
+rule BaseRecalibrator:
+    input: 02_alignment/proband/proband_ACC1-LIBR_L1.dedub.bam
+    output: 03_bamPrep/proband/proband_ACC1-LIBR_L1.report
+    jobid: 58
+    benchmark: benchamrks/proband/proband_ACC1-LIBR_L1_GATK_pqsr.txt
+    reason: Missing output files: 03_bamPrep/proband/proband_ACC1-LIBR_L1.report; Input files updated by another job: 02_alignment/proband/proband_ACC1-LIBR_L1.dedub.bam
+    wildcards: sample=proband, unit=ACC1-LIBR_L1
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=4, mem_gb=2, nodes=1, time=120
+
+[Wed Jun 14 23:18:57 2023]
+Finished job 19.
+39 of 86 steps (45%) done
+Select jobs to execute...
+
+[Wed Jun 14 23:18:57 2023]
+rule applyBaseRecalibrator:
+    input: 02_alignment/father/father_ACC1-LIBR_L2.dedub.bam, 03_bamPrep/father/father_ACC1-LIBR_L2.report
+    output: 03_bamPrep/father/father_ACC1-LIBR_L2.pqsr.bam
+    jobid: 16
+    benchmark: benchamrks/father/father_ACC1-LIBR_L2_GATK_apply_BQSR.txt
+    reason: Missing output files: 03_bamPrep/father/father_ACC1-LIBR_L2.pqsr.bam; Input files updated by another job: 02_alignment/father/father_ACC1-LIBR_L2.dedub.bam, 03_bamPrep/father/father_ACC1-LIBR_L2.report
+    wildcards: sample=father, unit=ACC1-LIBR_L2
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=4, mem_gb=2, nodes=1, time=120
+
+[Wed Jun 14 23:19:02 2023]
+Finished job 61.
+40 of 86 steps (47%) done
+Select jobs to execute...
+
+[Wed Jun 14 23:19:02 2023]
+rule BaseRecalibrator:
+    input: 02_alignment/proband/proband_ACC2-LIBR2_L3.dedub.bam
+    output: 03_bamPrep/proband/proband_ACC2-LIBR2_L3.report
+    jobid: 63
+    benchmark: benchamrks/proband/proband_ACC2-LIBR2_L3_GATK_pqsr.txt
+    reason: Missing output files: 03_bamPrep/proband/proband_ACC2-LIBR2_L3.report; Input files updated by another job: 02_alignment/proband/proband_ACC2-LIBR2_L3.dedub.bam
+    wildcards: sample=proband, unit=ACC2-LIBR2_L3
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=4, mem_gb=2, nodes=1, time=120
+
+[Wed Jun 14 23:19:12 2023]
+Finished job 33.
+41 of 86 steps (48%) done
+Select jobs to execute...
+
+[Wed Jun 14 23:19:12 2023]
+rule bqsr_calibrated_report:
+    input: 03_bamPrep/mother/mother_ACC1-LIBR_L1.pqsr.bam
+    output: 03_bamPrep/mother/mother_ACC1-LIBR_L1_pqsr.report
+    jobid: 43
+    reason: Missing output files: 03_bamPrep/mother/mother_ACC1-LIBR_L1_pqsr.report; Input files updated by another job: 03_bamPrep/mother/mother_ACC1-LIBR_L1.pqsr.bam
+    wildcards: sample=mother, unit=ACC1-LIBR_L1
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=4, mem_gb=2, nodes=1, time=120
+
+
+[Wed Jun 14 23:19:12 2023]
+rule qualimap:
+    input: 03_bamPrep/mother/mother_ACC1-LIBR_L1.pqsr.bam
+    output: 03_bamPrep/mother/QC/mother_ACC1-LIBR_L1_Qualimap
+    jobid: 32
+    reason: Missing output files: 03_bamPrep/mother/QC/mother_ACC1-LIBR_L1_Qualimap; Input files updated by another job: 03_bamPrep/mother/mother_ACC1-LIBR_L1.pqsr.bam
+    wildcards: sample=mother, unit=ACC1-LIBR_L1
+    threads: 2
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=2, mem_gb=2, nodes=1, time=120
+
+[Wed Jun 14 23:19:21 2023]
+Finished job 38.
+42 of 86 steps (49%) done
+Select jobs to execute...
+
+[Wed Jun 14 23:19:21 2023]
+rule MergeSamFiles:
+    input: 03_bamPrep/mother/mother_ACC1-LIBR_L1.pqsr.bam, 03_bamPrep/mother/mother_ACC2-LIBR2_L1.pqsr.bam
+    output: 03_bamPrep/merged_bams/mother.pqsr.bam
+    jobid: 75
+    reason: Missing output files: 03_bamPrep/merged_bams/mother.pqsr.bam; Input files updated by another job: 03_bamPrep/mother/mother_ACC2-LIBR2_L1.pqsr.bam, 03_bamPrep/mother/mother_ACC1-LIBR_L1.pqsr.bam
+    wildcards: sample=mother
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=1, mem_gb=2, nodes=1, time=120
+
+
+[Wed Jun 14 23:19:21 2023]
+rule qualimap:
+    input: 03_bamPrep/mother/mother_ACC2-LIBR2_L1.pqsr.bam
+    output: 03_bamPrep/mother/QC/mother_ACC2-LIBR2_L1_Qualimap
+    jobid: 37
+    reason: Missing output files: 03_bamPrep/mother/QC/mother_ACC2-LIBR2_L1_Qualimap; Input files updated by another job: 03_bamPrep/mother/mother_ACC2-LIBR2_L1.pqsr.bam
+    wildcards: sample=mother, unit=ACC2-LIBR2_L1
+    threads: 2
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=2, mem_gb=2, nodes=1, time=120
+
+
+[Wed Jun 14 23:19:21 2023]
+rule bqsr_calibrated_report:
+    input: 03_bamPrep/mother/mother_ACC2-LIBR2_L1.pqsr.bam
+    output: 03_bamPrep/mother/mother_ACC2-LIBR2_L1_pqsr.report
+    jobid: 45
+    reason: Missing output files: 03_bamPrep/mother/mother_ACC2-LIBR2_L1_pqsr.report; Input files updated by another job: 03_bamPrep/mother/mother_ACC2-LIBR2_L1.pqsr.bam
+    wildcards: sample=mother, unit=ACC2-LIBR2_L1
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=4, mem_gb=2, nodes=1, time=120
+
+[Wed Jun 14 23:19:56 2023]
+Finished job 32.
+43 of 86 steps (50%) done
+[Wed Jun 14 23:20:01 2023]
+Finished job 11.
+44 of 86 steps (51%) done
+Select jobs to execute...
+
+[Wed Jun 14 23:20:01 2023]
+rule qualimap:
+    input: 03_bamPrep/father/father_ACC1-LIBR_L1.pqsr.bam
+    output: 03_bamPrep/father/QC/father_ACC1-LIBR_L1_Qualimap
+    jobid: 10
+    reason: Missing output files: 03_bamPrep/father/QC/father_ACC1-LIBR_L1_Qualimap; Input files updated by another job: 03_bamPrep/father/father_ACC1-LIBR_L1.pqsr.bam
+    wildcards: sample=father, unit=ACC1-LIBR_L1
+    threads: 2
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=2, mem_gb=2, nodes=1, time=120
+
+
+[Wed Jun 14 23:20:01 2023]
+rule bqsr_calibrated_report:
+    input: 03_bamPrep/father/father_ACC1-LIBR_L1.pqsr.bam
+    output: 03_bamPrep/father/father_ACC1-LIBR_L1_pqsr.report
+    jobid: 21
+    reason: Missing output files: 03_bamPrep/father/father_ACC1-LIBR_L1_pqsr.report; Input files updated by another job: 03_bamPrep/father/father_ACC1-LIBR_L1.pqsr.bam
+    wildcards: sample=father, unit=ACC1-LIBR_L1
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=4, mem_gb=2, nodes=1, time=120
+
+[Wed Jun 14 23:20:01 2023]
+Finished job 58.
+45 of 86 steps (52%) done
+Select jobs to execute...
+
+[Wed Jun 14 23:20:01 2023]
+rule applyBaseRecalibrator:
+    input: 02_alignment/proband/proband_ACC1-LIBR_L1.dedub.bam, 03_bamPrep/proband/proband_ACC1-LIBR_L1.report
+    output: 03_bamPrep/proband/proband_ACC1-LIBR_L1.pqsr.bam
+    jobid: 55
+    benchmark: benchamrks/proband/proband_ACC1-LIBR_L1_GATK_apply_BQSR.txt
+    reason: Missing output files: 03_bamPrep/proband/proband_ACC1-LIBR_L1.pqsr.bam; Input files updated by another job: 02_alignment/proband/proband_ACC1-LIBR_L1.dedub.bam, 03_bamPrep/proband/proband_ACC1-LIBR_L1.report
+    wildcards: sample=proband, unit=ACC1-LIBR_L1
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=4, mem_gb=2, nodes=1, time=120
+
+[Wed Jun 14 23:20:07 2023]
+Finished job 37.
+46 of 86 steps (53%) done
+[Wed Jun 14 23:20:14 2023]
+Finished job 16.
+47 of 86 steps (55%) done
+Select jobs to execute...
+
+[Wed Jun 14 23:20:14 2023]
+rule bqsr_calibrated_report:
+    input: 03_bamPrep/father/father_ACC1-LIBR_L2.pqsr.bam
+    output: 03_bamPrep/father/father_ACC1-LIBR_L2_pqsr.report
+    jobid: 23
+    reason: Missing output files: 03_bamPrep/father/father_ACC1-LIBR_L2_pqsr.report; Input files updated by another job: 03_bamPrep/father/father_ACC1-LIBR_L2.pqsr.bam
+    wildcards: sample=father, unit=ACC1-LIBR_L2
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=4, mem_gb=2, nodes=1, time=120
+
+
+[Wed Jun 14 23:20:14 2023]
+rule MergeSamFiles:
+    input: 03_bamPrep/father/father_ACC1-LIBR_L1.pqsr.bam, 03_bamPrep/father/father_ACC1-LIBR_L2.pqsr.bam
+    output: 03_bamPrep/merged_bams/father.pqsr.bam
+    jobid: 73
+    reason: Missing output files: 03_bamPrep/merged_bams/father.pqsr.bam; Input files updated by another job: 03_bamPrep/father/father_ACC1-LIBR_L1.pqsr.bam, 03_bamPrep/father/father_ACC1-LIBR_L2.pqsr.bam
+    wildcards: sample=father
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=1, mem_gb=2, nodes=1, time=120
+
+
+[Wed Jun 14 23:20:14 2023]
+rule qualimap:
+    input: 03_bamPrep/father/father_ACC1-LIBR_L2.pqsr.bam
+    output: 03_bamPrep/father/QC/father_ACC1-LIBR_L2_Qualimap
+    jobid: 15
+    reason: Missing output files: 03_bamPrep/father/QC/father_ACC1-LIBR_L2_Qualimap; Input files updated by another job: 03_bamPrep/father/father_ACC1-LIBR_L2.pqsr.bam
+    wildcards: sample=father, unit=ACC1-LIBR_L2
+    threads: 2
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=2, mem_gb=2, nodes=1, time=120
+
+[Wed Jun 14 23:20:16 2023]
+Finished job 63.
+48 of 86 steps (56%) done
+Select jobs to execute...
+
+[Wed Jun 14 23:20:16 2023]
+rule applyBaseRecalibrator:
+    input: 02_alignment/proband/proband_ACC2-LIBR2_L3.dedub.bam, 03_bamPrep/proband/proband_ACC2-LIBR2_L3.report
+    output: 03_bamPrep/proband/proband_ACC2-LIBR2_L3.pqsr.bam
+    jobid: 60
+    benchmark: benchamrks/proband/proband_ACC2-LIBR2_L3_GATK_apply_BQSR.txt
+    reason: Missing output files: 03_bamPrep/proband/proband_ACC2-LIBR2_L3.pqsr.bam; Input files updated by another job: 02_alignment/proband/proband_ACC2-LIBR2_L3.dedub.bam, 03_bamPrep/proband/proband_ACC2-LIBR2_L3.report
+    wildcards: sample=proband, unit=ACC2-LIBR2_L3
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=4, mem_gb=2, nodes=1, time=120
+
+[Wed Jun 14 23:20:17 2023]
+Finished job 43.
+49 of 86 steps (57%) done
+Select jobs to execute...
+
+[Wed Jun 14 23:20:17 2023]
+rule AnalyzeCovariates:
+    input: 03_bamPrep/mother/mother_ACC1-LIBR_L1.report, 03_bamPrep/mother/mother_ACC1-LIBR_L1_pqsr.report
+    output: 03_bamPrep/mother/QC/mother_ACC1-LIBR_L1.pdf
+    jobid: 42
+    reason: Missing output files: 03_bamPrep/mother/QC/mother_ACC1-LIBR_L1.pdf; Input files updated by another job: 03_bamPrep/mother/mother_ACC1-LIBR_L1_pqsr.report, 03_bamPrep/mother/mother_ACC1-LIBR_L1.report
+    wildcards: sample=mother, unit=ACC1-LIBR_L1
+    threads: 2
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=2, mem_gb=2, nodes=1, time=120
+
+[Wed Jun 14 23:20:25 2023]
+Finished job 45.
+50 of 86 steps (58%) done
+Select jobs to execute...
+
+[Wed Jun 14 23:20:25 2023]
+rule AnalyzeCovariates:
+    input: 03_bamPrep/mother/mother_ACC2-LIBR2_L1.report, 03_bamPrep/mother/mother_ACC2-LIBR2_L1_pqsr.report
+    output: 03_bamPrep/mother/QC/mother_ACC2-LIBR2_L1.pdf
+    jobid: 44
+    reason: Missing output files: 03_bamPrep/mother/QC/mother_ACC2-LIBR2_L1.pdf; Input files updated by another job: 03_bamPrep/mother/mother_ACC2-LIBR2_L1_pqsr.report, 03_bamPrep/mother/mother_ACC2-LIBR2_L1.report
+    wildcards: sample=mother, unit=ACC2-LIBR2_L1
+    threads: 2
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=2, mem_gb=2, nodes=1, time=120
+
+[Wed Jun 14 23:20:28 2023]
+Finished job 42.
+51 of 86 steps (59%) done
+[Wed Jun 14 23:20:35 2023]
+Finished job 44.
+52 of 86 steps (60%) done
+[Wed Jun 14 23:20:49 2023]
+Finished job 10.
+53 of 86 steps (62%) done
+[Wed Jun 14 23:21:03 2023]
+Finished job 15.
+54 of 86 steps (63%) done
+[Wed Jun 14 23:21:12 2023]
+Finished job 21.
+55 of 86 steps (64%) done
+Select jobs to execute...
+
+[Wed Jun 14 23:21:12 2023]
+rule AnalyzeCovariates:
+    input: 03_bamPrep/father/father_ACC1-LIBR_L1.report, 03_bamPrep/father/father_ACC1-LIBR_L1_pqsr.report
+    output: 03_bamPrep/father/QC/father_ACC1-LIBR_L1.pdf
+    jobid: 20
+    reason: Missing output files: 03_bamPrep/father/QC/father_ACC1-LIBR_L1.pdf; Input files updated by another job: 03_bamPrep/father/father_ACC1-LIBR_L1.report, 03_bamPrep/father/father_ACC1-LIBR_L1_pqsr.report
+    wildcards: sample=father, unit=ACC1-LIBR_L1
+    threads: 2
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=2, mem_gb=2, nodes=1, time=120
+
+[Wed Jun 14 23:21:20 2023]
+Finished job 20.
+56 of 86 steps (65%) done
+[Wed Jun 14 23:21:20 2023]
+Finished job 23.
+57 of 86 steps (66%) done
+Select jobs to execute...
+
+[Wed Jun 14 23:21:20 2023]
+rule AnalyzeCovariates:
+    input: 03_bamPrep/father/father_ACC1-LIBR_L2.report, 03_bamPrep/father/father_ACC1-LIBR_L2_pqsr.report
+    output: 03_bamPrep/father/QC/father_ACC1-LIBR_L2.pdf
+    jobid: 22
+    reason: Missing output files: 03_bamPrep/father/QC/father_ACC1-LIBR_L2.pdf; Input files updated by another job: 03_bamPrep/father/father_ACC1-LIBR_L2.report, 03_bamPrep/father/father_ACC1-LIBR_L2_pqsr.report
+    wildcards: sample=father, unit=ACC1-LIBR_L2
+    threads: 2
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=2, mem_gb=2, nodes=1, time=120
+
+[Wed Jun 14 23:21:27 2023]
+Finished job 22.
+58 of 86 steps (67%) done
+[Wed Jun 14 23:21:33 2023]
+Finished job 55.
+59 of 86 steps (69%) done
+Select jobs to execute...
+
+[Wed Jun 14 23:21:33 2023]
+rule qualimap:
+    input: 03_bamPrep/proband/proband_ACC1-LIBR_L1.pqsr.bam
+    output: 03_bamPrep/proband/QC/proband_ACC1-LIBR_L1_Qualimap
+    jobid: 54
+    reason: Missing output files: 03_bamPrep/proband/QC/proband_ACC1-LIBR_L1_Qualimap; Input files updated by another job: 03_bamPrep/proband/proband_ACC1-LIBR_L1.pqsr.bam
+    wildcards: sample=proband, unit=ACC1-LIBR_L1
+    threads: 2
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=2, mem_gb=2, nodes=1, time=120
+
+
+[Wed Jun 14 23:21:33 2023]
+rule bqsr_calibrated_report:
+    input: 03_bamPrep/proband/proband_ACC1-LIBR_L1.pqsr.bam
+    output: 03_bamPrep/proband/proband_ACC1-LIBR_L1_pqsr.report
+    jobid: 65
+    reason: Missing output files: 03_bamPrep/proband/proband_ACC1-LIBR_L1_pqsr.report; Input files updated by another job: 03_bamPrep/proband/proband_ACC1-LIBR_L1.pqsr.bam
+    wildcards: sample=proband, unit=ACC1-LIBR_L1
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=4, mem_gb=2, nodes=1, time=120
+
+[Wed Jun 14 23:21:49 2023]
+Finished job 60.
+60 of 86 steps (70%) done
+Select jobs to execute...
+
+[Wed Jun 14 23:21:49 2023]
+rule qualimap:
+    input: 03_bamPrep/proband/proband_ACC2-LIBR2_L3.pqsr.bam
+    output: 03_bamPrep/proband/QC/proband_ACC2-LIBR2_L3_Qualimap
+    jobid: 59
+    reason: Missing output files: 03_bamPrep/proband/QC/proband_ACC2-LIBR2_L3_Qualimap; Input files updated by another job: 03_bamPrep/proband/proband_ACC2-LIBR2_L3.pqsr.bam
+    wildcards: sample=proband, unit=ACC2-LIBR2_L3
+    threads: 2
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=2, mem_gb=2, nodes=1, time=120
+
+
+[Wed Jun 14 23:21:49 2023]
+rule bqsr_calibrated_report:
+    input: 03_bamPrep/proband/proband_ACC2-LIBR2_L3.pqsr.bam
+    output: 03_bamPrep/proband/proband_ACC2-LIBR2_L3_pqsr.report
+    jobid: 67
+    reason: Missing output files: 03_bamPrep/proband/proband_ACC2-LIBR2_L3_pqsr.report; Input files updated by another job: 03_bamPrep/proband/proband_ACC2-LIBR2_L3.pqsr.bam
+    wildcards: sample=proband, unit=ACC2-LIBR2_L3
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=4, mem_gb=2, nodes=1, time=120
+
+
+[Wed Jun 14 23:21:49 2023]
+rule MergeSamFiles:
+    input: 03_bamPrep/proband/proband_ACC1-LIBR_L1.pqsr.bam, 03_bamPrep/proband/proband_ACC2-LIBR2_L3.pqsr.bam
+    output: 03_bamPrep/merged_bams/proband.pqsr.bam
+    jobid: 77
+    reason: Missing output files: 03_bamPrep/merged_bams/proband.pqsr.bam; Input files updated by another job: 03_bamPrep/proband/proband_ACC1-LIBR_L1.pqsr.bam, 03_bamPrep/proband/proband_ACC2-LIBR2_L3.pqsr.bam
+    wildcards: sample=proband
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=1, mem_gb=2, nodes=1, time=120
+
+[Wed Jun 14 23:21:59 2023]
+Finished job 75.
+61 of 86 steps (71%) done
+Select jobs to execute...
+
+[Wed Jun 14 23:21:59 2023]
+rule HaplotypeCaller:
+    input: 03_bamPrep/merged_bams/mother.pqsr.bam
+    output: 04_calling/mother_raw.gvcf.gz
+    jobid: 74
+    reason: Missing output files: 04_calling/mother_raw.gvcf.gz; Input files updated by another job: 03_bamPrep/merged_bams/mother.pqsr.bam
+    wildcards: sample=mother
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=8192, mem_mib=7813, cores=4, mem_gb=8, nodes=1, time=120
+
+[Wed Jun 14 23:22:02 2023]
+Error in rule HaplotypeCaller:
+    jobid: 74
+    input: 03_bamPrep/merged_bams/mother.pqsr.bam
+    output: 04_calling/mother_raw.gvcf.gz
+    conda-env: /home/marc/Desktop/output_new_wes_gatk/.snakemake/conda/85fefb7173d4d7ca43c40188cac58258_
+    shell:
+        
+        gatk --java-options "-Xmx8G -XX:+UseParallelGC -XX:ParallelGCThreads=4"             HaplotypeCaller -R /home/marc/Desktop/data/refs/fa/hg38/hg38.fa             -G StandardAnnotation -G StandardHCAnnotation             -G AS_StandardAnnotation 
+            -L /home/marc/Desktop/data/refs/BED/Twist_Exome_Core_Covered_Targets_hg38.bed             -I 03_bamPrep/merged_bams/mother.pqsr.bam --native-pair-hmm-threads 4 -ERC GVCF -O 04_calling/mother_raw.gvcf.gz
+        
+        (one of the commands exited with non-zero exit code; note that snakemake uses bash strict mode!)
+
+[Wed Jun 14 23:22:19 2023]
+Finished job 54.
+62 of 86 steps (72%) done
+[Wed Jun 14 23:22:36 2023]
+Finished job 59.
+63 of 86 steps (73%) done
+[Wed Jun 14 23:22:41 2023]
+Finished job 65.
+64 of 86 steps (74%) done
+[Wed Jun 14 23:22:52 2023]
+Finished job 67.
+65 of 86 steps (76%) done
+[Wed Jun 14 23:23:04 2023]
+Finished job 73.
+66 of 86 steps (77%) done
+[Wed Jun 14 23:24:49 2023]
+Finished job 77.
+67 of 86 steps (78%) done
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: ../../wes_gatk/workflow/.snakemake/log/2023-06-14T230924.854954.snakemake.log

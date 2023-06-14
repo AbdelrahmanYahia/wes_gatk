@@ -1,17 +1,4 @@
 
-## TODO: add gatk best practice args:
-#           -R ~{ref_fasta} \
-#           -I ~{input_bam} \
-#           -L ~{interval_list} \
-#           -O ~{output_filename} \
-#           -contamination ~{default="0" contamination} \
-#           -G StandardAnnotation -G StandardHCAnnotation ~{true="-G AS_StandardAnnotation" false="" make_gvcf} \
-#           -GQB 10 -GQB 20 -GQB 30 -GQB 40 -GQB 50 -GQB 60 -GQB 70 -GQB 80 -GQB 90 \
-#           ~{true="-ERC GVCF" false="" make_gvcf} \
-#           ~{if defined(gcs_project_for_requester_pays) then "--gcs-project-for-requester-pays ~{gcs_project_for_requester_pays}" else ""} \
-#           ~{bamout_arg}
-
-## TODO: update 
 rule HaplotypeCaller:
     input: "03_bamPrep/merged_bams/{sample}.pqsr.bam"
     
@@ -37,14 +24,12 @@ rule HaplotypeCaller:
             HaplotypeCaller -R {params.ref} \
             -G StandardAnnotation -G StandardHCAnnotation \
             -G AS_StandardAnnotation \
-
+            -GQB 10 -GQB 20 -GQB 30 -GQB 40 -GQB 50 -GQB 60 -GQB 70 -GQB 80 -GQB 90 \
             -L {params.bed} \
             -I {input} --native-pair-hmm-threads {threads} -ERC GVCF -O {output}
         """
 
-## TODO: merging samples lanes and libraries?
-## TODO: Genotype each sample individualy?
-
+# same as GenomicsDBImport
 rule combine_gvcf:
     input:
         gvcfs=get_gvcf
@@ -66,10 +51,13 @@ rule combine_gvcf:
         time = lambda wildcards, attempt: 60 * 2 * attempt
     shell:
         """
+        echo "{params.gvcfs}"
         gatk --java-options '-DGATK_STACKTRACE_ON_USER_EXCEPTION=true' \
             CombineGVCFs \
             -R {params.ref} \
             {params.gvcfs} \
+            -G StandardAnnotation -G AS_StandardAnnotation \
+            --allow-old-rms-mapping-quality-annotation-data \
             -O {output}
         """
 

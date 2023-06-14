@@ -1,0 +1,5 @@
+WorkflowError in file /home/marc/wes_gatk/workflow/rules/common.smk, line 71:
+Failed to open source file /home/marc/wes_gatk/workflow/rules/alignment.smk
+FileNotFoundError: [Errno 2] No such file or directory: '/home/marc/wes_gatk/workflow/rules/alignment.smk'
+  File "/home/marc/wes_gatk/workflow/Snakefile", line 7, in <module>
+  File "/home/marc/wes_gatk/workflow/rules/common.smk", line 71, in <module>

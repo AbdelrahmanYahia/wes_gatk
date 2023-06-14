@@ -344,5 +344,17 @@ CODE
 ###    File output_vcf_index = "~{merged_vcf_filename + output_index_suffix}"
 
 
+########
+## validate vcfs
+
+    ~{gatk_path} --java-options "-Xmx~{command_mem_gb}G ~{java_opt}" \
+      ValidateVariants \
+      -R ~{ref_fasta} \
+      -V ~{input_vcf} \
+      -L ~{interval} \
+      -gvcf ~{gvcf_mode} \
+      --disable-sequence-dictionary-validation ~{skip_seq_dict} 
+
+  File report = stdout()
 
 ######################### END ########################

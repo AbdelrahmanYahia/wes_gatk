@@ -34,21 +34,23 @@ def get_final_output(wildcards):
                 unit=units.loc[i, "unit"].tolist()
         ))
     
-    final_output.extend(
-        [
-            "04_calling/QC/bcftools.stats",
-            "04_calling/QC/bcftools_plots",
-            "04_calling/QC/bcftools_csq.vcf",
-            "04_calling/snvs/variants_genotyped.gvcf.gz",
-            "04_calling/indels/variants_genotyped.gvcf.gz",
-            "05_Annotation/Nirvana/Annotation.json.gz",
-            "05_Annotation/ANNOVAR"
-        ]
-    )
     final_output.extend(expand(
         "04_calling/QC/{sample}.eval.grp",
             sample = samples_IDs
     ))
+    final_output.extend(expand(
+            "04_calling/QC/{type}/bcftools_plots",
+            type = ["snvs", "indels"]
+    ))
+    final_output.extend(expand(
+            "05_Annotation/ANNOVAR/{type}",
+            type = ["snvs", "indels"]
+    ))
+    final_output.extend(expand(
+            "05_Annotation/Nirvana/{type}/Annotation.json.gz",
+            type = ["snvs", "indels"]
+    ))
+
 
     return final_output
 

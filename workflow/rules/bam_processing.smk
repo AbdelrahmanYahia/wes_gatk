@@ -139,6 +139,7 @@ rule BaseRecalibrator:
             BaseRecalibrator \
             -R {params.ref} \
             -I {input} \
+            --use-original-qualities \
             --known-sites {params.known_sites} \
             -O {output} 
         """
@@ -164,11 +165,16 @@ rule applyBaseRecalibrator:
         ref = ref_fasta
     shell:
         """
-        gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" ApplyBQSR  -R {params.ref} \
+        gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
+            ApplyBQSR  -R {params.ref} \
             -I {input.bam} --emit-original-quals \
             -bqsr {input.report} -O {output} \
-            --add-output-sam-program-record
+            --static-quantized-quals 10 --static-quantized-quals 20 --static-quantized-quals 30 \
+            --add-output-sam-program-record \
+            --create-output-bam-md5 \
+            --use-original-qualities
         """
+
 
 rule bqsr_calibrated_report:
     input: "03_bamPrep/{sample}/{sample}_{unit}.pqsr.bam"

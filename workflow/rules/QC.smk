@@ -1,8 +1,8 @@
 
 rule trimmomatic:
     input:
-        R1 = f"{samples_dir}/{{sample}}_{{unit}}_1.fq.gz",
-        R2 = f"{samples_dir}/{{sample}}_{{unit}}_2.fq.gz"
+        R1 = f"{samples_dir}/{{sample}}_{{unit}}_1.{EXT}",
+        R2 = f"{samples_dir}/{{sample}}_{{unit}}_2.{EXT}"
     
     conda: "../env/wes_gatk.yml"
 

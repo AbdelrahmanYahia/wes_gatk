@@ -1,0 +1,20 @@
+Building DAG of jobs...
+Your conda installation is not configured to use strict channel priorities. This is however crucial for having robust and correct environments (for details, see https://conda-forge.org/docs/user/tipsandtricks.html). Please consider to configure strict priorities by executing 'conda config --set channel_priority strict'.
+Creating conda environment /home/marc/wes_gatk/workflow/rules/../env/wes_gatk.yml...
+Downloading and installing remote packages.
+CreateCondaEnvironmentException:
+Could not create conda environment from /home/marc/wes_gatk/workflow/rules/../env/wes_gatk.yml:
+Command:
+mamba env create --quiet --file "/home/marc/Desktop/output_new_wes_gatk/.snakemake/conda/85fefb7173d4d7ca43c40188cac58258_.yaml" --prefix "/home/marc/Desktop/output_new_wes_gatk/.snakemake/conda/85fefb7173d4d7ca43c40188cac58258_"
+Output:
+Traceback (most recent call last):
+  File "/home/marc/miniconda3/condabin/mamba", line 7, in <module>
+    from mamba.mamba import main
+  File "/home/marc/miniconda3/lib/python3.10/site-packages/mamba/mamba.py", line 49, in <module>
+    import libmambapy as api
+  File "/home/marc/miniconda3/lib/python3.10/site-packages/libmambapy/__init__.py", line 7, in <module>
+    raise e
+  File "/home/marc/miniconda3/lib/python3.10/site-packages/libmambapy/__init__.py", line 4, in <module>
+    from libmambapy.bindings import *  # noqa: F401,F403
+ImportError: /home/marc/miniconda3/lib/python3.10/site-packages/libmambapy/../../../libmamba.so.2: undefined symbol: archive_write_add_filter_zstd
+

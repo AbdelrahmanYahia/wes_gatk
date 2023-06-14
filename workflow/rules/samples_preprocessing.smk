@@ -1,8 +1,8 @@
 
 rule FastqToSam:
     input:
-        R1 = f"{samples_dir}/{{sample}}_{{unit}}_1.fq.gz",
-        R2 = f"{samples_dir}/{{sample}}_{{unit}}_2.fq.gz"
+        R1 = f"{samples_dir}/{{sample}}_{{unit}}_1.{EXT}",
+        R2 = f"{samples_dir}/{{sample}}_{{unit}}_2.{EXT}"
     
     conda: "../env/wes_gatk.yml"
 
@@ -16,7 +16,8 @@ rule FastqToSam:
         size = 4,
         quality = 10,
         extra = '',
-        minlen = 50
+        minlen = 50,
+        ext = EXT
 
     resources:
         mem_mb=5120,
@@ -28,19 +29,23 @@ rule FastqToSam:
         "logs/trimmomatic/{sample}/{sample}_{unit}.txt"
     shell:
         '''
+        ext={params.ext}
         R1={input.R1}
+        echo "R1 $R1"
         SM={wildcards.sample}
+        echo "SM $SM"
         PL="Illumina"
         LB="{wildcards.sample}_{wildcards.unit}"
-        name=$(basename $R1 | cut -d'_' -f1)
-        RGID=$(zcat $R1 | head -n1 | sed 's/:/_/g' |cut -d "_" -f1,2,3,4)
+        echo "LB $LB"      
+        if [[ $ext == *.gz ]]; then
+            RGID=$(zcat {input.R1} | head -n1 | sed 's/:/_/g' |cut -d "_" -f1,2,3,4)
+        else
+            RGID=$(head {input.R1} -n1 | sed 's/:/_/g' |cut -d "_" -f1,2,3,4)
+        fi
+        echo "RGID $RGID"
         PU=$RGID.$LB 
+        echo "PU $PU" 
 
-        echo -e "Using names:"
-        echo -e "SM $SM:"
-        echo -e "LB $LB:"
-        echo -e "RGID $RGID:"
-        echo -e "PU $RGID.$LB "
 
 
         gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \

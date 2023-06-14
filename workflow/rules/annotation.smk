@@ -1,10 +1,10 @@
 
 rule consequence:
-    input: "04_calling/variants_genotyped.gvcf.gz"
+    input: "04_calling/{type}/variants_genotyped.gvcf.gz"
     
     conda: "../env/wes_gatk.yml"
 
-    output: "04_calling/QC/bcftools_csq.vcf"
+    output: "04_calling/QC/{type}/bcftools_csq.vcf"
     threads: 1
     resources:
         mem_mb=2048,
@@ -22,15 +22,14 @@ rule consequence:
         bcftools csq -f {params.ref} -g {params.gff} {input} -Ov -o {output}
         """
 
-
 rule Nirvana:
     input:
-        "04_calling/variants_genotyped.gvcf.gz"
+        "04_calling/{type}/variants_genotyped.gvcf.gz"
     
     conda: "../env/wes_gatk.yml"
 
     output:
-        "05_Annotation/Nirvana/Annotation.json.gz"
+        "05_Annotation/Nirvana/{type}/Annotation.json.gz"
     threads: 1
     resources:
         mem_mb=8192,
@@ -57,12 +56,12 @@ rule Nirvana:
 
 rule Annovar:
     input:
-        "04_calling/variants_genotyped.gvcf.gz"
+        "04_calling/{type}/variants_genotyped.gvcf.gz"
     
     conda: "../env/wes_gatk.yml"
 
     output:
-        directory("05_Annotation/ANNOVAR")
+        directory("05_Annotation/ANNOVAR/{type}")
     threads: 4
     resources:
         mem_mb=8192,
@@ -74,7 +73,7 @@ rule Annovar:
         annovar_dir = annovar_dir,
         protocol = config["annovar_protocol"],
         operation = config["annovar_operation"],
-        output = "05_Annotation/ANNOVAR/annotations"
+        output = "05_Annotation/ANNOVAR/{type}/annotations"
 
     shell:
         """

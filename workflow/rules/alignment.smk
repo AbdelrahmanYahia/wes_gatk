@@ -152,8 +152,8 @@ rule ubam_align:
             -I {input.bam} \
             --FASTQ /dev/stdout \
             --CLIPPING_ATTRIBUTE XT --CLIPPING_ACTION 2 \
-            --INTERLEAVE true -NON_PF true | bwa mem \
-            -M -t {threads} -p {params.index} /dev/stdin | gatk \
+            --INTERLEAVE true -NON_PF true | bwa mem -K 100000000 \
+            -M -v 3 -t {threads} -p {params.index} /dev/stdin | gatk \
             --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
             MergeBamAlignment \
             --ALIGNED_BAM /dev/stdin \
