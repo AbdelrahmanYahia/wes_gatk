@@ -1,0 +1,45 @@
+Building DAG of jobs...
+Using shell: /bin/bash
+Provided cores: 32
+Rules claiming more threads will be scaled down.
+Conda environments: ignored
+Job stats:
+job                     count    min threads    max threads
+--------------------  -------  -------------  -------------
+Annovar                     2              4              4
+Nirvana                     2              1              1
+Split_variants_idnel        1              1              1
+Split_variants_snp          1              1              1
+all                         1              1              1
+bcftools_stats              2              1              1
+combine_gvcf                1              1              1
+consequence                 2              1              1
+genotype_gvcfs              1              4              4
+multiqc                     1              1              1
+plot_bcftools_stats         2              1              1
+total                      16              1              4
+
+Select jobs to execute...
+
+[Thu Jun 15 00:30:19 2023]
+rule combine_gvcf:
+    input: 04_calling/father_raw.gvcf.gz, 04_calling/proband_raw.gvcf.gz, 04_calling/mother_raw.gvcf.gz
+    output: 04_calling/variants.gvcf.gz
+    jobid: 82
+    reason: Params have changed since last execution
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=1, mem_gb=2, nodes=1, time=120
+
+[Thu Jun 15 00:30:40 2023]
+Finished job 82.
+1 of 16 steps (6%) done
+Select jobs to execute...
+
+[Thu Jun 15 00:30:40 2023]
+rule genotype_gvcfs:
+    input: 04_calling/variants.gvcf.gz
+    output: 04_calling/variants_genotyped.gvcf.gz
+    jobid: 81
+    reason: Input files updated by another job: 04_calling/variants.gvcf.gz
+    threads: 4
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=4, mem_gb=2, nodes=1, time=120
+

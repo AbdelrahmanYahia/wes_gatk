@@ -42,7 +42,7 @@ rule Nirvana:
         Nirvana_ref = f"{nirvana_path}/DB/References/Homo_sapiens.GRCh38.Nirvana.dat",
         Nirvana_cache = f"{nirvana_path}/DB/Cache/GRCh38/Both",
         Nirvana_cmd = f"{nirvana_path}/bin/Release/net*/Nirvana.dll",
-        file_name = lambda wildcards: f"05_Annotation/Nirvana/{wildcards.type}/Annotation"
+        file_name = lambda wildcards: "05_Annotation/Nirvana/{wildcards.type}/Annotation"
 
     shell:
         """
@@ -73,7 +73,7 @@ rule Annovar:
         annovar_dir = annovar_dir,
         protocol = config["annovar_protocol"],
         operation = config["annovar_operation"],
-        output = "05_Annotation/ANNOVAR/{type}/annotations"
+        output = lambda wildcards: "05_Annotation/ANNOVAR/{wildcards.type}/annotations" 
 
     shell:
         """
