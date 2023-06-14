@@ -1,50 +1,50 @@
 ## TODO: implememt this workflow
-rule merge_bams:
-    input:
-        ubam = "0_samples/{sample}/{sample}_{unit}.ubam",
-        alignedBam = "02_alignment/{sample}/{sample}_{unit}.bam"    
-    conda: "../env/wes_gatk.yml"
+# rule merge_bams:
+#     input:
+#         ubam = "0_samples/{sample}/{sample}_{unit}.ubam",
+#         alignedBam = "02_alignment/{sample}/{sample}_{unit}.bam"    
+#     conda: "../env/wes_gatk.yml"
 
-    output:
-        temp("02_alignment/{sample}/{sample}_{unit}_mergedUnmapped.bam")
+#     output:
+#         temp("02_alignment/{sample}/{sample}_{unit}_mergedUnmapped.bam")
 
-    threads: 4
-    params:
-        fa = ref_fasta
+#     threads: 4
+#     params:
+#         fa = ref_fasta
 
-    resources:
-        mem_mb=4096,
-        cores=4,
-        mem_gb=4,
-        nodes = 1,
-        time = lambda wildcards, attempt: 60 * 2 * attempt
+#     resources:
+#         mem_mb=4096,
+#         cores=4,
+#         mem_gb=4,
+#         nodes = 1,
+#         time = lambda wildcards, attempt: 60 * 2 * attempt
 
-    shell:
-        """
-        gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
-            FastqToSam \
-            --VALIDATION_STRINGENCY SILENT \
-            --EXPECTED_ORIENTATIONS FR \
-            --ATTRIBUTES_TO_RETAIN X0 \
-            --ALIGNED_BAM {input.alignedBam} \
-            --UNMAPPED_BAM {input.ubam} \
-            --OUTPUT {output} \
-            --REFERENCE_SEQUENCE {params.fa} \
-            --PAIRED_RUN true \
-            --SORT_ORDER "unsorted" \
-            --IS_BISULFITE_SEQUENCE false \
-            --ALIGNED_READS_ONLY false \
-            --CLIP_ADAPTERS false \
-            --MAX_RECORDS_IN_RAM 2000000 \
-            --ADD_MATE_CIGAR true \
-            --MAX_INSERTIONS_OR_DELETIONS -1 \
-            --PRIMARY_ALIGNMENT_STRATEGY MostDistant \
-            --PROGRAM_RECORD_ID "bwamem" \
-            --PROGRAM_GROUP_NAME "bwamem" \
-            --UNMAPPED_READ_STRATEGY COPY_TO_TAG \
-            --ALIGNER_PROPER_PAIR_FLAGS true \
-            --UNMAP_CONTAMINANT_READS true
-        """
+#     shell:
+#         """
+#         gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
+#             FastqToSam \
+#             --VALIDATION_STRINGENCY SILENT \
+#             --EXPECTED_ORIENTATIONS FR \
+#             --ATTRIBUTES_TO_RETAIN X0 \
+#             --ALIGNED_BAM {input.alignedBam} \
+#             --UNMAPPED_BAM {input.ubam} \
+#             --OUTPUT {output} \
+#             --REFERENCE_SEQUENCE {params.fa} \
+#             --PAIRED_RUN true \
+#             --SORT_ORDER "unsorted" \
+#             --IS_BISULFITE_SEQUENCE false \
+#             --ALIGNED_READS_ONLY false \
+#             --CLIP_ADAPTERS false \
+#             --MAX_RECORDS_IN_RAM 2000000 \
+#             --ADD_MATE_CIGAR true \
+#             --MAX_INSERTIONS_OR_DELETIONS -1 \
+#             --PRIMARY_ALIGNMENT_STRATEGY MostDistant \
+#             --PROGRAM_RECORD_ID "bwamem" \
+#             --PROGRAM_GROUP_NAME "bwamem" \
+#             --UNMAPPED_READ_STRATEGY COPY_TO_TAG \
+#             --ALIGNER_PROPER_PAIR_FLAGS true \
+#             --UNMAP_CONTAMINANT_READS true
+#         """
 
 rule SortNFix:
     input:
@@ -84,7 +84,7 @@ rule SortNFix:
 
 rule mrk_duplicates:
     input:
-        "02_alignment/{sample}/{sample}_{unit}.sorted.bam"
+        "02_alignment/{sample}/{sample}_{unit}_mergedUnmapped_sorted.bam"
     
     conda: "../env/wes_gatk.yml"
 
@@ -142,44 +142,6 @@ rule BaseRecalibrator:
             --known-sites {params.known_sites} \
             -O {output} 
         """
-
-
-## TODO:  add all reports in one report like reference.sh
-##        use gathered reoprt for BQSR
-rule gather_reports:
-    input:
-        lambda wildcards: expand(
-            "03_bamPrep/{sample}/{sample}_{unit}.report",
-            unit=units.loc[wildcards.sample, "unit"].tolist(),
-            sample=wildcards.sample
-        )
-    
-    conda: "../env/wes_gatk.yml"
-
-    output:
-        "03_bamPrep/PQSR.report"
-    params:
-        reports = lambda wildcards: [f" -I 03_bamPrep/{wildcards.sample}/{wildcards.sample}_{b}.report" for b in units.loc[wildcards.sample, "unit"].tolist()],
-        ref = ref_fasta
-
-    threads: 1
-    resources:
-        mem_mb=2048,
-        cores=1,
-        mem_gb=2,
-        nodes = 1,
-        time = lambda wildcards, attempt: 60 * 2 * attempt
-
-    shell:
-        """
-        gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
-            GatherBQSRReports \
-            {params.reprots} \
-            -O {output}
-        """
-
-
-
 
 rule applyBaseRecalibrator:
     input: 
@@ -317,32 +279,32 @@ rule MergeSamFiles:
 
 ## TODO: check difference between this and above
 
-# rule GatherBamFiles:
-#     input:
-#         get_merge_input
+rule GatherBamFiles:
+    input:
+        get_merge_input
     
-#     conda: "../env/wes_gatk.yml"
+    conda: "../env/wes_gatk.yml"
 
-#     output:
-#         "03_bamPrep/merged_bams/{sample}.pqsr.bam"
-#     params:
-#         bams = lambda wildcards: [f" -I 03_bamPrep/{wildcards.sample}/{wildcards.sample}_{b}.pqsr.bam" for b in units.loc[wildcards.sample, "unit"].tolist()],
-#         ref = ref_fasta
+    output:
+        "03_bamPrep/merged_bams/{sample}.gatherd.pqsr.bam"
+    params:
+        bams = lambda wildcards: [f" -I 03_bamPrep/{wildcards.sample}/{wildcards.sample}_{b}.pqsr.bam" for b in units.loc[wildcards.sample, "unit"].tolist()],
+        ref = ref_fasta
 
-#     threads: 1
-#     resources:
-#         mem_mb=2048,
-#         cores=1,
-#         mem_gb=2,
-#         nodes = 1,
-#         time = lambda wildcards, attempt: 60 * 2 * attempt
-#     shell:
-#         """
-#         gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
-#             GatherBamFiles \
-#             {params.bams} \
-#             -OUTPUT {output} \
-#             --CREATE_INDEX true \
-#             --CREATE_MD5_FILE true
-#         """
+    threads: 1
+    resources:
+        mem_mb=2048,
+        cores=1,
+        mem_gb=2,
+        nodes = 1,
+        time = lambda wildcards, attempt: 60 * 2 * attempt
+    shell:
+        """
+        gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
+            GatherBamFiles \
+            {params.bams} \
+            -OUTPUT {output} \
+            --CREATE_INDEX true \
+            --CREATE_MD5_FILE true
+        """
 

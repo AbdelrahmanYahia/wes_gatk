@@ -95,7 +95,6 @@ rule bwa_align:
             samtools view -1 - >  {output} 
         """
 
-
 rule sort_and_convert_sam:
     input:
         "02_alignment/{sample}/{sample}_{unit}.bam"
@@ -118,15 +117,64 @@ rule sort_and_convert_sam:
         samtools index {output}
         """
 
+rule ubam_align:
+    input:
+        bam="0_samples/{sample}/{sample}_{unit}.adab.ubam"
+
+    output:
+        "02_alignment/{sample}/{sample}_{unit}_mergedUnmapped.bam"
+
+    threads: 4
+    params:
+        fa = ref_fasta,
+        index = ref_bwa 
+
+        ## TODO: fix this
+        # index = lambda wildcards: ref_bwa if not config["index_fasta"] else rules.bwa_index.output
+
+        # library_index = lambda wildcards: units.loc[:, 'library_index'][units['unit'] == f"{wildcards.unit}"].tolist()[0],
+        # lane = lambda wildcards: units.loc[:, 'lane'][units['unit'] == f"{wildcards.unit}"].tolist()[0]
+
+    log: 
+        bwa = "logs/bwa/{sample}/{sample}_{unit}_gatk-bwa.log",
+
+    benchmark: "benchamrks/{sample}/{sample}_{unit}_gatk-bwa.txt"
+    resources:
+        mem_mb=32768,
+        cores=4,
+        mem_gb=32,
+        nodes = 1,
+        time = lambda wildcards, attempt: 60 * 2 * attempt
+    shell:
+        '''
+        gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
+            SamToFastq \
+            -I={input.bam} \
+            --FASTQ=/dev/stdout \
+            --CLIPPING_ATTRIBUTE=XT --CLIPPING_ACTION=2 \
+            --INTERLEAVE=true -NON_PF=true | bwa mem \
+            -M -t {threads} -p {params.index} /dev/stdin | gatk \
+            --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
+            MergeBamAlignment \
+            --ALIGNED_BAM=/dev/stdin \
+            --UNMAPPED_BAM={input.bam} \
+            --OUTPUT={output.bam} \
+            -R={params.fa} --CREATE_INDEX=true --ADD_MATE_CIGAR=true \
+            --CLIP_ADAPTERS=false --CLIP_OVERLAPPING_READS=true \
+            --INCLUDE_SECONDARY_ALIGNMENTS=true --MAX_INSERTIONS_OR_DELETIONS=-1 \
+            --PRIMARY_ALIGNMENT_STRATEGY=MostDistant --ATTRIBUTES_TO_RETAIN=XS \
+            --TMP_DIR="tmp4/{wildcards.fragment}"
+        '''
+
 rule QC_alignment:
     input:
-        "02_alignment/{sample}/{sample}_{unit}.sorted.bam"
+        "02_alignment/{sample}/{sample}_{unit}_mergedUnmapped.bam"
 
     conda: "../env/wes_gatk.yml"
 
     output:
-        cov = "02_alignment/{sample}/QC/{sample}_{unit}.cov",
-        stats = "02_alignment/{sample}/QC/{sample}_{unit}.stats"
+        cov = "02_alignment/{sample}/QC/{sample}_{unit}_mergedUnmapped.cov",
+        stats = "02_alignment/{sample}/QC/{sample}_{unit}_mergedUnmapped.stats"
     resources:
         mem_mb=2048,
         cores=1,

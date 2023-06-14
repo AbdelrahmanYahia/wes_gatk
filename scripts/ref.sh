@@ -164,7 +164,7 @@ java -Dsamjdk.compression_level=~{compression_level} -Xms~{command_mem_gb}G -jar
 CODE 
 
  ###   Array[Array[String]] sequence_grouping = read_tsv("sequence_grouping.txt")
-  ###  Array[Array[String]] sequence_grouping_with_unmapped = read_tsv("sequence_grouping_with_unmapped.txt")
+ ###  Array[Array[String]] sequence_grouping_with_unmapped = read_tsv("sequence_grouping_with_unmapped.txt")
 
   ###############
 

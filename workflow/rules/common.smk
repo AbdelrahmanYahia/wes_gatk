@@ -74,4 +74,5 @@ include: "QC.smk"
 include: "variant_calling.smk"
 include: "variant_processing.smk"
 include: "annotation.smk"
+include: "samples_preprocessing.smk"
 

@@ -68,18 +68,18 @@ echo -e "${YEL}Downloading Genome GFF for bcftools annotation${NC}"
 cd ~/annDB/bcftools/hg38/
 wget -c https://ftp.ensembl.org/pub/release-109/gff3/homo_sapiens/Homo_sapiens.GRCh38.109.gff3.gz
 
-# downloading ref genome 
-mkdir -p ~/annDB/ref/fa
-cd ~/annDB/ref/fa
-echo -e "${YEL}Downloading refrecne genome from : http://hgdownload.cse.ucsc.edu/goldenPath/hg38/bigZips/analysisSet/hg38.analysisSet.2bit${NC}"
-wget -c http://hgdownload.cse.ucsc.edu/goldenPath/hg38/bigZips/analysisSet/hg38.analysisSet.2bit
-error_cheker $?
-twoBitToFa hg38.analysisSet.2bit hg38.analysisSet.fa
+# # downloading ref genome 
+# mkdir -p ~/annDB/ref/fa
+# cd ~/annDB/ref/fa
+# echo -e "${YEL}Downloading refrecne genome from : http://hgdownload.cse.ucsc.edu/goldenPath/hg38/bigZips/analysisSet/hg38.analysisSet.2bit${NC}"
+# wget -c http://hgdownload.cse.ucsc.edu/goldenPath/hg38/bigZips/analysisSet/hg38.analysisSet.2bit
+# error_cheker $?
+# twoBitToFa hg38.analysisSet.2bit hg38.analysisSet.fa
 
 # Download the GATK Resource bundle: https://gatk.broadinstitute.org/hc/en-us/articles/360035890811
 mkdir -p ~/annDB/broad_hg38 && cd ~/annDB/broad_hg38
 source $script_dir/scripts/gatk_download_data.sh
-wget https://ftp.ensembl.org/pub/release-109/gff3/homo_sapiens/Homo_sapiens.GRCh38.109.gff3.gz
+# wget https://ftp.ensembl.org/pub/release-109/gff3/homo_sapiens/Homo_sapiens.GRCh38.109.gff3.gz
 
 # downloading VEP db 
 echo -e "${YEL}Downloading veb cache${NC}"

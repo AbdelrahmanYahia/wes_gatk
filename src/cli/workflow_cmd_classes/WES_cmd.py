@@ -28,8 +28,7 @@ class WES(WorkflowCli):
             metavar='out path', 
             type=os.path.abspath, 
             required = not any(arg in ["--print-last-run"] for arg in sys.argv)
-        )  
-
+        ) 
 
         # workflow configure
         workflow_conf = parser.add_argument_group(f'{CYN}Workflow configure{NC}')
@@ -90,75 +89,70 @@ class WES(WorkflowCli):
             action='store_true'
         )
 
+        workflow_conf.add_argument(
+            '--dont-use-gatk-bestparctice', 
+            help='Generate sample table and config file only', 
+            action='store_true'
+        )
 
-        # qc_conf = parser.add_argument_group(f'{BLU}QC configuration{NC}')
+        qc_conf = parser.add_argument_group(f'{BLU}QC configuration{NC}')
 
-        # qc_conf.add_argument(
-        #     '--trimmomatic',
-        #     dest='trimmomatic',
-        #     action='store_true',
-        #     help="Use trimmomatic"
-        # )
+        qc_conf.add_argument(
+            '--trimmomatic',
+            dest='trimmomatic',
+            action='store_true',
+            help="Use trimmomatic"
+        )
 
-        # qc_conf.add_argument(
-        #     '--trim-t', 
-        #     help= "Number of threads to use during trim step", 
-        #     type=int ,
-        #     metavar = "N",
-        #     default= 4 
-        # )
+        qc_conf.add_argument(
+            '--trim-t', 
+            help= "Number of threads to use during trim step", 
+            type=int ,
+            metavar = "N",
+            default= 4 
+        )
 
-        # qc_conf.add_argument(
-        #     "--trim-min-length", 
-        #     type=int,
-        #     default=30,
-        #     metavar = "N",
-        #     help='trimmomatic min length [default = 30]'
-        # )
+        qc_conf.add_argument(
+            "--trim-min-length", 
+            type=int,
+            default=30,
+            metavar = "N",
+            help='trimmomatic min length [default = 30]'
+        )
 
-        # qc_conf.add_argument(
-        #     "--slidingwindow-size", 
-        #     type=int,
-        #     default=4,
-        #     metavar = "N",
-        #     help='trimmomatic sliding window size [default = 4]'
-        # )
+        qc_conf.add_argument(
+            "--slidingwindow-size", 
+            type=int,
+            default=4,
+            metavar = "N",
+            help='trimmomatic sliding window size [default = 4]'
+        )
 
-        # qc_conf.add_argument(
-        #     "--slidingwindow-quality", 
-        #     type=int,
-        #     default=10,
-        #     metavar = "N",
-        #     help='trimmomatic sliding window quality score [default = 10]'
-        # )
+        qc_conf.add_argument(
+            "--slidingwindow-quality", 
+            type=int,
+            default=10,
+            metavar = "N",
+            help='trimmomatic sliding window quality score [default = 10]'
+        )
 
-        # qc_conf.add_argument(
-        #     '--trimmomatic-extra-args',
-        #      type=str,
-        #     metavar="='-args'",
-        #     help="A string value of extra args for trimmomatic (must be used with = with no spaces (--trimmomatic-extra-args='-arg1 -arg2'))",
-        #     default=""
-        # )
+        qc_conf.add_argument(
+            '--trimmomatic-extra-args',
+             type=str,
+            metavar="='-args'",
+            help="A string value of extra args for trimmomatic (must be used with = with no spaces (--trimmomatic-extra-args='-arg1 -arg2'))",
+            default=""
+        )
 
 
-        # qc_conf.add_argument(
-        #     '--skip-QC',
-        #      action='store_true',
-        #      help="Skipp Fastqc step"
-        # )
-
-        # qc_conf.set_defaults(trimmomatic=False)
+        qc_conf.add_argument(
+            '--skip-QC',
+             action='store_true',
+             help="Skipp Fastqc step"
+        )
 
         aligner_conf = parser.add_argument_group(f'{BLU}Aligner configuration{NC}')
 
-        # aligner_conf.add_argument(
-        #     '--aligner', 
-        #     help = "Choose aligner [default = bwa]",
-        #     choices=["bwa", "bowtie2"], 
-        #     metavar = "bwa|bowtie2",
-        #     type=str,
-        #     default='bwa'
-        # )
 
         aligner_conf.add_argument(
             '--threads-index', 
@@ -214,22 +208,6 @@ class WES(WorkflowCli):
 
         variant_caller_conf = parser.add_argument_group(f'{BLU}Variant caller configuration{NC}')
 
-        # variant_caller_conf.add_argument(
-        #         '--variant-caller', 
-        #         help = "Choose variant caller", 
-        #         choices=["GATK", "mpileup", "lofreq"], 
-        #         type=str, 
-        #         default='GATK'
-        # )
-
-        # variant_caller_conf.add_argument(
-        #         '--bqsr-mem', 
-        #         help = "base quality score recalipration memory for each sample", 
-        #         choices=["GATK", "mpileup", "lofreq"], 
-        #         type=str, 
-        #         default='GATK'
-        # )
-
         variant_caller_conf.add_argument(
             '--known-variants',
             metavar='path', 
@@ -239,21 +217,21 @@ class WES(WorkflowCli):
 
         )
 
-        # variant_caller_conf.add_argument(
-        #     '--caller-extra-args', 
-        #     help = "Extra arguments for caller, use it with no spaces and add = ( --caller-extra-args='-arg1 -arg2' ) ",
-        #     type=str,
-        #     metavar = "'-args'",
-        #     default=""
-        # )
+        variant_caller_conf.add_argument(
+            '--caller-extra-args', 
+            help = "Extra arguments for caller, use it with no spaces and add = ( --caller-extra-args='-arg1 -arg2' ) ",
+            type=str,
+            metavar = "'-args'",
+            default=""
+        )
 
-        # variant_caller_conf.add_argument(
-        #     '--threads-calling', 
-        #     help= "Number of threads to use during variant calling [default = 4]", 
-        #     type=int, 
-        #     default= 4,
-        #     metavar = "N",
-        # )
+        variant_caller_conf.add_argument(
+            '--threads-calling', 
+            help= "Number of threads to use during variant calling [default = 4]", 
+            type=int, 
+            default= 4,
+            metavar = "N",
+        )
 
         # Snakemake Options
         snakemake_options = parser.add_argument_group(f'{CYN}Snakemake Options{NC}')

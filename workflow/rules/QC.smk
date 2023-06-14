@@ -37,6 +37,32 @@ rule trimmomatic:
                 SLIDINGWINDOW:{params.size}:{params.quality} MINLEN:{params.minlen} > {log} 2>&1
         """
 
+rule gunzip_trimmomatic:
+    input:
+        nf1 = "00_trimmomatic/{sample}/{sample}_{unit}_1.trimmed.fastq.gz",
+        nf2 = "00_trimmomatic/{sample}/{sample}_{unit}_2.trimmed.fastq.gz",
+    
+    conda: "../env/wes_gatk.yml"
+
+    output:
+        nf1 = "00_trimmomatic/{sample}/{sample}_{unit}_1.trimmed.fastq",
+        nf2 = "00_trimmomatic/{sample}/{sample}_{unit}_2.trimmed.fastq"
+
+    threads: 1
+
+    resources:
+        mem_mb=2048,
+        cores=1,
+        mem_gb=2,
+        nodes = 1,
+        time = lambda wildcards, attempt: 60 * 2 * attempt
+
+    shell:
+        """
+        gunzip {input.nf1} 
+        gunzip {input.nf2} 
+        """
+
 rule FqtoUBam:
     input:
         R1 = "00_trimmomatic/{sample}/{sample}_{unit}_1.trimmed.fastq",
@@ -45,7 +71,7 @@ rule FqtoUBam:
     conda: "../env/wes_gatk.yml"
 
     output:
-        ubam = "0_samples/{sample}/{sample}_{unit}.ubam"
+        ubam = "0_samples/{sample}/{sample}_{unit}_trimmed.ubam"
 
     benchmark: "benchamrks/FastqToSam/{sample}/{sample}_{unit}.txt"
     threads: 4
@@ -75,32 +101,6 @@ rule FqtoUBam:
             -RG $RGID \
             -LB $LB \
             {params.extra_args}
-        """
-
-rule gunzip_trimmomatic:
-    input:
-        nf1 = "00_trimmomatic/{sample}/{sample}_{unit}_1.trimmed.fastq.gz",
-        nf2 = "00_trimmomatic/{sample}/{sample}_{unit}_2.trimmed.fastq.gz",
-    
-    conda: "../env/wes_gatk.yml"
-
-    output:
-        nf1 = "00_trimmomatic/{sample}/{sample}_{unit}_1.trimmed.fastq",
-        nf2 = "00_trimmomatic/{sample}/{sample}_{unit}_2.trimmed.fastq"
-
-    threads: 1
-
-    resources:
-        mem_mb=2048,
-        cores=1,
-        mem_gb=2,
-        nodes = 1,
-        time = lambda wildcards, attempt: 60 * 2 * attempt
-
-    shell:
-        """
-        gunzip {input.nf1} 
-        gunzip {input.nf2} 
         """
 
 rule Fastqc:
