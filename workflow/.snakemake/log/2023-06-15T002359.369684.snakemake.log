@@ -243,3 +243,12 @@ Error in rule plot_bcftools_stats:
 
 Removing output files of failed job plot_bcftools_stats since they might be corrupted:
 04_calling/QC/indels/bcftools_plots
+[Thu Jun 15 00:26:35 2023]
+Finished job 87.
+9 of 16 steps (56%) done
+[Thu Jun 15 00:26:37 2023]
+Finished job 88.
+10 of 16 steps (62%) done
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: ../../wes_gatk/workflow/.snakemake/log/2023-06-15T002359.369684.snakemake.log
