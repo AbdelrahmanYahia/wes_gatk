@@ -39,7 +39,7 @@ def get_final_output(wildcards):
             sample = samples_IDs
     ))
     final_output.extend(expand(
-            "04_calling/QC/{type}/bcftools_plots",
+            "04_calling/QC/{type}/bcftools.stats",
             type = ["snvs", "indels"]
     ))
     final_output.extend(expand(
