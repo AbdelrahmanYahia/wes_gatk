@@ -73,7 +73,7 @@ rule Annovar:
         annovar_dir = annovar_dir,
         protocol = config["annovar_protocol"],
         operation = config["annovar_operation"],
-        output = lambda wildcards: "05_Annotation/ANNOVAR/{wildcards.type}/annotations" 
+        output = lambda wildcards: f"05_Annotation/ANNOVAR/{wildcards.type}/annotations" 
 
     shell:
         """
