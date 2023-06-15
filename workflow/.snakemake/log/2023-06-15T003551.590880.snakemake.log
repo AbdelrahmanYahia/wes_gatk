@@ -174,3 +174,32 @@ Finished job 88.
 [Thu Jun 15 00:36:39 2023]
 Finished job 87.
 10 of 14 steps (71%) done
+[Thu Jun 15 00:38:24 2023]
+Finished job 86.
+11 of 14 steps (79%) done
+[Thu Jun 15 00:38:30 2023]
+Finished job 85.
+12 of 14 steps (86%) done
+Select jobs to execute...
+
+[Thu Jun 15 00:38:30 2023]
+rule multiqc:
+    input: 02_alignment/proband/QC/proband_ACC1-LIBR_L1_mergedUnmapped.cov, 02_alignment/proband/QC/proband_ACC2-LIBR2_L3_mergedUnmapped.cov, 03_bamPrep/proband/QC/proband_ACC1-LIBR_L1_Qualimap, 03_bamPrep/proband/QC/proband_ACC2-LIBR2_L3_Qualimap, 03_bamPrep/proband/QC/proband_ACC1-LIBR_L1.pdf, 03_bamPrep/proband/QC/proband_ACC2-LIBR2_L3.pdf, 02_alignment/father/QC/father_ACC1-LIBR_L1_mergedUnmapped.cov, 02_alignment/father/QC/father_ACC1-LIBR_L2_mergedUnmapped.cov, 03_bamPrep/father/QC/father_ACC1-LIBR_L1_Qualimap, 03_bamPrep/father/QC/father_ACC1-LIBR_L2_Qualimap, 03_bamPrep/father/QC/father_ACC1-LIBR_L1.pdf, 03_bamPrep/father/QC/father_ACC1-LIBR_L2.pdf, 02_alignment/mother/QC/mother_ACC1-LIBR_L1_mergedUnmapped.cov, 02_alignment/mother/QC/mother_ACC2-LIBR2_L1_mergedUnmapped.cov, 03_bamPrep/mother/QC/mother_ACC1-LIBR_L1_Qualimap, 03_bamPrep/mother/QC/mother_ACC2-LIBR2_L1_Qualimap, 03_bamPrep/mother/QC/mother_ACC1-LIBR_L1.pdf, 03_bamPrep/mother/QC/mother_ACC2-LIBR2_L1.pdf, 04_calling/QC/proband.eval.grp, 04_calling/QC/father.eval.grp, 04_calling/QC/mother.eval.grp, 04_calling/QC/snvs/bcftools.stats, 04_calling/QC/indels/bcftools.stats, 05_Annotation/ANNOVAR/snvs, 05_Annotation/ANNOVAR/indels, 05_Annotation/Nirvana/snvs/Annotation.json.gz, 05_Annotation/Nirvana/indels/Annotation.json.gz
+    output: multiqc/multiqc_report.html
+    jobid: 1
+    reason: Missing output files: multiqc/multiqc_report.html; Input files updated by another job: 05_Annotation/ANNOVAR/indels, 04_calling/QC/indels/bcftools.stats, 05_Annotation/Nirvana/snvs/Annotation.json.gz, 04_calling/QC/snvs/bcftools.stats, 05_Annotation/ANNOVAR/snvs, 05_Annotation/Nirvana/indels/Annotation.json.gz
+    resources: tmpdir=/tmp, mem_mb=2048, mem_mib=1954, cores=1, mem_gb=2, nodes=1, time=120
+
+[Thu Jun 15 00:38:31 2023]
+Error in rule multiqc:
+    jobid: 1
+    input: 02_alignment/proband/QC/proband_ACC1-LIBR_L1_mergedUnmapped.cov, 02_alignment/proband/QC/proband_ACC2-LIBR2_L3_mergedUnmapped.cov, 03_bamPrep/proband/QC/proband_ACC1-LIBR_L1_Qualimap, 03_bamPrep/proband/QC/proband_ACC2-LIBR2_L3_Qualimap, 03_bamPrep/proband/QC/proband_ACC1-LIBR_L1.pdf, 03_bamPrep/proband/QC/proband_ACC2-LIBR2_L3.pdf, 02_alignment/father/QC/father_ACC1-LIBR_L1_mergedUnmapped.cov, 02_alignment/father/QC/father_ACC1-LIBR_L2_mergedUnmapped.cov, 03_bamPrep/father/QC/father_ACC1-LIBR_L1_Qualimap, 03_bamPrep/father/QC/father_ACC1-LIBR_L2_Qualimap, 03_bamPrep/father/QC/father_ACC1-LIBR_L1.pdf, 03_bamPrep/father/QC/father_ACC1-LIBR_L2.pdf, 02_alignment/mother/QC/mother_ACC1-LIBR_L1_mergedUnmapped.cov, 02_alignment/mother/QC/mother_ACC2-LIBR2_L1_mergedUnmapped.cov, 03_bamPrep/mother/QC/mother_ACC1-LIBR_L1_Qualimap, 03_bamPrep/mother/QC/mother_ACC2-LIBR2_L1_Qualimap, 03_bamPrep/mother/QC/mother_ACC1-LIBR_L1.pdf, 03_bamPrep/mother/QC/mother_ACC2-LIBR2_L1.pdf, 04_calling/QC/proband.eval.grp, 04_calling/QC/father.eval.grp, 04_calling/QC/mother.eval.grp, 04_calling/QC/snvs/bcftools.stats, 04_calling/QC/indels/bcftools.stats, 05_Annotation/ANNOVAR/snvs, 05_Annotation/ANNOVAR/indels, 05_Annotation/Nirvana/snvs/Annotation.json.gz, 05_Annotation/Nirvana/indels/Annotation.json.gz
+    output: multiqc/multiqc_report.html
+    conda-env: /home/marc/Desktop/output_new_wes_gatk/.snakemake/conda/85fefb7173d4d7ca43c40188cac58258_
+    shell:
+        multiqc . -o multiqc/
+        (one of the commands exited with non-zero exit code; note that snakemake uses bash strict mode!)
+
+Shutting down, this might take some time.
+Exiting because a job execution failed. Look above for error message
+Complete log: ../../wes_gatk/workflow/.snakemake/log/2023-06-15T003551.590880.snakemake.log

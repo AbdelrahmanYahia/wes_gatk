@@ -61,13 +61,12 @@ def recogize_pattern(file_name): # takes string of fastq file name and returns d
     """ using re to recognize the naming pattern of samples (illumina, srr and general naming patten)"""
     # naming pattern for re 
     patterns = { # ! fix (_|\.) group for R pattern in dict config !
-        "Novagen1": "(((.+)_(((.+)-(.+))_(L\d+)))((_)([1|2]))\.(fastq\.gz|fastq|fq\.gz|fq))",
-        "Novagen2": "(((.+)_(((.+)-(.+))_(L\d+)))((-)(r[1|2]))\.(fastq\.gz|fastq|fq\.gz|fq))",
+        "Novagen": "(((.+)-(.+))([1|2])\.(fastq\.gz|fastq|fq\.gz|fq))",
         "illumina": "(((.+)_(S\d+)_(L00\d))_(R1|R2|r1|r2|read1|read2)_(00\d)\.(fastq\.gz|fastq|fq\.gz|fq))",
         "SRR": "(((SRR)(\d+))(_|\.)(1|2|R1|R2|r1|r2|read1|read2)\.(fastq\.gz|fastq|fq\.gz|fq))",
         "general": "(((.+))(_|\.)(1|2|R1|R2|r1|r2|read1|read2)\.(fastq\.gz|fastq|fq\.gz|fq))"
     }
-
+## 1: full name 2: without read group and ext, 3: sample name, 4: flowcell + lane, 5: read number, 6: ext
     matched_pattern = None
     ## loop on pattern to and checks whichs one matches 
     ## starting with illumina because general would match any ways
@@ -84,46 +83,58 @@ def recogize_pattern(file_name): # takes string of fastq file name and returns d
             
         else:
             continue
+## 1: full name 2: without read group and ext, 3: sample name, 4: flowcell + lane, 5: read number, 6: ext
 
-    if matched_pattern == "Novagen1":
-        file_name, sample_name, sample_id, unit, library_index, acc1, acc2, lane, R_pattern, R_sep, read_num, ext, tail, sample_number =  matched.groups()[0], matched.groups()[1], matched.groups()[2], matched.groups()[2+1], matched.groups()[3+1], matched.groups()[4+1], matched.groups()[5+1], matched.groups()[6+1], matched.groups()[7+1] , matched.groups()[8+1] , matched.groups()[9+1], matched.groups()[10+1],"", ""
+    if matched_pattern == "Novagen":
+        sample, sample_name, sample_id, unit, read_num, ext = matched.groups()[0], matched.groups()[1], matched.groups()[2], matched.groups()[3], matched.groups()[4], matched.groups()[5]
+        # sample, sample_name, sample_id, unit, library_index, acc1, acc2, lane, R_pattern, R_sep, read_num, ext, tail, sample_number =  matched.groups()[0], matched.groups()[1], matched.groups()[2], matched.groups()[2+1], matched.groups()[3+1], matched.groups()[4+1], matched.groups()[5+1], matched.groups()[6+1], matched.groups()[7+1] , matched.groups()[8+1] , matched.groups()[9+1], matched.groups()[10+1],"", ""
 
-    elif matched_pattern == "Novagen2":
-        file_name, sample_name, sample_id, unit, library_index, acc1, acc2, lane, R_pattern, R_sep, read_num, ext, tail, sample_number =  matched.groups()[0], matched.groups()[1], matched.groups()[2], matched.groups()[2+1], matched.groups()[3+1], matched.groups()[4+1], matched.groups()[5+1], matched.groups()[6+1], matched.groups()[7+1] , matched.groups()[8+1] , matched.groups()[9+1], matched.groups()[10+1],"", ""
-    elif matched_pattern == "illumina":
-        file_name, sample_name, sample_id, sample_number, read_num, lane, tail, ext = matched.groups()[0], matched.groups()[1], matched.groups()[2], matched.groups()[3], matched.groups()[5], matched.groups()[4], matched.groups()[6], matched.groups()[7]
+    # elif matched_pattern == "Novagen2":
+    #     file_name, sample_name, sample_id, unit, library_index, acc1, acc2, lane, R_pattern, R_sep, read_num, ext, tail, sample_number =  matched.groups()[0], matched.groups()[1], matched.groups()[2], matched.groups()[2+1], matched.groups()[3+1], matched.groups()[4+1], matched.groups()[5+1], matched.groups()[6+1], matched.groups()[7+1] , matched.groups()[8+1] , matched.groups()[9+1], matched.groups()[10+1],"", ""
+    # elif matched_pattern == "illumina":
+    #     file_name, sample_name, sample_id, sample_number, read_num, lane, tail, ext = matched.groups()[0], matched.groups()[1], matched.groups()[2], matched.groups()[3], matched.groups()[5], matched.groups()[4], matched.groups()[6], matched.groups()[7]
 
-    elif matched_pattern == "SRR":
-        glogger.prnt_fatel(f"{RED}{matched_pattern}{NC} is currntly not supported sample naming pattern\nonly {GRE}'Illumina'{NC} naming pattern is supported at the moment")
-        file_name, sample_name, sample_id, sample_number, read_num, lane, tail, ext = matched.groups()[0], matched.groups()[1], matched.groups()[3], "", matched.groups()[5], "", "", matched.groups()[6]
+    # elif matched_pattern == "SRR":
+    #     glogger.prnt_fatel(f"{RED}{matched_pattern}{NC} is currntly not supported sample naming pattern\nonly {GRE}'Illumina'{NC} naming pattern is supported at the moment")
+    #     file_name, sample_name, sample_id, sample_number, read_num, lane, tail, ext = matched.groups()[0], matched.groups()[1], matched.groups()[3], "", matched.groups()[5], "", "", matched.groups()[6]
 
-    elif matched_pattern == "general":
-        glogger.prnt_fatel(f"{RED}{matched_pattern}{NC} is currntly not supported sample naming pattern\nonly {GRE}'Illumina'{NC} naming pattern is supported at the moment")
-        file_name, sample_name, sample_id, sample_number, read_num, lane, tail, ext = matched.groups()[0], matched.groups()[1], matched.groups()[1], "", matched.groups()[4], "", "", matched.groups()[5]
+    # elif matched_pattern == "general":
+    #     glogger.prnt_fatel(f"{RED}{matched_pattern}{NC} is currntly not supported sample naming pattern\nonly {GRE}'Illumina'{NC} naming pattern is supported at the moment")
+    #     file_name, sample_name, sample_id, sample_number, read_num, lane, tail, ext = matched.groups()[0], matched.groups()[1], matched.groups()[1], "", matched.groups()[4], "", "", matched.groups()[5]
 
     else:
         glogger.prnt_fatel(f"{RED}Your Samples Pattern is an unfamiler pattern.{NC}\nPlease contact my Developpers and they will look into it :D")
         file_name = sample_name = sample_id = sample_number = read_num = lane = tail = ext = None
 
 
-    if matched_pattern == "Novagen1" or matched_pattern == "Novagen2":
+    if matched_pattern == "Novagen":
         return {
-            "file_name": file_name,
+            "file_name": sample,
             "unit": unit,
             "sample_name": sample_name,
             "sample_id": sample_id,
-            "library_index": library_index,
-            "acc1": acc1,
-            "acc2": acc2,
-            "lane": lane,
-            "R_pattern" : R_pattern, 
-            "R_sep" : R_sep, 
             "read_num" : read_num, 
             "ext" : ext,
-            "tail": tail,
-            "sample_number": sample_number,
             "matched_pattern": ptrn_name
         }
+    
+        # return {
+        #     "file_name": file_name,
+        #     "unit": unit,
+        #     "sample_name": sample_name,
+        #     "sample_id": sample_id,
+        #     "library_index": library_index,
+        #     "acc1": acc1,
+        #     "acc2": acc2,
+        #     "lane": lane,
+        #     "R_pattern" : R_pattern, 
+        #     "R_sep" : R_sep, 
+        #     "read_num" : read_num, 
+        #     "ext" : ext,
+        #     "tail": tail,
+        #     "sample_number": sample_number,
+        #     "matched_pattern": ptrn_name
+        # }
     
     else:
         # Returns a dictionary of sample information
@@ -140,7 +151,7 @@ def recogize_pattern(file_name): # takes string of fastq file name and returns d
         }
 
 
-    
+
 def parse_samples(inpath): # takes path return contains fastq files, returns df contains sample information
     ## takes input path
     ## gets the file names containg fastq and fq
@@ -261,7 +272,8 @@ def parse_input_args(args): # takes args (object) returns dict of args informati
     ext = str(check_extension(samples))
     PE = bool(check_PE(samples))
     R = str(check_R(samples))
-    R_pattern = str(check_R_pattern(samples))
+    # R_pattern = str(check_R_pattern(samples))
+    R_pattern = ""
     compressed = False
     EXT = ext
     pattern = str(check_pattern(samples))
