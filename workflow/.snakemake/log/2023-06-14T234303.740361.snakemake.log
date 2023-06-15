@@ -1,4 +1,0 @@
-SyntaxError in file /home/marc/wes_gatk/workflow/rules/utils.smk, line 55:
-invalid syntax
-  File "/home/marc/wes_gatk/workflow/Snakefile", line 7, in <module>
-  File "/home/marc/wes_gatk/workflow/rules/common.smk", line 70, in <module>

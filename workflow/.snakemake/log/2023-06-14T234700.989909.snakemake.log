@@ -1,6 +1,0 @@
-Building DAG of jobs...
-MissingInputException in rule bcftools_stats in file /home/marc/wes_gatk/workflow/rules/variant_processing.smk, line 26:
-Missing input files for rule bcftools_stats:
-    output: 04_calling/QC/bcftools.stats
-    affected files:
-        04_calling/QC/bcftools_csq.vcf

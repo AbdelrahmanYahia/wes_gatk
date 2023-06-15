@@ -1,9 +1,0 @@
-Building DAG of jobs...
-InputFunctionException in rule bwa_align in file /home/marc/wes_gatk/workflow/rules/alignment.smk, line 48:
-Error:
-  IndexError: list index out of range
-Wildcards:
-  sample=father_ACC1-LIBR
-  unit=L1
-Traceback:
-  File "/home/marc/wes_gatk/workflow/rules/alignment.smk", line 61, in <lambda>
