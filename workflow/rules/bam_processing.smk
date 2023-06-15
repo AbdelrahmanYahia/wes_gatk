@@ -1,12 +1,12 @@
 ## TODO: implememt this workflow
 # rule merge_bams:
 #     input:
-#         ubam = "0_samples/{sample}/{sample}_{unit}.ubam",
-#         alignedBam = "02_alignment/{sample}/{sample}_{unit}.bam"    
+#         ubam = "0_samples/{sample}/{sample}-{unit}.ubam",
+#         alignedBam = "02_alignment/{sample}/{sample}-{unit}.bam"    
 #     conda: "../env/wes_gatk.yml"
 
 #     output:
-#         temp("02_alignment/{sample}/{sample}_{unit}_mergedUnmapped.bam")
+#         temp("02_alignment/{sample}/{sample}-{unit}_mergedUnmapped.bam")
 
 #     threads: 4
 #     params:
@@ -48,10 +48,10 @@
 
 rule SortNFix:
     input:
-        "02_alignment/{sample}/{sample}_{unit}_mergedUnmapped.bam"  
+        "02_alignment/{sample}/{sample}-{unit}_mergedUnmapped.bam"  
     conda: "../env/wes_gatk.yml"
     output:
-        "02_alignment/{sample}/{sample}_{unit}_mergedUnmapped_sorted.bam"
+        "02_alignment/{sample}/{sample}-{unit}_mergedUnmapped_sorted.bam"
 
     threads: 4
     params:
@@ -84,13 +84,13 @@ rule SortNFix:
 
 rule mrk_duplicates:
     input:
-        "02_alignment/{sample}/{sample}_{unit}_mergedUnmapped_sorted.bam"
+        "02_alignment/{sample}/{sample}-{unit}_mergedUnmapped_sorted.bam"
     
     conda: "../env/wes_gatk.yml"
 
     output:
-        bam = "02_alignment/{sample}/{sample}_{unit}.dedub.bam",
-        matrix = "02_alignment/{sample}/{sample}_{unit}.dedub.matrix"
+        bam = "02_alignment/{sample}/{sample}-{unit}.dedub.bam",
+        matrix = "02_alignment/{sample}/{sample}-{unit}.dedub.matrix"
     params: 
         extra_args = """--VALIDATION_STRINGENCY SILENT \
                         --OPTICAL_DUPLICATE_PIXEL_DISTANCE 2500 \
@@ -105,7 +105,7 @@ rule mrk_duplicates:
         time = lambda wildcards, attempt: 60 * 2 * attempt
 
     log: 
-        "logs/mrk-dub/{sample}/{sample}_{unit}.dedub.log"
+        "logs/mrk-dub/{sample}/{sample}-{unit}.dedub.log"
 
     shell:
         """
@@ -116,17 +116,17 @@ rule mrk_duplicates:
         """
 
 rule BaseRecalibrator:
-    input: "02_alignment/{sample}/{sample}_{unit}.dedub.bam"
+    input: "02_alignment/{sample}/{sample}-{unit}.dedub.bam"
     
     conda: "../env/wes_gatk.yml"
 
-    output: "03_bamPrep/{sample}/{sample}_{unit}.report"
+    output: "03_bamPrep/{sample}/{sample}-{unit}.report"
     params: 
         known_sites = known_variants,
         ref = ref_fasta,
 
     threads: 4
-    benchmark: "benchamrks/{sample}/{sample}_{unit}_GATK_pqsr.txt"
+    benchmark: "benchamrks/{sample}/{sample}-{unit}_GATK_pqsr.txt"
     resources:
         mem_mb=2048,
         cores=4,
@@ -146,13 +146,13 @@ rule BaseRecalibrator:
 
 rule applyBaseRecalibrator:
     input: 
-        bam = "02_alignment/{sample}/{sample}_{unit}.dedub.bam",
-        report = "03_bamPrep/{sample}/{sample}_{unit}.report"
-    benchmark: "benchamrks/{sample}/{sample}_{unit}_GATK_apply_BQSR.txt"
+        bam = "02_alignment/{sample}/{sample}-{unit}.dedub.bam",
+        report = "03_bamPrep/{sample}/{sample}-{unit}.report"
+    benchmark: "benchamrks/{sample}/{sample}-{unit}_GATK_apply_BQSR.txt"
     
     conda: "../env/wes_gatk.yml"
 
-    output: "03_bamPrep/{sample}/{sample}_{unit}.pqsr.bam"
+    output: "03_bamPrep/{sample}/{sample}-{unit}.pqsr.bam"
     threads: 1
     resources:
         mem_mb=2048,
@@ -177,11 +177,11 @@ rule applyBaseRecalibrator:
 
 
 rule bqsr_calibrated_report:
-    input: "03_bamPrep/{sample}/{sample}_{unit}.pqsr.bam"
+    input: "03_bamPrep/{sample}/{sample}-{unit}.pqsr.bam"
     
     conda: "../env/wes_gatk.yml"
 
-    output: "03_bamPrep/{sample}/{sample}_{unit}_pqsr.report"
+    output: "03_bamPrep/{sample}/{sample}-{unit}_pqsr.report"
     params: 
         known_sites = known_variants,
         ref = ref_fasta
@@ -201,13 +201,13 @@ rule bqsr_calibrated_report:
 
 rule AnalyzeCovariates:
     input: 
-        raw = "03_bamPrep/{sample}/{sample}_{unit}.report", 
-        bqsr = "03_bamPrep/{sample}/{sample}_{unit}_pqsr.report"
+        raw = "03_bamPrep/{sample}/{sample}-{unit}.report", 
+        bqsr = "03_bamPrep/{sample}/{sample}-{unit}_pqsr.report"
 
     
     conda: "../env/wes_gatk.yml"
 
-    output: "03_bamPrep/{sample}/QC/{sample}_{unit}.pdf"
+    output: "03_bamPrep/{sample}/QC/{sample}-{unit}.pdf"
 
     threads: 2
     resources:
@@ -225,12 +225,12 @@ rule AnalyzeCovariates:
 
 rule qualimap:
     input:
-        "03_bamPrep/{sample}/{sample}_{unit}.pqsr.bam"
+        "03_bamPrep/{sample}/{sample}-{unit}.pqsr.bam"
     
     conda: "../env/wes_gatk.yml"
 
     output:
-        directory("03_bamPrep/{sample}/QC/{sample}_{unit}_Qualimap")
+        directory("03_bamPrep/{sample}/QC/{sample}-{unit}_Qualimap")
 
     threads: 2
     resources:

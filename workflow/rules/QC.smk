@@ -1,20 +1,20 @@
 
 rule trimmomatic:
     input:
-        R1 = f"{samples_dir}/{{sample}}_{{unit}}_1.{EXT}",
-        R2 = f"{samples_dir}/{{sample}}_{{unit}}_2.{EXT}"
+        R1 = f"{samples_dir}/{{sample}}_{{unit}}1.{EXT}",
+        R2 = f"{samples_dir}/{{sample}}_{{unit}}2.{EXT}"
     
     conda: "../env/wes_gatk.yml"
 
     output:
-        log="logs/trimmomatic/{sample}/{sample}_{unit}.log",
-        summary="logs/trimmomatic/{sample}/{sample}_{unit}.summary",
-        nf1 = "00_trimmomatic/{sample}/{sample}_{unit}_1.trimmed.fastq.gz",
-        nf2 = "00_trimmomatic/{sample}/{sample}_{unit}_2.trimmed.fastq.gz",
-        nfu1=temp("00_trimmomatic/{sample}/{sample}_{unit}-U_1.trimmed.fastq.gz"),
-        nfu2=temp("00_trimmomatic/{sample}/{sample}_{unit}-U_2.trimmed.fastq.gz")
+        log="logs/trimmomatic/{sample}/{sample}-{unit}.log",
+        summary="logs/trimmomatic/{sample}/{sample}-{unit}.summary",
+        nf1 = "00_trimmomatic/{sample}/{sample}-{unit}1.trimmed.fastq.gz",
+        nf2 = "00_trimmomatic/{sample}/{sample}-{unit}2.trimmed.fastq.gz",
+        nfu1=temp("00_trimmomatic/{sample}/{sample}-{unit}-U_1.trimmed.fastq.gz"),
+        nfu2=temp("00_trimmomatic/{sample}/{sample}-{unit}-U_2.trimmed.fastq.gz")
 
-    benchmark: "benchamrks/QC/{sample}/{sample}_{unit}_trim.txt"
+    benchmark: "benchamrks/QC/{sample}/{sample}-{unit}_trim.txt"
     threads: 4
     params:
         size = 4,
@@ -29,7 +29,7 @@ rule trimmomatic:
         nodes = 1,
         time = lambda wildcards, attempt: 60 * 2 * attempt
     log: 
-        "logs/trimmomatic/{sample}/{sample}_{unit}.txt"
+        "logs/trimmomatic/{sample}/{sample}-{unit}.txt"
     shell:
         """
         trimmomatic PE -threads {threads} -phred33 -trimlog {output.log} \
@@ -39,14 +39,14 @@ rule trimmomatic:
 
 rule gunzip_trimmomatic:
     input:
-        nf1 = "00_trimmomatic/{sample}/{sample}_{unit}_1.trimmed.fastq.gz",
-        nf2 = "00_trimmomatic/{sample}/{sample}_{unit}_2.trimmed.fastq.gz",
+        nf1 = "00_trimmomatic/{sample}/{sample}-{unit}1.trimmed.fastq.gz",
+        nf2 = "00_trimmomatic/{sample}/{sample}-{unit}2.trimmed.fastq.gz",
     
     conda: "../env/wes_gatk.yml"
 
     output:
-        nf1 = "00_trimmomatic/{sample}/{sample}_{unit}_1.trimmed.fastq",
-        nf2 = "00_trimmomatic/{sample}/{sample}_{unit}_2.trimmed.fastq"
+        nf1 = "00_trimmomatic/{sample}/{sample}-{unit}1.trimmed.fastq",
+        nf2 = "00_trimmomatic/{sample}/{sample}-{unit}2.trimmed.fastq"
 
     threads: 1
 
@@ -65,15 +65,15 @@ rule gunzip_trimmomatic:
 
 rule FqtoUBam:
     input:
-        R1 = "00_trimmomatic/{sample}/{sample}_{unit}_1.trimmed.fastq",
-        R2 = "00_trimmomatic/{sample}/{sample}_{unit}_2.trimmed.fastq"
+        R1 = "00_trimmomatic/{sample}/{sample}-{unit}1.trimmed.fastq",
+        R2 = "00_trimmomatic/{sample}/{sample}-{unit}2.trimmed.fastq"
     
     conda: "../env/wes_gatk.yml"
 
     output:
-        ubam = "0_samples/{sample}/{sample}_{unit}_trimmed.ubam"
+        ubam = "0_samples/{sample}/{sample}-{unit}-trimmed.ubam"
 
-    benchmark: "benchamrks/FastqToSam/{sample}/{sample}_{unit}.txt"
+    benchmark: "benchamrks/FastqToSam/{sample}/{sample}-{unit}.txt"
     threads: 4
 
     resources:
@@ -83,7 +83,7 @@ rule FqtoUBam:
         nodes = 1,
         time = lambda wildcards, attempt: 60 * 2 * attempt
     log: 
-        "logs/trimmomatic/{sample}/{sample}_{unit}.txt"
+        "logs/trimmomatic/{sample}/{sample}-{unit}.txt"
     params:
         extra_args = ""
     shell:
@@ -105,17 +105,17 @@ rule FqtoUBam:
 
 rule Fastqc:
     input:
-        "00_trimmomatic/{sample}/{sample}_{unit}_{R}.trimmed.fastq.gz"
+        "00_trimmomatic/{sample}/{sample}-{unit}_{R}.trimmed.fastq.gz"
     log:
-        "logs/QC/QC_{sample}_{unit}_{R}.log"
+        "logs/QC/QC_{sample}-{unit}_{R}.log"
     
     conda: "../env/wes_gatk.yml"
 
     output:
-        zip="01_QC/{sample}/{sample}_{unit}_{R}.trimmed_fastqc.zip",
-        html="01_QC/{sample}/{sample}_{unit}_{R}.trimmed_fastqc.html"
+        zip="01_QC/{sample}/{sample}-{unit}{R}.trimmed_fastqc.zip",
+        html="01_QC/{sample}/{sample}-{unit}{R}.trimmed_fastqc.html"
         
-    benchmark: "benchamrks/QC/{sample}/{sample}_{unit}_{R}_fastqc.txt"
+    benchmark: "benchamrks/QC/{sample}/{sample}-{unit}{R}_fastqc.txt"
     threads: 2
     params:
         path=lambda wildcards: f"01_QC/{wildcards.sample}"

@@ -47,14 +47,14 @@
 ## TODO: create input function for align to use either workflows 
 rule bwa_align:
     input:
-        R1 = "00_trimmomatic/{sample}/{sample}_{unit}_1.trimmed.fastq",
-        R2 = "00_trimmomatic/{sample}/{sample}_{unit}_2.trimmed.fastq",
+        R1 = "00_trimmomatic/{sample}/{sample}-{unit}1.trimmed.fastq",
+        R2 = "00_trimmomatic/{sample}/{sample}-{unit}2.trimmed.fastq",
 
     
     conda: "../env/wes_gatk.yml"
 
     output:
-        temp("02_alignment/{sample}/{sample}_{unit}.bam")
+        temp("02_alignment/{sample}/{sample}-{unit}.bam")
 
     threads: 4
     params:
@@ -68,9 +68,9 @@ rule bwa_align:
         # lane = lambda wildcards: units.loc[:, 'lane'][units['unit'] == f"{wildcards.unit}"].tolist()[0]
 
     log: 
-        bwa = "logs/bwa/{sample}/{sample}_{unit}_bwa.log",
+        bwa = "logs/bwa/{sample}/{sample}-{unit}_bwa.log",
 
-    benchmark: "benchamrks/{sample}/{sample}_{unit}_bwa.txt"
+    benchmark: "benchamrks/{sample}/{sample}-{unit}_bwa.txt"
     resources:
         mem_mb=32768,
         cores=4,
@@ -97,12 +97,12 @@ rule bwa_align:
 
 rule sort_and_convert_sam:
     input:
-        "02_alignment/{sample}/{sample}_{unit}.bam"
+        "02_alignment/{sample}/{sample}-{unit}.bam"
     
     conda: "../env/wes_gatk.yml"
 
     output:
-        "02_alignment/{sample}/{sample}_{unit}.sorted.bam"
+        "02_alignment/{sample}/{sample}-{unit}.sorted.bam"
     
     resources:
         mem_mb=2048,
@@ -119,10 +119,10 @@ rule sort_and_convert_sam:
 
 rule ubam_align:
     input:
-        bam="0_samples/{sample}/{sample}_{unit}.adab.ubam"
+        bam="0_samples/{sample}/{sample}-{unit}.adab.ubam"
 
     output:
-        bam="02_alignment/{sample}/{sample}_{unit}_mergedUnmapped.bam"
+        bam="02_alignment/{sample}/{sample}-{unit}_mergedUnmapped.bam"
 
     threads: 4
     params:
@@ -136,9 +136,9 @@ rule ubam_align:
         # lane = lambda wildcards: units.loc[:, 'lane'][units['unit'] == f"{wildcards.unit}"].tolist()[0]
 
     log: 
-        bwa = "logs/bwa/{sample}/{sample}_{unit}_gatk-bwa.log",
+        bwa = "logs/bwa/{sample}/{sample}-{unit}_gatk-bwa.log",
 
-    benchmark: "benchamrks/{sample}/{sample}_{unit}_gatk-bwa.txt"
+    benchmark: "benchamrks/{sample}/{sample}-{unit}_gatk-bwa.txt"
     resources:
         mem_mb=32768,
         cores=4,
@@ -167,13 +167,13 @@ rule ubam_align:
 
 rule QC_alignment:
     input:
-        "02_alignment/{sample}/{sample}_{unit}_mergedUnmapped.bam"
+        "02_alignment/{sample}/{sample}-{unit}_mergedUnmapped.bam"
 
     conda: "../env/wes_gatk.yml"
 
     output:
-        cov = "02_alignment/{sample}/QC/{sample}_{unit}_mergedUnmapped.cov",
-        stats = "02_alignment/{sample}/QC/{sample}_{unit}_mergedUnmapped.stats"
+        cov = "02_alignment/{sample}/QC/{sample}-{unit}_mergedUnmapped.cov",
+        stats = "02_alignment/{sample}/QC/{sample}-{unit}_mergedUnmapped.stats"
     resources:
         mem_mb=2048,
         cores=1,
