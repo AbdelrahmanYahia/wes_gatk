@@ -1,8 +1,8 @@
 python3 ./wes.py WES \
-    -i /mnt/gs21/scratch/mansourt/wes_gatk/raw_data_temp \
+    -i /mnt/gs21/scratch/mansourt/wes_gatk/raw_data \
     -o /mnt/gs21/scratch/mansourt/wes_gatk/output \
     --reference-fasta /mnt/home/mansourt/annDB/broad_hg38/Homo_sapiens_assembly38.fasta \
-    --bed-file /mnt/gs21/scratch/mansourt/wes_gatk/exome_bed/S07604715_Padded.bed \
+    --bed-file /mnt/gs21/scratch/mansourt/wes_gatk/exome_bed/sureSelect_V6_60M.bed \
     --gff-file /mnt/home/mansourt/annDB/broad_hg38/Homo_sapiens.GRCh38.109.gff3.gz \
     --nirvana-path /mnt/home/mansourt/annDB/Nirvana \
     --annovar-path /mnt/home/mansourt/annDB/annovar_source/annovar \
