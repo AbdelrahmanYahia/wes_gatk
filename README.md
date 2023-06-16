@@ -53,7 +53,7 @@ chmod 777 wes_gatk/scripts/Prep_ENV.sh
 
 Create the environment, install the tools, and download the annotations database:
 ```
-./wes_gatk/scripts/Prep_ENV.sh ANNOVAR_LINK
+./wes_gatk/scripts/Prep_ENV.sh $ANNOVAR_LINK
 ```
 
 
@@ -62,7 +62,7 @@ This process may take some time.
 You can also download all the required reference files using `wes_gatk/scripts/gatk_download_data.sh`:
 ```
 chmod 777 wes_gatk/scripts/gatk_download_data.sh
-bash wes_gatk/scripts/gatk_download_data.sh DOWNLOAD_DIR
+bash wes_gatk/scripts/gatk_download_data.sh $DOWNLOAD_DIR
 ```
 
 
@@ -72,6 +72,7 @@ bash wes_gatk/scripts/gatk_download_data.sh DOWNLOAD_DIR
 To start the analysis, activate the `wes_gatk` environment and run the `wes.py` file:
 ```
 conda activate wes_gatk
+cd wes_gatk
 python3 wes.py WES --help
 ```
 
@@ -91,12 +92,18 @@ python3 wes.py WES \
   --generate-confs-only
 ```
 
+As an alternative, you can edit the options in "prep_files.sh", then run it:
+```
+conda activate wes_gatk
+bash prep_files.sh
+```
+
 To run a Snakemake dry-run:
 ```
 conda activate wes_gatk
 snakemake \
-  --snakefile wes_gatk/workflow/Snakefile \
-  -c PTH/to/outdir/config.yml \
+  --snakefile workflow/Snakefile \
+  --configfile PTH/to/outdir/config.yml \
   -n -j THREADS
 ```
 ### Advanced Parameters
