@@ -163,7 +163,6 @@ rule applyBaseRecalibrator:
         nodes = 1,
         time = lambda wildcards, attempt: 60 * 2 * attempt
     params: 
-        known_sites = known_variants,
         ref = ref_fasta
     shell:
         """
@@ -185,7 +184,8 @@ rule bqsr_calibrated_report:
 
     output: "03_bamPrep/{sample}/{sample}-{unit}_pqsr.report"
     params: 
-        known_sites = known_variants,
+        known_sites = known_variants_snps,
+        known_sites2 = known_variants_indels,
         ref = ref_fasta
     threads: 1
     resources:
@@ -197,7 +197,9 @@ rule bqsr_calibrated_report:
     shell:
         """
         gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" BaseRecalibrator -R {params.ref} \
-            -I {input} --known-sites {params.known_sites} \
+            -I {input} \
+            --known-sites {params.known_sites} \
+            --known-sites {params.known_sites2} \
             -O {output} 
         """
 
