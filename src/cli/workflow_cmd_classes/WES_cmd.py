@@ -456,6 +456,26 @@ class WES(WorkflowCli):
 
                     try:
                         if args.parse_snakemake_output:
+                            print(f"""
+ ________________________________________________
+|                                                 |
+|                                                 |
+|                                                 |
+|    ▄████     █    ██     ▄▄▄          ██▓███    |
+|   ██▒ ▀█▒    ██  ▓██▒   ▒████▄       ▓██░  ██▒  |
+|  ▒██░▄▄▄░   ▓██  ▒██░   ▒██  ▀█▄     ▓██░ ██▓▒  |
+|  ░▓█  ██▓   ▓▓█  ░██░   ░██▄▄▄▄██    ▒██▄█▓▒ ▒  |
+|  ░▒▓███▀▒   ▒▒█████▓     ▓█   ▓██▒   ▒██▒ ░  ░  |
+|   ░▒   ▒    ░▒▓▒ ▒ ▒     ▒▒   ▓▒█░   ▒▓▒░ ░  ░  |
+|    ░   ░    ░░▒░ ░ ░      ▒   ▒▒ ░   ░▒ ░       |
+|  ░ ░   ░     ░░░ ░ ░      ░   ▒      ░░         |
+|        ░       ░              ░  ░              |
+|                                                 |
+|                                                 |
+|       {GRE}GUAP toolkit for Genomics analysis{NC}        |
+| ________________________________________________|
+
+    """)
                             process_snakemake_standard_output(snakemake_cmd, f"{all_args['working_dir']}/output.log")
                         else:
                             subprocess.run(f"{snakemake_cmd}")
