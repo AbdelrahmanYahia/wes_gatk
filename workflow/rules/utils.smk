@@ -1,7 +1,7 @@
 
 def get_gvcf(wildcards):
     return [f"04_calling/{sample}_raw.gvcf.gz" \
-        for sample in samples_IDs]
+        for sample in set(samples_IDs)]
 
 # def get_bams(wildcards):
 #     return [f"03_bamPrep/{sample}.pqsr.bam" \

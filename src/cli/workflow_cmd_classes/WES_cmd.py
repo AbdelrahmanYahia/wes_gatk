@@ -443,10 +443,10 @@ class WES(WorkflowCli):
             try:
                 if all_args['export_dag'] is True and all_args['dry_run'] != True:
                     if all_args['continue']:
-                        subprocess.run(f"snakemake --snakefile '{GUAP_DIR}/workflows/{workflow}/Snakefile' --configfile '{all_args['working_dir']}/config.yaml' -j {all_args['threads']} --progress {all_args['smk_extra_args']}", shell=True)
+                        subprocess.run(f"snakemake --snakefile '{GUAP_DIR}/workflow/Snakefile' --configfile '{all_args['working_dir']}/config.yaml' -j {all_args['threads']} {all_args['smk_extra_args']}", shell=True)
                     else:
                         subprocess.run(snakemake_cmd, shell=True)
-                        subprocess.run(f"snakemake --snakefile '{GUAP_DIR}/workflows/{workflow}/Snakefile' --configfile '{all_args['working_dir']}/config.yaml' -j {all_args['threads']} --progress {all_args['smk_extra_args']}", shell=True)
+                        subprocess.run(f"snakemake --snakefile '{GUAP_DIR}/workflow/Snakefile' --configfile '{all_args['working_dir']}/config.yaml' -j {all_args['threads']} {all_args['smk_extra_args']}", shell=True)
 
                     print(f"{PRP}{runtime.elapsed()}{NC}")
                 elif all_args['dry_run']:
