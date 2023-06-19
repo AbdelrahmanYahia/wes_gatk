@@ -11,6 +11,7 @@ def get_final_output(wildcards):
     final_output = []
 
     for i in samples_IDs:
+        # print(i)
         # final_output.extend(expand(
         #     "01_QC/{sample}/{sample}-{unit}_{R}.trimmed_fastqc.zip",
         #     sample=i,

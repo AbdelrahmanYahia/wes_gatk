@@ -5,13 +5,13 @@ rule VariantEval:
     conda: "../env/wes_gatk.yml"
 
     output: "04_calling/QC/{sample}.eval.grp"
-    threads:1
+    threads: config["general_low_threads"]
     params:
         ref = ref_fasta
     resources:
-        mem_mb=2048,
-        cores=1,
-        mem_gb=2,
+        mem_mb=int(config["general_low_mem"])* 1024,
+        cores=config["general_low_threads"],
+        mem_gb=int(config["general_low_mem"]),
         nodes = 1,
         time = lambda wildcards, attempt: 60 * 2 * attempt
     shell:
@@ -32,12 +32,12 @@ rule variant_filteration:
     params:
         ref = ref_fasta
     resources:
-        mem_mb=2048,
-        cores=1,
-        mem_gb=2,
+        mem_mb=int(config["general_low_mem"])* 1024,
+        cores=config["general_low_threads"],
+        mem_gb=int(config["general_low_mem"]),
         nodes = 1,
         time = lambda wildcards, attempt: 60 * 2 * attempt
-    threads:1
+    threads: config["general_low_threads"]
     shell:
         """
         gatk VariantFiltration \
@@ -62,12 +62,12 @@ rule Split_variants_idnel:
     params:
         ref = ref_fasta
     resources:
-        mem_mb=2048,
-        cores=1,
-        mem_gb=2,
+        mem_mb=int(config["general_low_mem"])* 1024,
+        cores=config["general_low_threads"],
+        mem_gb=int(config["general_low_mem"]),
         nodes = 1,
         time = lambda wildcards, attempt: 60 * 2 * attempt
-    threads:1
+    threads: config["general_low_threads"]
     shell:
         """
         gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}"  SelectVariants \
@@ -87,12 +87,12 @@ rule variant_filteration_indels:
     params:
         ref = ref_fasta
     resources:
-        mem_mb=2048,
-        cores=1,
-        mem_gb=2,
+        mem_mb=int(config["general_low_mem"])* 1024,
+        cores=config["general_low_threads"],
+        mem_gb=int(config["general_low_mem"]),
         nodes = 1,
         time = lambda wildcards, attempt: 60 * 2 * attempt
-    threads:1
+    threads: config["general_low_threads"]
     shell:
         """
         gatk VariantFiltration \
@@ -115,12 +115,12 @@ rule Split_variants_snp:
     params:
         ref = ref_fasta
     resources:
-        mem_mb=2048,
-        cores=1,
-        mem_gb=2,
+        mem_mb=int(config["general_low_mem"])* 1024,
+        cores=config["general_low_threads"],
+        mem_gb=int(config["general_low_mem"]),
         nodes = 1,
         time = lambda wildcards, attempt: 60 * 2 * attempt
-    threads:1
+    threads: config["general_low_threads"]
     shell:
         """
         gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}"  SelectVariants \
@@ -139,12 +139,12 @@ rule variant_filteration_snps:
     params:
         ref = ref_fasta
     resources:
-        mem_mb=2048,
-        cores=1,
-        mem_gb=2,
+        mem_mb=int(config["general_low_mem"])* 1024,
+        cores=config["general_low_threads"],
+        mem_gb=int(config["general_low_mem"]),
         nodes = 1,
         time = lambda wildcards, attempt: 60 * 2 * attempt
-    threads:1
+    threads: config["general_low_threads"]
     shell:
         """
         gatk VariantFiltration \

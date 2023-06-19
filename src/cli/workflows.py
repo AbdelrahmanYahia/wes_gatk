@@ -44,12 +44,12 @@ class WorkflowCli:
         pass
     
     def run(self, args, workflow):
-        if args.print_last_run:
-            with open(f"{GUAP_DIR}/.last_run.txt", 'r') as last_run:
-                lines = last_run.readlines()
-            last_command = lines[0]
-            print(f"guap {last_command}")
-            exit()
+        # if args.print_last_run:
+        #     with open(f"{GUAP_DIR}/.last_run.txt", 'r') as last_run:
+        #         lines = last_run.readlines()
+        #     last_command = lines[0]
+        #     print(f"guap {last_command}")
+        #     exit()
         all_args = parse_input_args(args)
         snakemake_cmd = smk_cmd(all_args, f"{workflow}")
         try:

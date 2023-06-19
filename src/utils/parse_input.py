@@ -36,7 +36,7 @@ def check_R(df): # takes pandas df and returns string
     """checks all files have same naming patterns from pandas df, to use in generete sample table function"""
     uniques = df['read_num'].unique()
     if len(uniques) > 1:
-        glogger.prnt_fatel(f"Your input directory has multible fastq file naming patterns, please check directory.")
+        glogger.prnt_error(f"Your input directory has multible fastq file naming patterns, please check directory.")
     else:
         return uniques[0].replace("1","")
 
@@ -56,7 +56,6 @@ def check_pattern(df): # takes pandas df and returns a string
     else:
         return uniques[0]
     
-
 def recogize_pattern(file_name): # takes string of fastq file name and returns dict with read info and id
     """ using re to recognize the naming pattern of samples (illumina, srr and general naming patten)"""
     # naming pattern for re 
@@ -83,7 +82,7 @@ def recogize_pattern(file_name): # takes string of fastq file name and returns d
             
         else:
             continue
-## 1: full name 2: without read group and ext, 3: sample name, 4: flowcell + lane, 5: read number, 6: ext
+## 1: full name 2: without read group and ext, 3: sample name, 4: flowcell + lane, 5: read group, 6: separtor 7: read number 8: ext
 
     if matched_pattern == "Novagen":
         sample, sample_name, sample_id, unit, read_num, ext = matched.groups()[0], matched.groups()[1], matched.groups()[2], matched.groups()[3], matched.groups()[4], matched.groups()[5]
@@ -149,7 +148,6 @@ def recogize_pattern(file_name): # takes string of fastq file name and returns d
             "ext": ext,
             "matched_pattern": ptrn_name
         }
-
 
 
 def parse_samples(inpath): # takes path return contains fastq files, returns df contains sample information
@@ -288,7 +286,7 @@ def parse_input_args(args): # takes args (object) returns dict of args informati
     if os.path.exists(outpath+"/"+"samples.tsv"):
         glogger.prnt_warning(f"Found an exsiting sample.tsv file in output directory, will not override.")
     else:
-        samples.to_csv(outpath+"/"+"samples.tsv",sep='\t')  
+        samples.to_csv(outpath+"/"+"samples.tsv",sep='\t',index=False)  
     
     ### TODO: modify R1_pattern and R2s
 
@@ -337,9 +335,9 @@ def parse_input_args(args): # takes args (object) returns dict of args informati
         # Write the command to a file
         with open(f"{outpath}/command.txt", "w") as f:
             f.write(command)
-        # Write the command to a lastcommand file
-        with open(f"{GUAP_DIR}/.last_run.txt", "w") as f:
-            f.write(command)
+        # # Write the command to a lastcommand file
+        # with open(f"{GUAP_DIR}/.last_run.txt", "w") as f:
+        #     f.write(command)
     return all_args
 
 

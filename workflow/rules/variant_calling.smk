@@ -8,22 +8,23 @@ rule HaplotypeCaller:
     params: 
         ref = ref_fasta,
         bed = bed_file,
-        workflow_args = """"""
+        extra_args = config["caller_extra_args"]
 
     resources:
-        mem_mb=8192,
-        cores=4,
-        mem_gb=8,
+        mem_mb=int(config["calling_mem"])*1024,
+        cores=config["calling_threads"],
+        mem_gb=config["calling_mem"],
         nodes = 1,
         time = lambda wildcards, attempt: 60 * 2 * attempt
-    threads: 4
+
+    threads: config["calling_threads"]
 
     shell:
         """
         gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
             HaplotypeCaller -R {params.ref} \
             -G StandardAnnotation -G StandardHCAnnotation \
-            -G AS_StandardAnnotation \
+            -G AS_StandardAnnotation {params.extra_args} \
             -GQB 10 -GQB 20 -GQB 30 -GQB 40 -GQB 50 -GQB 60 -GQB 70 -GQB 80 -GQB 90 \
             -L {params.bed} \
             -I {input} --native-pair-hmm-threads {threads} -ERC GVCF -O {output}
@@ -42,11 +43,11 @@ rule combine_gvcf:
         gvcfs = lambda wildcards, input: [f" --variant {v}" for v in input["gvcfs"]],
         ref = ref_fasta
 
-    threads: 1
+    threads: config["general_low_threads"]
     resources:
-        mem_mb=2048,
-        cores=1,
-        mem_gb=2,
+        mem_mb=int(config["general_low_mem"])* 1024,
+        cores=config["general_low_threads"],
+        mem_gb=int(config["general_low_mem"]),
         nodes = 1,
         time = lambda wildcards, attempt: 60 * 2 * attempt
     shell:
@@ -56,7 +57,8 @@ rule combine_gvcf:
             CombineGVCFs \
             -R {params.ref} \
             {params.gvcfs} \
-            -G StandardAnnotation -G AS_StandardAnnotation \
+            -G StandardAnnotation -G StandardHCAnnotation \
+            -G AS_StandardAnnotation \
             --allow-old-rms-mapping-quality-annotation-data \
             -O {output}
         """
@@ -71,11 +73,11 @@ rule genotype_gvcfs:
         "04_calling/variants_genotyped.gvcf.gz"
     params:
         ref = ref_fasta
-    threads: 4
+    threads: config["general_high_threads"]
     resources:
-        mem_mb=2048,
-        cores=4,
-        mem_gb=2,
+        mem_mb=int(config["general_high_mem"])* 1024,
+        cores=config["general_high_threads"],
+        mem_gb=int(config["general_high_mem"]),
         nodes = 1,
         time = lambda wildcards, attempt: 60 * 2 * attempt
 
@@ -83,5 +85,7 @@ rule genotype_gvcfs:
         """
         gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
             GenotypeGVCFs \
+            -G StandardAnnotation -G StandardHCAnnotation \
+            -G AS_StandardAnnotation \
             -R {params.ref} -V {input} -O {output}
         """

@@ -264,7 +264,7 @@ rule MergeSamFiles:
     output:
         "03_bamPrep/merged_bams/{sample}.pqsr.bam"
     params:
-        bams = lambda wildcards: [f" -I 03_bamPrep/{wildcards.sample}/{wildcards.sample}_{b}.pqsr.bam" for b in units.loc[wildcards.sample, "unit"].tolist()],
+        bams = lambda wildcards: [f" -I 03_bamPrep/{wildcards.sample}/{wildcards.sample}-{b}.pqsr.bam" for b in units.loc[wildcards.sample, "unit"].tolist()],
         ref = ref_fasta
 
     threads: 1
@@ -294,7 +294,7 @@ rule GatherBamFiles:
     output:
         "03_bamPrep/merged_bams/{sample}.gatherd.pqsr.bam"
     params:
-        bams = lambda wildcards: [f" -I 03_bamPrep/{wildcards.sample}/{wildcards.sample}_{b}.pqsr.bam" for b in units.loc[wildcards.sample, "unit"].tolist()],
+        bams = lambda wildcards: [f" -I 03_bamPrep/{wildcards.sample}/{wildcards.sample}-{b}.pqsr.bam" for b in units.loc[wildcards.sample, "unit"].tolist()],
         ref = ref_fasta
 
     threads: 1

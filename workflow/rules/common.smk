@@ -14,21 +14,17 @@ working_dir = config["working_dir"]
 sample_table_file=config.get('sampletable','samples.tsv')
 SampleTable = pd.read_table(sample_table_file)
 
-
-files_R1s = list(SampleTable.iloc[:, 0])
-files_R2s = list(SampleTable.iloc[:, 7])
-samples = list(SampleTable.iloc[:, 2]) # sample full name
-units = list(SampleTable.iloc[:, 1])
-samples_IDs = list(SampleTable.iloc[:, 3])
-
+files_R1s = list(SampleTable.iloc[:, 1-1])
+files_R2s = list(SampleTable.iloc[:, 8-1])
+samples = list(SampleTable.iloc[:, 3-1]) # sample full name
+units = list(SampleTable.iloc[:, 2-1])
+samples_IDs = list(SampleTable.iloc[:, 4-1])
+# print(SampleTable)
 units = (
-    pd.read_csv('samples.tsv', sep="\t", dtype={"sample_id": str, "library_index": str, "lane": str})
+    pd.read_csv('samples.tsv', sep="\t", dtype={"sample_id": str, "unit": str})
     .set_index(["sample_id", "unit"], drop=False)
     .sort_index()
 )
-
-
-
 
 ALL_THREADS = config["threads"]
 MEM = config["total_mem"]

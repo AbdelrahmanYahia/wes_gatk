@@ -1,32 +1,26 @@
 
 rule FastqToSam:
     input:
-        R1 = f"{samples_dir}/{{sample}}_{{unit}}1.{EXT}",
-        R2 = f"{samples_dir}/{{sample}}_{{unit}}2.{EXT}"
+        R1 = f"{samples_dir}/{{sample}}-{{unit}}1.{EXT}",
+        R2 = f"{samples_dir}/{{sample}}-{{unit}}2.{EXT}"
     
     conda: "../env/wes_gatk.yml"
 
     output:
-        ubam = "0_samples/{sample}/{sample}_{unit}.ubam"
+        ubam = "0_samples/{sample}/{sample}-{unit}.ubam"
 
-
-    benchmark: "benchamrks/QC/{sample}/{sample}_{unit}_trim.txt"
-    threads: 4
+    threads: config["gen_ubam_threads"]
     params:
-        size = 4,
-        quality = 10,
-        extra = '',
-        minlen = 50,
         ext = EXT
 
     resources:
-        mem_mb=5120,
-        cores=4,
-        mem_gb=5,
+        mem_mb = int(config["gen_ubam_mem"])*1024,
+        cores = config["gen_ubam_threads"],
+        mem_gb = int(config["gen_ubam_mem"]),
         nodes = 1,
         time = lambda wildcards, attempt: 60 * 2 * attempt
     log: 
-        "logs/trimmomatic/{sample}/{sample}_{unit}.txt"
+        "logs/fastqtosam/{sample}/{sample}-{unit}.txt"
     shell:
         '''
 
@@ -57,27 +51,32 @@ rule FastqToSam:
             -LB $LB \
             -PL $PL \
             -RG $RGID \
-            -PU $PU 
+            -PU $PU \
+            # > {log} 2>&1
         '''
 
 rule MarkIlluminaAdapters:
     input:
-        "0_samples/{sample}/{sample}_{unit}.ubam"
+        "0_samples/{sample}/{sample}-{unit}.ubam"
     output:
-        bam="0_samples/{sample}/{sample}_{unit}.adab.ubam",
-        metrics="0_samples/{sample}/{sample}_{unit}.adap_metrics.txt"
+        bam="0_samples/{sample}/{sample}-{unit}.adab.ubam",
+        metrics="0_samples/{sample}/{sample}-{unit}.adap_metrics.txt"
     threads:4
     resources:
-        mem_mb=5120,
-        cores=4,
-        mem_gb=5,
+        mem_mb = int(config["gen_ubam_mem"])*1024,
+        cores = config["gen_ubam_threads"],
+        mem_gb = int(config["gen_ubam_mem"]),
         nodes = 1,
         time = lambda wildcards, attempt: 60 * 2 * attempt
+    log: 
+        "logs/markilluminaAdabs/{sample}/{sample}-{unit}.txt"
+
     shell:
         '''
         gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
             MarkIlluminaAdapters \
             -I {input} \
             -O {output.bam} \
-            -M {output.metrics} 
+            -M {output.metrics} \
+            # > {log} 2>&1
         '''

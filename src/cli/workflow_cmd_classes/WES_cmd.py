@@ -90,72 +90,123 @@ class WES(WorkflowCli):
         )
 
         workflow_conf.add_argument(
-            '--dont-use-gatk-bestparctice', 
-            help='Generate sample table and config file only', 
-            action='store_true'
-        )
-
-        qc_conf = parser.add_argument_group(f'{BLU}QC configuration{NC}')
-
-        qc_conf.add_argument(
-            '--trimmomatic',
-            dest='trimmomatic',
-            action='store_true',
-            help="Use trimmomatic"
-        )
-
-        qc_conf.add_argument(
-            '--trim-t', 
-            help= "Number of threads to use during trim step", 
-            type=int ,
+            '--general-low-threads', 
+            help= "Number of threads to use during genral tasks that requires low threads [default = 1]", 
+            type=int, 
+            default= 1,
             metavar = "N",
-            default= 4 
         )
 
-        qc_conf.add_argument(
-            "--trim-min-length", 
-            type=int,
-            default=30,
+        workflow_conf.add_argument(
+            '--general-high-threads', 
+            help= "Number of threads to use during genral tasks that requires many threads [default = 4]", 
+            type=int, 
+            default= 4,
             metavar = "N",
-            help='trimmomatic min length [default = 30]'
         )
 
-        qc_conf.add_argument(
-            "--slidingwindow-size", 
-            type=int,
-            default=4,
+        workflow_conf.add_argument(
+            '--general-low-mem', 
+            help= "Memory required in general tasks that doesn't need much memory [default = 2]", 
+            type=int, 
+            default= 2,
             metavar = "N",
-            help='trimmomatic sliding window size [default = 4]'
         )
 
-        qc_conf.add_argument(
-            "--slidingwindow-quality", 
-            type=int,
-            default=10,
+        workflow_conf.add_argument(
+            '--general-high-mem', 
+            help= "Memory required in general tasks that need medium memory [default = 5]", 
+            type=int, 
+            default= 5,
             metavar = "N",
-            help='trimmomatic sliding window quality score [default = 10]'
+        )
+        
+        # workflow_conf.add_argument(
+        #     '--dont-use-gatk-bestparctice', 
+        #     help='Generate sample table and config file only', 
+        #     action='store_true'
+        # )
+
+        # qc_conf = parser.add_argument_group(f'{BLU}QC configuration{NC}')
+
+        # qc_conf.add_argument(
+        #     '--trimmomatic',
+        #     dest='trimmomatic',
+        #     action='store_true',
+        #     help="Use trimmomatic"
+        # )
+
+        # qc_conf.add_argument(
+        #     '--trim-t', 
+        #     help= "Number of threads to use during trim step", 
+        #     type=int ,
+        #     metavar = "N",
+        #     default= 4 
+        # )
+
+        # qc_conf.add_argument(
+        #     "--trim-min-length", 
+        #     type=int,
+        #     default=30,
+        #     metavar = "N",
+        #     help='trimmomatic min length [default = 30]'
+        # )
+
+        # qc_conf.add_argument(
+        #     "--slidingwindow-size", 
+        #     type=int,
+        #     default=4,
+        #     metavar = "N",
+        #     help='trimmomatic sliding window size [default = 4]'
+        # )
+
+        # qc_conf.add_argument(
+        #     "--slidingwindow-quality", 
+        #     type=int,
+        #     default=10,
+        #     metavar = "N",
+        #     help='trimmomatic sliding window quality score [default = 10]'
+        # )
+
+        # qc_conf.add_argument(
+        #     '--trimmomatic-extra-args',
+        #      type=str,
+        #     metavar="='-args'",
+        #     help="A string value of extra args for trimmomatic (must be used with = with no spaces (--trimmomatic-extra-args='-arg1 -arg2'))",
+        #     default=""
+        # )
+
+
+        # qc_conf.add_argument(
+        #     '--skip-QC',
+        #      action='store_true',
+        #      help="Skipp Fastqc step"
+        # )
+
+        preprocess = parser.add_argument_group(f'{BLU}Samples pre-processing{NC}')
+
+        preprocess.add_argument(
+            '--gen-ubam-threads', 
+            help= "Number of threads to use during creating ubam and marking adaptors [default = 4]", 
+            type=int, 
+            default= 4,
+            metavar = "N",
         )
 
-        qc_conf.add_argument(
-            '--trimmomatic-extra-args',
-             type=str,
-            metavar="='-args'",
-            help="A string value of extra args for trimmomatic (must be used with = with no spaces (--trimmomatic-extra-args='-arg1 -arg2'))",
-            default=""
+        preprocess.add_argument(
+            '--gen-ubam-mem', 
+            help= "Memory (GB) to use during creating ubam and marking adaptors [default = 5]", 
+            type=int, 
+            default= 5,
+            metavar = "N",
         )
 
-
-        qc_conf.add_argument(
-            '--skip-QC',
-             action='store_true',
-             help="Skipp Fastqc step"
-        )
 
         aligner_conf = parser.add_argument_group(f'{BLU}Aligner configuration{NC}')
 
 
         aligner_conf.add_argument(
-            '--threads-index', 
+            '--index-threads', 
             help= "Number of threads to use during indexing ref [default = 4]", 
             type=int, 
             default= 4,
@@ -163,10 +214,18 @@ class WES(WorkflowCli):
         )
 
         aligner_conf.add_argument(
-            '--threads-align', 
+            '--align-threads', 
             help= "Number of threads to use during sample alignment [default = 4]", 
             type=int, 
             default= 4,
+            metavar = "N",
+        )
+
+        aligner_conf.add_argument(
+            '--align-mem', 
+            help= "Memory (GB) to use during sample alignment [default = 32]", 
+            type=int, 
+            default= 32,
             metavar = "N",
         )
 
@@ -217,6 +276,15 @@ class WES(WorkflowCli):
 
         )
 
+        # variant_caller_conf.add_argument(
+        #     '--known-variants-snps',
+        #     metavar='path', 
+        #     type=os.path.abspath, 
+        #     help="path to reference fasta file",
+        #     required = not any(arg in ["--print-last-run"] for arg in sys.argv)
+
+        # )
+
         variant_caller_conf.add_argument(
             '--caller-extra-args', 
             help = "Extra arguments for caller, use it with no spaces and add = ( --caller-extra-args='-arg1 -arg2' ) ",
@@ -226,10 +294,18 @@ class WES(WorkflowCli):
         )
 
         variant_caller_conf.add_argument(
-            '--threads-calling', 
+            '--calling-threads', 
             help= "Number of threads to use during variant calling [default = 4]", 
             type=int, 
             default= 4,
+            metavar = "N",
+        )
+
+        variant_caller_conf.add_argument(
+            '--calling-mem', 
+            help= "Memory in GB to use during variant calling [default = 8]", 
+            type=int, 
+            default= 8,
             metavar = "N",
         )
 
@@ -277,6 +353,36 @@ class WES(WorkflowCli):
             help=f"Annovar Protocol\n defaults:\ng,f,f,f,f,f,f,f,f,f"
         )
 
+        annotation_conf.add_argument(
+            "--annovar-extra-args", 
+            metavar="='-args'",
+            help="A string value of extra args for annovar(must be used with = with no spaces (--annovar-extra-args='-arg1 -arg2'))",
+            default="", type=str
+        )
+
+        annotation_conf.add_argument(
+            "--nirvana-extra-args", 
+            metavar="='-args'",
+            help="A string value of extra args for nirvana(must be used with = with no spaces (--nirvana-extra-args='-arg1 -arg2'))",
+            default="", type=str
+        )
+
+        annotation_conf.add_argument(
+            '--annotation-threads', 
+            help= "Number of threads to use during creating ubam and marking adaptors [default = 4]", 
+            type=int, 
+            default= 4,
+            metavar = "N",
+        )
+
+        annotation_conf.add_argument(
+            '--annotation-mem', 
+            help= "Memory (GB) to use during creating ubam and marking adaptors [default = 5]", 
+            type=int, 
+            default= 8,
+            metavar = "N",
+        )
+
         # other options
         other_conf = parser.add_argument_group(f'{CYN}Other{NC}')
 
@@ -312,27 +418,27 @@ class WES(WorkflowCli):
             help="print many output"
         )
 
-        other_conf.add_argument(
-            '--print-last-run', 
-            action='store_true', 
-            help="Prints last run on screen",
-        )
+        # other_conf.add_argument(
+        #     '--print-last-run', 
+        #     action='store_true', 
+        #     help="Prints last run on screen",
+        # )
 
 
     def run(self, args):
 
         workflow = "WES"
-        if args.print_last_run:
-            with open(f"{GUAP_DIR}/.last_run.txt", 'r') as last_run:
-                lines = last_run.readlines()
-            last_command = lines[0]
-            print(f"guap {last_command}")
-            exit()
+        # if args.print_last_run:
+        #     with open(f"{GUAP_DIR}/.last_run.txt", 'r') as last_run:
+        #         lines = last_run.readlines()
+        #     last_command = lines[0]
+        #     print(f"guap {last_command}")
+        #     exit()
         all_args = parse_input_args(args)
         if all_args["generate_confs_only"]:
             print(f"{PRP}{runtime.elapsed()}{NC}")
         else:
-            glogger.prnt_fatel(f"{RED}Sorry still under dev :(\n{YEL}Make sure to include: {GRE}--generate-confs-only{NC}")
+            # glogger.prnt_fatel(f"{RED}Sorry still under dev :(\n{YEL}Make sure to include: {GRE}--generate-confs-only{NC}")
             snakemake_cmd = smk_cmd(all_args, f"{workflow}")
             try:
                 if all_args['export_dag'] is True and all_args['dry_run'] != True:

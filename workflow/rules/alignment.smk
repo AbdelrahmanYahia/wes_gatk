@@ -1,3 +1,75 @@
+
+rule ubam_align:
+    input:
+        bam="0_samples/{sample}/{sample}-{unit}.adab.ubam"
+
+    output:
+        bam="02_alignment/{sample}/{sample}-{unit}_mergedUnmapped.bam"
+
+    threads: 4
+    params:
+        fa = ref_fasta,
+        index = ref_bwa,
+        bwa_args = config["aligner_extra_args"]
+
+        ## TODO: fix this
+        # index = lambda wildcards: ref_bwa if not config["index_fasta"] else rules.bwa_index.output
+
+        # library_index = lambda wildcards: units.loc[:, 'library_index'][units['unit'] == f"{wildcards.unit}"].tolist()[0],
+        # lane = lambda wildcards: units.loc[:, 'lane'][units['unit'] == f"{wildcards.unit}"].tolist()[0]
+
+    log: 
+        bwa = "logs/bwa/{sample}/{sample}-{unit}_gatk-bwa.log",
+
+    benchmark: "benchamrks/{sample}/{sample}-{unit}_gatk-bwa.txt"
+    resources:
+        mem_mb=int(config["align_mem"])* 1024,
+        cores=config["align_threads"],
+        mem_gb=int(config["align_mem"]),
+        nodes = 1,
+        time = lambda wildcards, attempt: 60 * 2 * attempt
+    shell:
+        '''
+        gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
+            SamToFastq \
+            -I {input.bam} \
+            --FASTQ /dev/stdout \
+            --CLIPPING_ATTRIBUTE XT --CLIPPING_ACTION 2 \
+            --INTERLEAVE true -NON_PF true | bwa mem -K 100000000 \
+            -M -v 3 {params.bwa_args} -t {threads} -p {params.index} /dev/stdin | gatk \
+            --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
+            MergeBamAlignment \
+            --ALIGNED_BAM /dev/stdin \
+            --UNMAPPED_BAM {input.bam} \
+            --OUTPUT {output.bam} \
+            -R {params.fa} --CREATE_INDEX true --ADD_MATE_CIGAR true \
+            --CLIP_ADAPTERS false --CLIP_OVERLAPPING_READS true \
+            --INCLUDE_SECONDARY_ALIGNMENTS true --MAX_INSERTIONS_OR_DELETIONS -1 \
+            --PRIMARY_ALIGNMENT_STRATEGY MostDistant --ATTRIBUTES_TO_RETAIN XS 
+        '''
+
+rule QC_alignment:
+    input:
+        "02_alignment/{sample}/{sample}-{unit}_mergedUnmapped.bam"
+
+    conda: "../env/wes_gatk.yml"
+
+    output:
+        cov = "02_alignment/{sample}/QC/{sample}-{unit}_mergedUnmapped.cov",
+        stats = "02_alignment/{sample}/QC/{sample}-{unit}_mergedUnmapped.stats"
+    resources:
+        mem_mb=int(config["general_low_mem"])* 1024,
+        cores=config["general_low_threads"],
+        mem_gb=int(config["general_low_mem"]),
+        nodes = 1,
+        time = lambda wildcards, attempt: 60 * 2 * attempt
+    shell:
+        """
+        samtools depth {input} | awk '{{sum+=$3}} END {{print "Average = ",sum/NR, "No of covered Nuc = ", NR}}' > {output.cov}
+        samtools flagstat {input} > {output.stats}
+        """
+
+
 ## TODO: implement automatic indexing 
 # rule index_ref:
 #     input: f"{ref_fasta}"
@@ -72,9 +144,9 @@ rule bwa_align:
 
     benchmark: "benchamrks/{sample}/{sample}-{unit}_bwa.txt"
     resources:
-        mem_mb=32768,
-        cores=4,
-        mem_gb=32,
+        mem_mb=int(config["align_mem"])* 1024,
+        cores=config["align_threads"],
+        mem_gb=int(config["align_mem"]),
         nodes = 1,
         time = lambda wildcards, attempt: 60 * 2 * attempt
 
@@ -100,14 +172,14 @@ rule sort_and_convert_sam:
         "02_alignment/{sample}/{sample}-{unit}.bam"
     
     conda: "../env/wes_gatk.yml"
-
+    threads: config["general_low_threads"]
     output:
         "02_alignment/{sample}/{sample}-{unit}.sorted.bam"
     
     resources:
-        mem_mb=2048,
-        cores=1,
-        mem_gb=2,
+        mem_mb=int(config["general_low_mem"])* 1024,
+        cores=config["general_low_threads"],
+        mem_gb=int(config["general_low_mem"]),
         nodes = 1,
         time = lambda wildcards, attempt: 60 * 2 * attempt
 
@@ -116,73 +188,3 @@ rule sort_and_convert_sam:
         samtools sort {input} -o {output}
         samtools index {output}
         """
-
-rule ubam_align:
-    input:
-        bam="0_samples/{sample}/{sample}-{unit}.adab.ubam"
-
-    output:
-        bam="02_alignment/{sample}/{sample}-{unit}_mergedUnmapped.bam"
-
-    threads: 4
-    params:
-        fa = ref_fasta,
-        index = ref_bwa 
-
-        ## TODO: fix this
-        # index = lambda wildcards: ref_bwa if not config["index_fasta"] else rules.bwa_index.output
-
-        # library_index = lambda wildcards: units.loc[:, 'library_index'][units['unit'] == f"{wildcards.unit}"].tolist()[0],
-        # lane = lambda wildcards: units.loc[:, 'lane'][units['unit'] == f"{wildcards.unit}"].tolist()[0]
-
-    log: 
-        bwa = "logs/bwa/{sample}/{sample}-{unit}_gatk-bwa.log",
-
-    benchmark: "benchamrks/{sample}/{sample}-{unit}_gatk-bwa.txt"
-    resources:
-        mem_mb=32768,
-        cores=4,
-        mem_gb=32,
-        nodes = 1,
-        time = lambda wildcards, attempt: 60 * 2 * attempt
-    shell:
-        '''
-        gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
-            SamToFastq \
-            -I {input.bam} \
-            --FASTQ /dev/stdout \
-            --CLIPPING_ATTRIBUTE XT --CLIPPING_ACTION 2 \
-            --INTERLEAVE true -NON_PF true | bwa mem -K 100000000 \
-            -M -v 3 -t {threads} -p {params.index} /dev/stdin | gatk \
-            --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
-            MergeBamAlignment \
-            --ALIGNED_BAM /dev/stdin \
-            --UNMAPPED_BAM {input.bam} \
-            --OUTPUT {output.bam} \
-            -R {params.fa} --CREATE_INDEX true --ADD_MATE_CIGAR true \
-            --CLIP_ADAPTERS false --CLIP_OVERLAPPING_READS true \
-            --INCLUDE_SECONDARY_ALIGNMENTS true --MAX_INSERTIONS_OR_DELETIONS -1 \
-            --PRIMARY_ALIGNMENT_STRATEGY MostDistant --ATTRIBUTES_TO_RETAIN XS 
-        '''
-
-rule QC_alignment:
-    input:
-        "02_alignment/{sample}/{sample}-{unit}_mergedUnmapped.bam"
-
-    conda: "../env/wes_gatk.yml"
-
-    output:
-        cov = "02_alignment/{sample}/QC/{sample}-{unit}_mergedUnmapped.cov",
-        stats = "02_alignment/{sample}/QC/{sample}-{unit}_mergedUnmapped.stats"
-    resources:
-        mem_mb=2048,
-        cores=1,
-        mem_gb=2,
-        nodes = 1,
-        time = lambda wildcards, attempt: 60 * 2 * attempt
-    shell:
-        """
-        samtools depth {input} | awk '{{sum+=$3}} END {{print "Average = ",sum/NR, "No of covered Nuc = ", NR}}' > {output.cov}
-        samtools flagstat {input} > {output.stats}
-        """
-
