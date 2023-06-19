@@ -122,7 +122,8 @@ rule BaseRecalibrator:
 
     output: "03_bamPrep/{sample}/{sample}-{unit}.report"
     params: 
-        known_sites = known_variants,
+        known_sites = known_variants_snps,
+        known_sites2 = known_variants_indels,
         ref = ref_fasta,
 
     threads: 4
@@ -141,6 +142,7 @@ rule BaseRecalibrator:
             -I {input} \
             --use-original-qualities \
             --known-sites {params.known_sites} \
+            --known-sites {params.known_sites2} \
             -O {output} 
         """
 

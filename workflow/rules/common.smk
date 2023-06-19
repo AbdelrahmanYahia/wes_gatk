@@ -50,7 +50,8 @@ ref_fasta_path = os.path.dirname(ref_fasta)
 
 bed_file = config["bed_file"]
 
-known_variants = config["known_variants"]
+known_variants_snps = config["known_variants_snps"]
+known_variants_indels = config["known_variants_indels"]
 
 nirvana_path = config["nirvana_path"]
 annovar_dir = config["annovar_path"]

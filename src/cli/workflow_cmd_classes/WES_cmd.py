@@ -19,7 +19,6 @@ class WES(WorkflowCli):
             help="Input directory path", 
             metavar='in path', 
             type=os.path.abspath, 
-            required = not any(arg in ["--print-last-run"] for arg in sys.argv)
         ) 
 
         basic_conf.add_argument(
@@ -27,7 +26,6 @@ class WES(WorkflowCli):
             help= "Output directory path", 
             metavar='out path', 
             type=os.path.abspath, 
-            required = not any(arg in ["--print-last-run"] for arg in sys.argv)
         ) 
 
         # workflow configure
@@ -46,7 +44,6 @@ class WES(WorkflowCli):
             metavar='path/to/file.fa',
             type=os.path.abspath,
             help="path to reference fasta file",
-            required = not any(arg in ["--print-last-run"] for arg in sys.argv)
 
         )
 
@@ -55,7 +52,6 @@ class WES(WorkflowCli):
             help='bed file path', 
             metavar='path',
             type=os.path.abspath,
-            required = not any(arg in ["--print-last-run"] for arg in sys.argv)
 
         )
 
@@ -64,7 +60,6 @@ class WES(WorkflowCli):
             help='gff file path', 
             metavar='path',
             type=os.path.abspath,
-            required = not any(arg in ["--print-last-run"] for arg in sys.argv)
 
         )
 
@@ -121,67 +116,67 @@ class WES(WorkflowCli):
             metavar = "N",
         )
         
-        # workflow_conf.add_argument(
-        #     '--dont-use-gatk-bestparctice', 
-        #     help='Generate sample table and config file only', 
-        #     action='store_true'
-        # )
+        workflow_conf.add_argument(
+            '--dont-use-gatk-bestparctice', 
+            help='Generate sample table and config file only', 
+            action='store_true'
+        )
 
-        # qc_conf = parser.add_argument_group(f'{BLU}QC configuration{NC}')
+        qc_conf = parser.add_argument_group(f'{BLU}QC configuration{NC}')
 
-        # qc_conf.add_argument(
-        #     '--trimmomatic',
-        #     dest='trimmomatic',
-        #     action='store_true',
-        #     help="Use trimmomatic"
-        # )
+        qc_conf.add_argument(
+            '--trimmomatic',
+            dest='trimmomatic',
+            action='store_true',
+            help="Use trimmomatic"
+        )
 
-        # qc_conf.add_argument(
-        #     '--trim-t', 
-        #     help= "Number of threads to use during trim step", 
-        #     type=int ,
-        #     metavar = "N",
-        #     default= 4 
-        # )
+        qc_conf.add_argument(
+            '--trim-t', 
+            help= "Number of threads to use during trim step", 
+            type=int ,
+            metavar = "N",
+            default= 4 
+        )
 
-        # qc_conf.add_argument(
-        #     "--trim-min-length", 
-        #     type=int,
-        #     default=30,
-        #     metavar = "N",
-        #     help='trimmomatic min length [default = 30]'
-        # )
+        qc_conf.add_argument(
+            "--trim-min-length", 
+            type=int,
+            default=30,
+            metavar = "N",
+            help='trimmomatic min length [default = 30]'
+        )
 
-        # qc_conf.add_argument(
-        #     "--slidingwindow-size", 
-        #     type=int,
-        #     default=4,
-        #     metavar = "N",
-        #     help='trimmomatic sliding window size [default = 4]'
-        # )
+        qc_conf.add_argument(
+            "--slidingwindow-size", 
+            type=int,
+            default=4,
+            metavar = "N",
+            help='trimmomatic sliding window size [default = 4]'
+        )
 
-        # qc_conf.add_argument(
-        #     "--slidingwindow-quality", 
-        #     type=int,
-        #     default=10,
-        #     metavar = "N",
-        #     help='trimmomatic sliding window quality score [default = 10]'
-        # )
+        qc_conf.add_argument(
+            "--slidingwindow-quality", 
+            type=int,
+            default=10,
+            metavar = "N",
+            help='trimmomatic sliding window quality score [default = 10]'
+        )
 
-        # qc_conf.add_argument(
-        #     '--trimmomatic-extra-args',
-        #      type=str,
-        #     metavar="='-args'",
-        #     help="A string value of extra args for trimmomatic (must be used with = with no spaces (--trimmomatic-extra-args='-arg1 -arg2'))",
-        #     default=""
-        # )
+        qc_conf.add_argument(
+            '--trimmomatic-extra-args',
+             type=str,
+            metavar="='-args'",
+            help="A string value of extra args for trimmomatic (must be used with = with no spaces (--trimmomatic-extra-args='-arg1 -arg2'))",
+            default=""
+        )
 
 
-        # qc_conf.add_argument(
-        #     '--skip-QC',
-        #      action='store_true',
-        #      help="Skipp Fastqc step"
-        # )
+        qc_conf.add_argument(
+            '--skip-QC',
+             action='store_true',
+             help="Skipp Fastqc step"
+        )
 
         preprocess = parser.add_argument_group(f'{BLU}Samples pre-processing{NC}')
 
@@ -268,22 +263,20 @@ class WES(WorkflowCli):
         variant_caller_conf = parser.add_argument_group(f'{BLU}Variant caller configuration{NC}')
 
         variant_caller_conf.add_argument(
-            '--known-variants',
+            '--known-variants-indels',
             metavar='path', 
             type=os.path.abspath, 
             help="path to reference fasta file",
-            required = not any(arg in ["--print-last-run"] for arg in sys.argv)
 
         )
 
-        # variant_caller_conf.add_argument(
-        #     '--known-variants-snps',
-        #     metavar='path', 
-        #     type=os.path.abspath, 
-        #     help="path to reference fasta file",
-        #     required = not any(arg in ["--print-last-run"] for arg in sys.argv)
+        variant_caller_conf.add_argument(
+            '--known-variants-snps',
+            metavar='path', 
+            type=os.path.abspath, 
+            help="path to reference fasta file",
 
-        # )
+        )
 
         variant_caller_conf.add_argument(
             '--caller-extra-args', 
