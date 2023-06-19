@@ -39,10 +39,10 @@ def get_final_output(wildcards):
         "04_calling/QC/{sample}.eval.grp",
             sample = samples_IDs
     ))
-    final_output.extend(expand(
-            "04_calling/QC/{type}/bcftools.stats",
-            type = ["snvs", "indels"]
-    ))
+    # final_output.extend(expand(
+    #         "04_calling/QC/{type}/bcftools.stats",
+    #         type = ["snvs", "indels"]
+    # ))
     final_output.extend(expand(
             "05_Annotation/ANNOVAR/{type}",
             type = ["snvs", "indels"]

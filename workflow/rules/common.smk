@@ -19,7 +19,7 @@ files_R2s = list(SampleTable.iloc[:, 8-1])
 samples = list(SampleTable.iloc[:, 3-1]) # sample full name
 units = list(SampleTable.iloc[:, 2-1])
 samples_IDs = list(SampleTable.iloc[:, 4-1])
-print(SampleTable)
+# print(SampleTable)
 units = (
     pd.read_csv('samples.tsv', sep="\t", dtype={"sample_id": str, "unit": str})
     .set_index(["sample_id", "unit"], drop=False)
