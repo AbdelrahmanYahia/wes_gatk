@@ -263,13 +263,21 @@ class WES(WorkflowCli):
         variant_caller_conf = parser.add_argument_group(f'{BLU}Variant caller configuration{NC}')
 
         variant_caller_conf.add_argument(
+            '--padding',
+            metavar='N', 
+            type=int, 
+            help="Interval padding to include",
+            default= 100
+        )
+
+        variant_caller_conf.add_argument(
             '--known-variants-indels',
             metavar='path', 
             type=os.path.abspath, 
             help="path to reference fasta file",
 
         )
-
+        
         variant_caller_conf.add_argument(
             '--known-variants-snps',
             metavar='path', 

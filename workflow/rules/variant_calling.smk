@@ -8,7 +8,8 @@ rule HaplotypeCaller:
     params: 
         ref = ref_fasta,
         bed = bed_file,
-        extra_args = config["caller_extra_args"]
+        extra_args = config["caller_extra_args"],
+        padding = config["padding"]
 
     resources:
         mem_mb=int(config["calling_mem"])*1024,
@@ -27,6 +28,7 @@ rule HaplotypeCaller:
             -G AS_StandardAnnotation {params.extra_args} \
             -GQB 10 -GQB 20 -GQB 30 -GQB 40 -GQB 50 -GQB 60 -GQB 70 -GQB 80 -GQB 90 \
             -L {params.bed} \
+            --interval-padding {params.padding} \
             -I {input} --native-pair-hmm-threads {threads} -ERC GVCF -O {output}
         """
 
