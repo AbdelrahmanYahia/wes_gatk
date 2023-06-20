@@ -15,12 +15,12 @@ rule FastqToSam:
 
     resources:
         mem_mb = int(config["gen_ubam_mem"])*1024,
-        cores = config["gen_ubam_threads"],
+        #cores = config["gen_ubam_threads"],
         mem_gb = int(config["gen_ubam_mem"]),
-        nodes = 1,
-        time = lambda wildcards, attempt: 60 * 2 * attempt
-    log: 
-        "logs/fastqtosam/{sample}/{sample}-{unit}.txt"
+        #nodes = 1,
+        runtime = lambda wildcards, attempt: 60 * attempt
+#    log: 
+#        "logs/fastqtosam/{sample}/{sample}-{unit}.txt"
     shell:
         '''
 
@@ -32,9 +32,11 @@ rule FastqToSam:
         PL="Illumina"
         LB=$SM
         echo "LB $LB"      
-        if [[ $ext == *.gz ]]; then
-            RGID=$(zcat {input.R1} | head -n1 | sed 's/:/_/g' |cut -d "_" -f1,2,3,4)
+        if [[ "$ext" == *".gz" ]]; then
+            RGID=$(head -n1 <(zcat {input.R1}) | sed 's/:/_/g' |cut -d "_" -f1,2,3,4)
+            #RGID=$(zcat {input.R1} | head -n1 | sed 's/:/_/g' |cut -d "_" -f1,2,3,4)
         else
+            echo "non gz file"
             RGID=$(head {input.R1} -n1 | sed 's/:/_/g' |cut -d "_" -f1,2,3,4)
         fi
         echo "RGID $RGID"
@@ -64,12 +66,12 @@ rule MarkIlluminaAdapters:
     threads:4
     resources:
         mem_mb = int(config["gen_ubam_mem"])*1024,
-        cores = config["gen_ubam_threads"],
+        #cores = config["gen_ubam_threads"],
         mem_gb = int(config["gen_ubam_mem"]),
-        nodes = 1,
-        time = lambda wildcards, attempt: 60 * 2 * attempt
-    log: 
-        "logs/markilluminaAdabs/{sample}/{sample}-{unit}.txt"
+        #nodes = 1,
+        runtime = lambda wildcards, attempt: 60 * attempt
+#   log: 
+#        "logs/markilluminaAdabs/{sample}/{sample}-{unit}.txt"
 
     shell:
         '''

@@ -3,9 +3,9 @@ cluster:
   sbatch
     --cpus-per-task={threads}
     --mem={resources.mem_mb}
-    --time={resources.time}
+    --time={resources.runtime}
     --job-name=smk-{rule}
-    --ntasks={resources.threads}
+    --ntasks={resources.tasks}
     --nodes={resources.nodes}
     --qos=scavenger
     --parsable
@@ -15,7 +15,7 @@ default-resources:
   - mem_mb=2000
   - disk_mb=1000000
   - runtime=60
-  - threads=1
+  - tasks=1
   - nodes=1
 jobs: 400
 latency-wait: 120
