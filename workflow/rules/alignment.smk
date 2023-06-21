@@ -11,23 +11,22 @@ rule ubam_align:
         fa = ref_fasta,
         index = ref_bwa,
         bwa_args = config["aligner_extra_args"]
-
         ## TODO: fix this
         # index = lambda wildcards: ref_bwa if not config["index_fasta"] else rules.bwa_index.output
 
         # library_index = lambda wildcards: units.loc[:, 'library_index'][units['unit'] == f"{wildcards.unit}"].tolist()[0],
         # lane = lambda wildcards: units.loc[:, 'lane'][units['unit'] == f"{wildcards.unit}"].tolist()[0]
 
-    log: 
-        bwa = "logs/bwa/{sample}/{sample}-{unit}_gatk-bwa.log",
+    # log: 
+    #     bwa = "logs/bwa/{sample}/{sample}-{unit}_gatk-bwa.log",
 
-    benchmark: "benchamrks/{sample}/{sample}-{unit}_gatk-bwa.txt"
+    benchmark: "benchamrks/ubam_align/{sample}/{sample}-{unit}.txt"
     resources:
-        mem_mb=int(config["align_mem"])* 1024,
-        cores=config["align_threads"],
-        mem_gb=int(config["align_mem"]),
-        nodes = 1,
-        time = lambda wildcards, attempt: 60 * 2 * attempt
+        mem_mb=32* 1024,
+        # cores=config["align_threads"],
+        mem_gb=32,
+        # nodes = 1,
+        runruntime = lambda wildcards, attempt: 60 * 2 * attempt
     shell:
         '''
         gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
@@ -53,16 +52,17 @@ rule QC_alignment:
         "02_alignment/{sample}/{sample}-{unit}_mergedUnmapped.bam"
 
     conda: "../env/wes_gatk.yml"
-
+    benchmark: "benchamrks/QC_alignment/{sample}/{sample}-{unit}.txt"
     output:
         cov = "02_alignment/{sample}/QC/{sample}-{unit}_mergedUnmapped.cov",
         stats = "02_alignment/{sample}/QC/{sample}-{unit}_mergedUnmapped.stats"
+    threads: 1
     resources:
-        mem_mb=int(config["general_low_mem"])* 1024,
-        cores=config["general_low_threads"],
-        mem_gb=int(config["general_low_mem"]),
-        nodes = 1,
-        time = lambda wildcards, attempt: 60 * 2 * attempt
+        mem_mb=lambda wildcards, attempt: (4 * 1024) * attempt,
+        # cores=config["general_low_threads"],
+        mem_gb=lambda wildcards, attempt: 4  * attempt,
+        # nodes = 1,
+        runtime = lambda wildcards, attempt: 60 * 2 * attempt
     shell:
         """
         samtools depth {input} | awk '{{sum+=$3}} END {{print "Average = ",sum/NR, "No of covered Nuc = ", NR}}' > {output.cov}
@@ -82,8 +82,8 @@ rule QC_alignment:
 #         mem_mb=2048,
 #         cores=1,
 #         mem_gb=2,
-#         nodes = 1,
-#         time = lambda wildcards, attempt: 60 * 2 * attempt
+        # nodes = 1,
+#         runtime = lambda wildcards, attempt: 60 * 2 * attempt
 #     shell: "samtools faidx {input}"
 
 
@@ -97,8 +97,8 @@ rule QC_alignment:
 #         mem_mb=2048,
 #         cores=1,
 #         mem_gb=2,
-#         nodes = 1,
-#         time = lambda wildcards, attempt: 60 * 2 * attempt
+        # nodes = 1,
+#         runtime = lambda wildcards, attempt: 60 * 2 * attempt
 #     shell: "picard CreateSequenceDictionary -R {input}"
 
 # rule bwa_index:
@@ -111,8 +111,8 @@ rule QC_alignment:
 #         mem_mb=8192,
 #         cores=4,
 #         mem_gb=8,
-#         nodes = 1,
-#         time = lambda wildcards, attempt: 60 * 2 * attempt
+        # nodes = 1,
+#         runtime = lambda wildcards, attempt: 60 * 2 * attempt
 #     shell: 
 #         "bwa index -p {output} {input}"
 
@@ -147,8 +147,8 @@ rule QC_alignment:
 #         mem_mb=int(config["align_mem"])* 1024,
 #         cores=config["align_threads"],
 #         mem_gb=int(config["align_mem"]),
-#         nodes = 1,
-#         time = lambda wildcards, attempt: 60 * 2 * attempt
+        # nodes = 1,
+#         runtime = lambda wildcards, attempt: 60 * 2 * attempt
 
 #     ## TODO: why does wildcards have errors in parsing 
 #     ##       fix it and use wildcards to generate LB, PL, SM, etc.
@@ -181,7 +181,7 @@ rule QC_alignment:
 #         cores=config["general_low_threads"],
 #         mem_gb=int(config["general_low_mem"]),
 #         nodes = 1,
-#         time = lambda wildcards, attempt: 60 * 2 * attempt
+#         runtime = lambda wildcards, attempt: 60 * 2 * attempt
 
 #     shell:
 #         """

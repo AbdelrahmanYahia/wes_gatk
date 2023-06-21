@@ -1,4 +1,25 @@
+
+rule multiqc:
+    input:
+        get_final_output
     
+    conda: "../env/wes_gatk.yml"
+
+    benchmark: "benchamrks/Multiqc/report.txt"
+
+    output:
+        "multiqc/multiqc_report.html"
+    threads: 1
+    resources:
+        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
+        # cores=config["general_low_threads"],
+        mem_gb=lambda wildcards, attempt: 8  * attempt,
+        # nodes = 1,
+        runtime = lambda wildcards, attempt: 60 * 2 * attempt
+
+    shell:
+        "multiqc . -o multiqc/"
+
 # rule trimmomatic:
 #     input:
 #         R1 = f"{samples_dir}/{{sample}}-{{unit}}1.{EXT}",
@@ -105,7 +126,7 @@
 
 # rule Fastqc:
 #     input:
-#         "00_trimmomatic/{sample}/{sample}-{unit}_{R}.trimmed.fastq.gz"
+#         f"00_trimmomatic/{{sample}}/{{sample}}-{{unit}}{R}.fq.gz"
 #     log:
 #         "logs/QC/QC_{sample}-{unit}_{R}.log"
     
@@ -130,24 +151,3 @@
 #         mkdir -p {params.path}
 #         fastqc {input} --threads {threads} -o {params.path} > {log} 2>&1
 #         """
-
-
-rule multiqc:
-    input:
-        get_final_output
-    
-    conda: "../env/wes_gatk.yml"
-    # output: 
-    #     "{sample}.txt"
-    output:
-        "multiqc/multiqc_report.html"
-    resources:
-        mem_mb=int(config["general_low_mem"])* 1024,
-        cores=config["general_low_threads"],
-        mem_gb=int(config["general_low_mem"]),
-        nodes = 1,
-        time = lambda wildcards, attempt: 60 * 2 * attempt
-    # run:
-    # print(wildcards.sample)
-    shell:
-        "multiqc . -o multiqc/"

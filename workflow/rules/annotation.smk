@@ -3,15 +3,16 @@ rule consequence:
     input: "04_calling/{type}/variants_genotyped.gvcf.gz"
     
     conda: "../env/wes_gatk.yml"
+    benchmark: "benchamrks/consequence/{type}/bcftools_csq.txt"
 
     output: "04_calling/QC/{type}/bcftools_csq.vcf"
-    threads: config["general_low_threads"]
+    threads: 1
     resources:
-        mem_mb=int(config["general_low_mem"])* 1024,
-        cores=config["general_low_threads"],
-        mem_gb=int(config["general_low_mem"]),
-        nodes = 1,
-        time = lambda wildcards, attempt: 60 * 2 * attempt
+        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
+        # cores=config["general_low_threads"],
+        mem_gb=lambda wildcards, attempt: 8  * attempt,
+        # nodes = 1,
+        runtime = lambda wildcards, attempt: 60 * 2 * attempt
     threads:1
     params:
         ref = ref_fasta,
@@ -27,15 +28,16 @@ rule bcftools_stats:
     input: "04_calling/QC/{type}/bcftools_csq.vcf"
     
     conda: "../env/wes_gatk.yml"
+    benchmark: "benchamrks/bcftools_stats/{type}/bcftools_csq.txt"
 
     output: "04_calling/QC/{type}/bcftools.stats"
-    threads: config["general_low_threads"]
+    threads: 1
     resources:
-        mem_mb=int(config["general_low_mem"])* 1024,
-        cores=config["general_low_threads"],
-        mem_gb=int(config["general_low_mem"]),
-        nodes = 1,
-        time = lambda wildcards, attempt: 60 * 2 * attempt
+        mem_mb=lambda wildcards, attempt: (4 * 1024) * attempt,
+        # cores=config["general_low_threads"],
+        mem_gb=lambda wildcards, attempt: 4  * attempt,
+        # nodes = 1,
+        runtime = lambda wildcards, attempt: 60 * 2 * attempt
     shell:
         """
             bcftools stats {input} > {output}
@@ -45,15 +47,15 @@ rule plot_bcftools_stats:
     input: "04_calling/QC/{type}/bcftools.stats"
     
     conda: "../env/wes_gatk.yml"
-
+    benchmark: "benchamrks/plot_bcftools_stats/{type}/bcftools_plots.txt"
     output: directory("04_calling/QC/{type}/bcftools_plots")
-    threads: config["general_low_threads"]
+    threads: 1
     resources:
-        mem_mb=int(config["general_low_mem"])* 1024,
-        cores=config["general_low_threads"],
-        mem_gb=int(config["general_low_mem"]),
-        nodes = 1,
-        time = lambda wildcards, attempt: 60 * 2 * attempt
+        mem_mb=lambda wildcards, attempt: (4 * 1024) * attempt,
+        # cores=config["general_low_threads"],
+        mem_gb=lambda wildcards, attempt: 4  * attempt,
+        # nodes = 1,
+        runtime = lambda wildcards, attempt: 60 * 2 * attempt
     shell:
         """
         plot-vcfstats -p {output} {input}
@@ -63,17 +65,20 @@ rule Nirvana:
     input:
         "04_calling/{type}/variants_genotyped.gvcf.gz"
     
+
     conda: "../env/wes_gatk.yml"
+
+    benchmark: "benchamrks/Nirvana/{type}/variants_genotyped_annotation.txt"
 
     output:
         "05_Annotation/Nirvana/{type}/Annotation.json.gz"
-    threads: config["annotation_threads"]
+    threads: 1
     resources:
-        mem_mb=int(config["annotation_mem"])* 1024,
-        cores=config["annotation_threads"],
-        mem_gb=int(config["annotation_mem"]),
-        nodes = 1,
-        time = lambda wildcards, attempt: 60 * 2 * attempt
+        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
+        # cores=config["general_low_threads"],
+        mem_gb=lambda wildcards, attempt: 8  * attempt,
+        # nodes = 1,
+        runtime = lambda wildcards, attempt: 60 * 2 * attempt
     params:
         Nirvana_supplementray = f"{nirvana_path}/DB/SupplementaryAnnotation/GRCh38/",
         Nirvana_ref = f"{nirvana_path}/DB/References/Homo_sapiens.GRCh38.Nirvana.dat",
@@ -97,16 +102,16 @@ rule Annovar:
         "04_calling/{type}/variants_genotyped.gvcf.gz"
     
     conda: "../env/wes_gatk.yml"
-
+    benchmark: "benchamrks/Annovar/{type}/variants_genotyped_annotation.txt"
     output:
         directory("05_Annotation/ANNOVAR/{type}")
-    threads: config["annotation_threads"]
+    threads: 1
     resources:
-        mem_mb=int(config["annotation_mem"])* 1024,
-        cores=config["annotation_threads"],
-        mem_gb=int(config["annotation_mem"]),
-        nodes = 1,
-        time = lambda wildcards, attempt: 60 * 2 * attempt
+        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
+        # cores=config["general_low_threads"],
+        mem_gb=lambda wildcards, attempt: 8  * attempt,
+        # nodes = 1,
+        runtime = lambda wildcards, attempt: 60 * 2 * attempt
     params:
         annovar_dir = annovar_dir,
         protocol = config["annovar_protocol"],

@@ -9,16 +9,16 @@ rule FastqToSam:
     output:
         ubam = "0_samples/{sample}/{sample}-{unit}.ubam"
 
-    threads: config["gen_ubam_threads"]
+    threads: 4
     params:
         ext = EXT
-
+    benchmark: "benchamrks/FastqToSam/{sample}/{sample}-{unit}.txt"
     resources:
-        mem_mb = int(config["gen_ubam_mem"])*1024,
-        #cores = config["gen_ubam_threads"],
-        mem_gb = int(config["gen_ubam_mem"]),
-        #nodes = 1,
-        runtime = lambda wildcards, attempt: 60 * attempt
+        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
+        # cores=config["general_low_threads"],
+        mem_gb=lambda wildcards, attempt: 8  * attempt,
+        # nodes = 1,
+        runtime = lambda wildcards, attempt: 60 * 2 * attempt
 #    log: 
 #        "logs/fastqtosam/{sample}/{sample}-{unit}.txt"
     shell:
@@ -65,13 +65,14 @@ rule MarkIlluminaAdapters:
         metrics="0_samples/{sample}/{sample}-{unit}.adap_metrics.txt"
     threads:4
     resources:
-        mem_mb = int(config["gen_ubam_mem"])*1024,
-        #cores = config["gen_ubam_threads"],
-        mem_gb = int(config["gen_ubam_mem"]),
-        #nodes = 1,
-        runtime = lambda wildcards, attempt: 60 * attempt
+        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
+        # cores=config["general_low_threads"],
+        mem_gb=lambda wildcards, attempt: 8  * attempt,
+        # nodes = 1,
+        runtime = lambda wildcards, attempt: 60 * 2 * attempt
 #   log: 
 #        "logs/markilluminaAdabs/{sample}/{sample}-{unit}.txt"
+    benchmark: "benchamrks/MarkIlluminaAdapters/{sample}/{sample}-{unit}.txt"
 
     shell:
         '''

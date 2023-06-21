@@ -11,14 +11,16 @@ rule HaplotypeCaller:
         extra_args = config["caller_extra_args"],
         padding = config["padding"]
 
-    resources:
-        mem_mb=int(config["calling_mem"])*1024,
-        cores=config["calling_threads"],
-        mem_gb=config["calling_mem"],
-        nodes = 1,
-        time = lambda wildcards, attempt: 60 * 2 * attempt
+    benchmark: "benchamrks/HaplotypeCaller/{sample}.txt"
 
-    threads: config["calling_threads"]
+    resources:
+        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
+        # cores=config["general_low_threads"],
+        mem_gb=lambda wildcards, attempt: 8  * attempt,
+        # nodes = 1,
+        runtime = lambda wildcards, attempt: 60 * 2 * attempt
+
+    threads: 4
 
     shell:
         """
@@ -44,14 +46,15 @@ rule combine_gvcf:
     params:
         gvcfs = lambda wildcards, input: [f" --variant {v}" for v in input["gvcfs"]],
         ref = ref_fasta
+    benchmark: "benchamrks/combine_gvcf/combinedvcf.txt"
 
-    threads: config["general_low_threads"]
+    threads: 1
     resources:
-        mem_mb=int(config["general_low_mem"])* 1024,
-        cores=config["general_low_threads"],
-        mem_gb=int(config["general_low_mem"]),
-        nodes = 1,
-        time = lambda wildcards, attempt: 60 * 2 * attempt
+        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
+        # cores=config["general_low_threads"],
+        mem_gb=lambda wildcards, attempt: 8  * attempt,
+        # nodes = 1,
+        runtime = lambda wildcards, attempt: 60 * 2 * attempt
     shell:
         """
         echo "{params.gvcfs}"
@@ -70,18 +73,19 @@ rule genotype_gvcfs:
         "04_calling/variants.gvcf.gz"
     
     conda: "../env/wes_gatk.yml"
+    benchmark: "benchamrks/GenotypeGvcfs/genotypedvcf.txt"
 
     output:
         "04_calling/variants_genotyped.gvcf.gz"
     params:
         ref = ref_fasta
-    threads: config["general_high_threads"]
+    threads: 4
     resources:
-        mem_mb=int(config["general_high_mem"])* 1024,
-        cores=config["general_high_threads"],
-        mem_gb=int(config["general_high_mem"]),
-        nodes = 1,
-        time = lambda wildcards, attempt: 60 * 2 * attempt
+        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
+        # cores=config["general_low_threads"],
+        mem_gb=lambda wildcards, attempt: 8  * attempt,
+        # nodes = 1,
+        runtime = lambda wildcards, attempt: 60 * 2 * attempt
 
     shell:
         """
