@@ -63,7 +63,7 @@ rule plot_bcftools_stats:
 
 rule Nirvana:
     input:
-        "04_calling/{type}/variants_genotyped.gvcf.gz"
+        "04_calling/{type}/variants_genotyped.filttered.gvcf.gz"
     
 
     conda: "../env/wes_gatk.yml"
@@ -99,7 +99,7 @@ rule Nirvana:
 
 rule Annovar:
     input:
-        "04_calling/{type}/variants_genotyped.gvcf.gz"
+        "04_calling/{type}/variants_genotyped.filttered.gvcf.gz"
     
     conda: "../env/wes_gatk.yml"
     benchmark: "benchamrks/Annovar/{type}/variants_genotyped_annotation.txt"
