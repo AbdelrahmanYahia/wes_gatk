@@ -1,7 +1,8 @@
 
 rule SortNFix:
     input:
-        "02_alignment/{sample}/{sample}-{unit}_mergedUnmapped.bam"  
+        "02_alignment/{sample}/{sample}-{unit}.dedub.bam"
+        # "02_alignment/{sample}/{sample}-{unit}_mergedUnmapped.bam"  
     conda: "../env/wes_gatk.yml"
     output:
         "02_alignment/{sample}/{sample}-{unit}_mergedUnmapped_sorted.bam"
@@ -39,7 +40,8 @@ rule SortNFix:
 
 rule mrk_duplicates:
     input:
-        "02_alignment/{sample}/{sample}-{unit}_mergedUnmapped_sorted.bam"
+        "02_alignment/{sample}/{sample}-{unit}_mergedUnmapped.bam"
+        # "02_alignment/{sample}/{sample}-{unit}_mergedUnmapped_sorted.bam"
     
     conda: "../env/wes_gatk.yml"
 
