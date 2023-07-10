@@ -52,6 +52,7 @@ bed_file = config["bed_file"]
 
 known_variants_snps = config["known_variants_snps"]
 known_variants_indels = config["known_variants_indels"]
+known_variants_indels2 = config["known_variants_indels2"]
 
 nirvana_path = config["nirvana_path"]
 annovar_dir = config["annovar_path"]
