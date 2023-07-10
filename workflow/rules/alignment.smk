@@ -61,7 +61,7 @@ rule ubam_align:
 
 rule QC_alignment:
     input:
-        "02_alignment/{sample}/{sample}-{unit}_mergedUnmapped.bam"
+        "02_alignment/{sample}/{sample}-{unit}_dedub_sorted.bam"
 
     conda: "../env/wes_gatk.yml"
     benchmark: "benchamrks/QC_alignment/{sample}/{sample}-{unit}.txt"
@@ -81,7 +81,37 @@ rule QC_alignment:
         samtools flagstat {input} > {output.stats}
         """
 
+rule qualimap:
+    input:
+        "03_bamPrep/{sample}/{sample}-{unit}.pqsr.bam"
+    
+    conda: "../env/wes_gatk.yml"
 
+    output:
+        directory("03_bamPrep/{sample}/QC/{sample}-{unit}_Qualimap")
+    benchmark: "benchamrks/Qualimap/{sample}/{sample}-{unit}.txt"
+
+    threads: 2
+    resources:
+        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
+        # cores=config["general_low_threads"],
+        mem_gb=lambda wildcards, attempt: 8  * attempt,
+        # nodes = 1,
+        runtime = lambda wildcards, attempt: 60 * 2 * attempt  
+
+    shell:
+        """
+        qualimap \
+            bamqc \
+            -bam {input} \
+            --paint-chromosome-limits \
+            --genome-gc-distr HUMAN \
+            -nt {threads} \
+            -skip-duplicated \
+            --skip-dup-mode 0 \
+            -outdir {output} \
+            -outformat HTML
+        """
 ## TODO: implement automatic indexing 
 # rule index_ref:
 #     input: f"{ref_fasta}"

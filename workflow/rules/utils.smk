@@ -59,7 +59,7 @@ def get_final_output(wildcards):
 def get_merge_input(wildcards):
 
     return expand(
-            "03_bamPrep/{sample}/{sample}-{unit}.pqsr.bam",
+            "02_alignment/{sample}/{sample}-{unit}_mergedUnmapped.bam",
             unit=units.loc[wildcards.sample, "unit"].tolist(),
             sample=wildcards.sample
         )

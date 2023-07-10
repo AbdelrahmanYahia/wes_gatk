@@ -1,17 +1,82 @@
 
+rule MergeSamFiles:
+    input:
+        get_merge_input
+    
+    conda: "../env/wes_gatk.yml"
+    benchmark: "benchamrks/Mergesamfiles/{sample}.txt"
+
+    output:
+        "03_bamPrep/{sample}.bam"
+    params:
+        bams = lambda wildcards: [f" -I 02_alignment/{wildcards.sample}/{wildcards.sample}-{b}_mergedUnmapped.bam" for b in units.loc[wildcards.sample, "unit"].tolist()],
+        ref = ref_fasta
+
+    threads: 1
+    resources:
+        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
+        # cores=config["general_low_threads"],
+        mem_gb=lambda wildcards, attempt: 8  * attempt,
+        # nodes = 1,
+        runtime = lambda wildcards, attempt: 60 * 2 * attempt
+    shell:
+        """
+        picard MergeSamFiles  \
+            {params.bams} \
+            -OUTPUT {output} \
+            --SORT_ORDER "unsorted" \
+            --create-output-bam-md5
+        """
+
+
+rule MarkDuplicates:
+    input:
+        "03_bamPrep/{sample}.bam"
+    
+    conda: "../env/wes_gatk.yml"
+
+    output:
+        bam = "03_bamPrep/{sample}.dedub.bam",
+        matrix = "03_bamPrep/{sample}.dedub.matrix"
+
+    threads: 4
+    benchmark: "benchamrks/mrkDuplicates/{sample}.txt"
+
+    resources:
+        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
+        # cores=config["general_low_threads"],
+        mem_gb=lambda wildcards, attempt: 8  * attempt,
+        # nodes = 1,
+        runtime = lambda wildcards, attempt: 60 * 2 * attempt
+
+    log: 
+        "logs/mrk-dub/{sample}.dedub.log"
+
+    shell:
+        """
+        picard MarkDuplicates -I {input} \
+            -O {output.bam} \
+            -M {output.matrix} \
+            --VALIDATION_STRINGENCY SILENT \
+            --OPTICAL_DUPLICATE_PIXEL_DISTANCE 2500 \
+            --ASSUME_SORT_ORDER "queryname" \
+            --CREATE_MD5_FILE true > {log}
+        """
+
+
 rule SortNFix:
     input:
-        "02_alignment/{sample}/{sample}-{unit}.dedub.bam"
-        # "02_alignment/{sample}/{sample}-{unit}_mergedUnmapped.bam"  
+        "03_bamPrep/{sample}.dedub.bam"
+        # "03_bamPrep/{sample}_mergedUnmapped.bam"  
     conda: "../env/wes_gatk.yml"
     output:
-        "02_alignment/{sample}/{sample}-{unit}_dedub_sorted.bam"
+        "03_bamPrep/{sample}.dedub.sorted.bam"
 
     threads: 4
     params:
         fa = ref_fasta
 
-    benchmark: "benchamrks/SortNFix/{sample}/{sample}-{unit}.txt"
+    benchmark: "benchamrks/SortNFix/{sample}.txt"
 
     resources:
         mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
@@ -38,47 +103,12 @@ rule SortNFix:
         """
 
 
-rule MarkDuplicates:
-    input:
-        "02_alignment/{sample}/{sample}-{unit}_mergedUnmapped.bam"
-        # "02_alignment/{sample}/{sample}-{unit}_mergedUnmapped_sorted.bam"
-    
-    conda: "../env/wes_gatk.yml"
-
-    output:
-        bam = "02_alignment/{sample}/{sample}-{unit}.dedub.bam",
-        matrix = "02_alignment/{sample}/{sample}-{unit}.dedub.matrix"
-
-    threads: 4
-    benchmark: "benchamrks/mrkDuplicates/{sample}/{sample}-{unit}.txt"
-
-    resources:
-        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
-        # cores=config["general_low_threads"],
-        mem_gb=lambda wildcards, attempt: 8  * attempt,
-        # nodes = 1,
-        runtime = lambda wildcards, attempt: 60 * 2 * attempt
-
-    log: 
-        "logs/mrk-dub/{sample}/{sample}-{unit}.dedub.log"
-
-    shell:
-        """
-        picard MarkDuplicates -I {input} \
-            -O {output.bam} \
-            -M {output.matrix} \
-            --VALIDATION_STRINGENCY SILENT \
-            --OPTICAL_DUPLICATE_PIXEL_DISTANCE 2500 \
-            --ASSUME_SORT_ORDER "queryname" \
-            --CREATE_MD5_FILE true > {log}
-        """
-
 rule BaseRecalibrator:
-    input: "02_alignment/{sample}/{sample}-{unit}_dedub_sorted.bam"
+    input: "02_alignment/{sample}.dedub.sorted.bam"
     
     conda: "../env/wes_gatk.yml"
 
-    output: "03_bamPrep/{sample}/{sample}-{unit}.report"
+    output: "03_bamPrep/{sample}.report"
     params: 
         known_sites = known_variants_snps,
         known_sites2 = known_variants_indels,
@@ -88,7 +118,7 @@ rule BaseRecalibrator:
         padding = config["padding"]
 
     threads: 4
-    benchmark: "benchamrks/BaseRecalibrator/{sample}/{sample}-{unit}.txt"
+    benchmark: "benchamrks/BaseRecalibrator/{sample}.txt"
     resources:
         mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
         # cores=config["general_low_threads"],
@@ -112,13 +142,13 @@ rule BaseRecalibrator:
 
 rule applyBaseRecalibrator:
     input: 
-        bam = "02_alignment/{sample}/{sample}-{unit}_dedub_sorted.bam",
-        report = "03_bamPrep/{sample}/{sample}-{unit}.report"
-    benchmark: "benchamrks/ApplyBaseRecab/{sample}/{sample}-{unit}.txt"
+        bam = "02_alignment/{sample}.dedub.sorted.bam",
+        report = "03_bamPrep/{sample}.report"
+    benchmark: "benchamrks/ApplyBaseRecab/{sample}.txt"
     
     conda: "../env/wes_gatk.yml"
 
-    output: "03_bamPrep/{sample}/{sample}-{unit}.pqsr.bam"
+    output: "03_bamPrep/{sample}.pqsr.bam"
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
@@ -146,12 +176,12 @@ rule applyBaseRecalibrator:
 
 
 rule bqsr_calibrated_report:
-    input: "03_bamPrep/{sample}/{sample}-{unit}.pqsr.bam"
+    input: "03_bamPrep/{sample}.pqsr.bam"
     
     conda: "../env/wes_gatk.yml"
-    benchmark: "benchamrks/recaliprated_report/{sample}/{sample}-{unit}.txt"
+    benchmark: "benchamrks/recaliprated_report/{sample}.txt"
 
-    output: "03_bamPrep/{sample}/{sample}-{unit}_pqsr.report"
+    output: "03_bamPrep/{sample}_pqsr.report"
     params: 
         known_sites = known_variants_snps,
         known_sites2 = known_variants_indels,
@@ -180,14 +210,14 @@ rule bqsr_calibrated_report:
 
 rule AnalyzeCovariates:
     input: 
-        raw = "03_bamPrep/{sample}/{sample}-{unit}.report", 
-        bqsr = "03_bamPrep/{sample}/{sample}-{unit}_pqsr.report"
+        raw = "03_bamPrep/{sample}.report", 
+        bqsr = "03_bamPrep/{sample}_pqsr.report"
 
     
     conda: "../env/wes_gatk.yml"
-    benchmark: "benchamrks/analyzeCovariates/{sample}/{sample}-{unit}.txt"
+    benchmark: "benchamrks/analyzeCovariates/{sample}.txt"
 
-    output: "03_bamPrep/{sample}/QC/{sample}-{unit}.pdf"
+    output: "03_bamPrep/QC/{sample}.pdf"
 
     threads: 2
     resources:
@@ -203,109 +233,49 @@ rule AnalyzeCovariates:
             -after {input.bqsr} -plots {output}
         """
 
-rule qualimap:
-    input:
-        "03_bamPrep/{sample}/{sample}-{unit}.pqsr.bam"
+
+# ## TODO: check difference between this and above
+
+# rule GatherBamFiles:
+#     input:
+#         get_merge_input
     
-    conda: "../env/wes_gatk.yml"
+#     conda: "../env/wes_gatk.yml"
 
-    output:
-        directory("03_bamPrep/{sample}/QC/{sample}-{unit}_Qualimap")
-    benchmark: "benchamrks/Qualimap/{sample}/{sample}-{unit}.txt"
+#     output:
+#         "03_bamPrep/merged_bams/{sample}.gatherd.pqsr.bam"
+#     params:
+#         # "02_alignment/{sample}/{sample}-{unit}_mergedUnmapped.bam"
+#         bams = lambda wildcards: [f" -I 03_bamPrep/{wildcards.sample}/{wildcards.sample}-{b}.pqsr.bam" for b in units.loc[wildcards.sample, "unit"].tolist()],
+#         ref = ref_fasta
+#     benchmark: "benchamrks/GatherBamFiles/{sample}.txt"
 
-    threads: 2
-    resources:
-        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
-        # cores=config["general_low_threads"],
-        mem_gb=lambda wildcards, attempt: 8  * attempt,
-        # nodes = 1,
-        runtime = lambda wildcards, attempt: 60 * 2 * attempt  
-
-    shell:
-        """
-        qualimap \
-            bamqc \
-            -bam {input} \
-            --paint-chromosome-limits \
-            --genome-gc-distr HUMAN \
-            -nt {threads} \
-            -skip-duplicated \
-            --skip-dup-mode 0 \
-            -outdir {output} \
-            -outformat HTML
-        """
-
-
-rule MergeSamFiles:
-    input:
-        get_merge_input
-    
-    conda: "../env/wes_gatk.yml"
-    benchmark: "benchamrks/Mergesamfiles/{sample}.txt"
-
-    output:
-        "03_bamPrep/merged_bams/{sample}.pqsr.bam"
-    params:
-        bams = lambda wildcards: [f" -I 03_bamPrep/{wildcards.sample}/{wildcards.sample}-{b}.pqsr.bam" for b in units.loc[wildcards.sample, "unit"].tolist()],
-        ref = ref_fasta
-
-    threads: 1
-    resources:
-        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
-        # cores=config["general_low_threads"],
-        mem_gb=lambda wildcards, attempt: 8  * attempt,
-        # nodes = 1,
-        runtime = lambda wildcards, attempt: 60 * 2 * attempt
-    shell:
-        """
-        picard MergeSamFiles  \
-            {params.bams} \
-            -OUTPUT {output} \
-            --CREATE_INDEX true \
-            --CREATE_MD5_FILE true
-        """
-
-## TODO: check difference between this and above
-
-rule GatherBamFiles:
-    input:
-        get_merge_input
-    
-    conda: "../env/wes_gatk.yml"
-
-    output:
-        "03_bamPrep/merged_bams/{sample}.gatherd.pqsr.bam"
-    params:
-        bams = lambda wildcards: [f" -I 03_bamPrep/{wildcards.sample}/{wildcards.sample}-{b}.pqsr.bam" for b in units.loc[wildcards.sample, "unit"].tolist()],
-        ref = ref_fasta
-    benchmark: "benchamrks/GatherBamFiles/{sample}.txt"
-
-    threads: 1
-    resources:
-        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
-        # cores=config["general_low_threads"],
-        mem_gb=lambda wildcards, attempt: 8  * attempt,
-        # nodes = 1,
-        runtime = lambda wildcards, attempt: 60 * 2 * attempt
-    shell:
-        """
-        gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
-            GatherBamFiles \
-            {params.bams} \
-            -OUTPUT {output} \
-            --CREATE_INDEX true \
-            --CREATE_MD5_FILE true
-        """
+#     threads: 1
+#     resources:
+#         mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
+#         # cores=config["general_low_threads"],
+#         mem_gb=lambda wildcards, attempt: 8  * attempt,
+#         # nodes = 1,
+#         runtime = lambda wildcards, attempt: 60 * 2 * attempt
+#     shell:
+#         """
+#         gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
+#             GatherBamFiles \
+#             {params.bams} \
+#             -OUTPUT {output} \
+#             --CREATE_INDEX true \
+#             --CREATE_MD5_FILE true
+#         """
 
 ## TODO: implememt this workflow
 # rule merge_bams:
 #     input:
-#         ubam = "0_samples/{sample}/{sample}-{unit}.ubam",
-#         alignedBam = "02_alignment/{sample}/{sample}-{unit}.bam"    
+#         ubam = "0_samples/{sample}-{unit}.ubam",
+#         alignedBam = "02_alignment/{sample}-{unit}.bam"    
 #     conda: "../env/wes_gatk.yml"
 
 #     output:
-#         temp("02_alignment/{sample}/{sample}-{unit}_mergedUnmapped.bam")
+#         temp("02_alignment/{sample}-{unit}_mergedUnmapped.bam")
 
 #     threads: 4
 #     params:
