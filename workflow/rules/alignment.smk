@@ -35,17 +35,28 @@ rule ubam_align:
             --FASTQ /dev/stdout \
             --CLIPPING_ATTRIBUTE XT --CLIPPING_ACTION 2 \
             --INTERLEAVE true -NON_PF true | bwa mem -K 100000000 \
-            -M -v 3 {params.bwa_args} -t {threads} -p {params.index} /dev/stdin | gatk \
+            -v 3 {params.bwa_args} -t {threads} -p  -Y {params.index} /dev/stdin | gatk \
             --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
             MergeBamAlignment \
+            --VALIDATION_STRINGENCY SILENT \
+            --EXPECTED_ORIENTATIONS FR \
+            --ATTRIBUTES_TO_RETAIN X0 \
             --ALIGNED_BAM /dev/stdin \
             --UNMAPPED_BAM {input.bam} \
             --OUTPUT {output.bam} \
+            -R {params.fa} \
+            --PAIRED_RUN true \
             --SORT_ORDER "unsorted" \
-            -R {params.fa} --CREATE_INDEX true --ADD_MATE_CIGAR true \
-            --CLIP_ADAPTERS false --CLIP_OVERLAPPING_READS true \
-            --INCLUDE_SECONDARY_ALIGNMENTS true --MAX_INSERTIONS_OR_DELETIONS -1 \
-            --PRIMARY_ALIGNMENT_STRATEGY MostDistant --ATTRIBUTES_TO_RETAIN XS 
+            --IS_BISULFITE_SEQUENCE false \
+            --ALIGNED_READS_ONLY false \
+            --CLIP_ADAPTERS false \
+            --MAX_RECORDS_IN_RAM 2000000 \
+            --ADD_MATE_CIGAR true \
+            --MAX_INSERTIONS_OR_DELETIONS -1 \
+            --PRIMARY_ALIGNMENT_STRATEGY MostDistant \
+            --UNMAPPED_READ_STRATEGY COPY_TO_TAG \
+            --ALIGNER_PROPER_PAIR_FLAGS true \
+            --UNMAP_CONTAMINANT_READS true
         '''
 
 rule QC_alignment:

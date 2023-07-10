@@ -5,7 +5,7 @@ rule SortNFix:
         # "02_alignment/{sample}/{sample}-{unit}_mergedUnmapped.bam"  
     conda: "../env/wes_gatk.yml"
     output:
-        "02_alignment/{sample}/{sample}-{unit}_mergedUnmapped_sorted.bam"
+        "02_alignment/{sample}/{sample}-{unit}_dedub_sorted.bam"
 
     threads: 4
     params:
@@ -49,10 +49,7 @@ rule mrk_duplicates:
         bam = "02_alignment/{sample}/{sample}-{unit}.dedub.bam",
         matrix = "02_alignment/{sample}/{sample}-{unit}.dedub.matrix"
     params: 
-        extra_args = """--VALIDATION_STRINGENCY SILENT \
-                        --OPTICAL_DUPLICATE_PIXEL_DISTANCE 2500 \
-                        --ASSUME_SORT_ORDER "queryname" \
-                        --CREATE_MD5_FILE true""",
+        extra_args = """""",
     threads: 4
     benchmark: "benchamrks/mrkDuplicates/{sample}/{sample}-{unit}.txt"
 
@@ -71,11 +68,14 @@ rule mrk_duplicates:
         picard MarkDuplicates -I {input} \
             -O {output.bam} \
             -M {output.matrix} \
-            {params.extra_args} > {log}
+            --VALIDATION_STRINGENCY SILENT \
+            --OPTICAL_DUPLICATE_PIXEL_DISTANCE 2500 \
+            --ASSUME_SORT_ORDER "queryname" \
+            --CREATE_MD5_FILE true > {log}
         """
 
 rule BaseRecalibrator:
-    input: "02_alignment/{sample}/{sample}-{unit}.dedub.bam"
+    input: "02_alignment/{sample}/{sample}-{unit}_dedub_sorted.bam"
     
     conda: "../env/wes_gatk.yml"
 
@@ -107,7 +107,7 @@ rule BaseRecalibrator:
 
 rule applyBaseRecalibrator:
     input: 
-        bam = "02_alignment/{sample}/{sample}-{unit}.dedub.bam",
+        bam = "02_alignment/{sample}/{sample}-{unit}_dedub_sorted.bam",
         report = "03_bamPrep/{sample}/{sample}-{unit}.report"
     benchmark: "benchamrks/ApplyBaseRecab/{sample}/{sample}-{unit}.txt"
     
