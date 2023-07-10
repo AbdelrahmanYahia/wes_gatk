@@ -134,7 +134,7 @@ rule applyBaseRecalibrator:
         """
         gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
             ApplyBQSR  -R {params.ref} \
-            -I {input.bam} --emit-original-quals \
+            -I {input.bam} \
             -bqsr {input.report} -O {output} \
             -L {params.bed} \
             --interval-padding {params.padding} \
