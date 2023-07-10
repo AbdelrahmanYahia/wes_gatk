@@ -48,8 +48,7 @@ rule MarkDuplicates:
     output:
         bam = "02_alignment/{sample}/{sample}-{unit}.dedub.bam",
         matrix = "02_alignment/{sample}/{sample}-{unit}.dedub.matrix"
-    params: 
-        extra_args = """""",
+
     threads: 4
     benchmark: "benchamrks/mrkDuplicates/{sample}/{sample}-{unit}.txt"
 
@@ -83,7 +82,10 @@ rule BaseRecalibrator:
     params: 
         known_sites = known_variants_snps,
         known_sites2 = known_variants_indels,
+        known_sites3 = known_variants_indels2,
         ref = ref_fasta,
+        bed = bed_file,
+        padding = config["padding"]
 
     threads: 4
     benchmark: "benchamrks/BaseRecalibrator/{sample}/{sample}-{unit}.txt"
@@ -102,6 +104,9 @@ rule BaseRecalibrator:
             --use-original-qualities \
             --known-sites {params.known_sites} \
             --known-sites {params.known_sites2} \
+            --known-sites {params.known_sites3} \
+            -L {params.bed} \
+            --interval-padding {params.padding} \
             -O {output} 
         """
 
@@ -122,13 +127,17 @@ rule applyBaseRecalibrator:
         # nodes = 1,
         runtime = lambda wildcards, attempt: 60 * 2 * attempt
     params: 
-        ref = ref_fasta
+        ref = ref_fasta,
+        bed = bed_file,
+        padding = config["padding"]
     shell:
         """
         gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
             ApplyBQSR  -R {params.ref} \
             -I {input.bam} --emit-original-quals \
             -bqsr {input.report} -O {output} \
+            -L {params.bed} \
+            --interval-padding {params.padding} \
             --static-quantized-quals 10 --static-quantized-quals 20 --static-quantized-quals 30 \
             --add-output-sam-program-record \
             --create-output-bam-md5 \
@@ -146,7 +155,10 @@ rule bqsr_calibrated_report:
     params: 
         known_sites = known_variants_snps,
         known_sites2 = known_variants_indels,
-        ref = ref_fasta
+        known_sites3 = known_variants_indels2,
+        ref = ref_fasta,
+        bed = bed_file,
+        padding = config["padding"]
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
@@ -160,6 +172,9 @@ rule bqsr_calibrated_report:
             -I {input} \
             --known-sites {params.known_sites} \
             --known-sites {params.known_sites2} \
+            --known-sites {params.known_sites3} \
+            -L {params.bed} \
+            --interval-padding {params.padding} \
             -O {output} 
         """
 

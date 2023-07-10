@@ -279,6 +279,14 @@ class WES(WorkflowCli):
         )
         
         variant_caller_conf.add_argument(
+            '--known-variants-indels2',
+            metavar='path', 
+            type=os.path.abspath, 
+            help="path to reference fasta file",
+
+        )
+
+        variant_caller_conf.add_argument(
             '--known-variants-snps',
             metavar='path', 
             type=os.path.abspath, 
