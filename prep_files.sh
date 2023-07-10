@@ -6,8 +6,9 @@ python3 ./wes.py WES \
     --gff-file /mnt/home/mansourt/annDB/broad_hg38/Homo_sapiens.GRCh38.109.gff3.gz \
     --nirvana-path /mnt/home/mansourt/annDB/Nirvana \
     --annovar-path /mnt/home/mansourt/annDB/annovar_source/annovar \
-    --known-variants-snps /mnt/home/mansourt/annDB/broad_hg38/1000G_omni2.5.hg38.vcf.gz \
-    --known-variants-indels /mnt/home/mansourt/annDB/broad_hg38/1000G_omni2.5.hg38.vcf.gz \
+    --known-variants-snps /mnt/home/mansourt/annDB/broad_hg38/Homo_sapiens_assembly38.dbsnp138.vcf \
+    --known-variants-indels /mnt/home/mansourt/annDB/broad_hg38/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz \
+    --known-variants-indels2 /mnt/home/mansourt/annDB/broad_hg38/Homo_sapiens_assembly38.known_indels.vcf.gz \
     --reference-index /mnt/home/mansourt/annDB/broad_hg38/Homo_sapiens_assembly38.fasta \
     --generate-confs-only \
     --threads 12

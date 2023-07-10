@@ -6,6 +6,7 @@ rule ubam_align:
     output:
         bam="02_alignment/{sample}/{sample}-{unit}_mergedUnmapped.bam"
 
+    conda: "../env/wes_gatk.yml"
     threads: 4
     params:
         fa = ref_fasta,
@@ -22,11 +23,11 @@ rule ubam_align:
 
     benchmark: "benchamrks/ubam_align/{sample}/{sample}-{unit}.txt"
     resources:
-        mem_mb=32* 1024,
+        mem_mb = 32* 1024,
         # cores=config["align_threads"],
-        mem_gb=32,
+        mem_gb = 32,
         # nodes = 1,
-        runruntime = lambda wildcards, attempt: 60 * 2 * attempt
+        runtime = lambda wildcards, attempt: 60 * 2 * attempt
     shell:
         '''
         gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
