@@ -38,7 +38,7 @@ rule SortNFix:
         """
 
 
-rule mrk_duplicates:
+rule MarkDuplicates:
     input:
         "02_alignment/{sample}/{sample}-{unit}_mergedUnmapped.bam"
         # "02_alignment/{sample}/{sample}-{unit}_mergedUnmapped_sorted.bam"
