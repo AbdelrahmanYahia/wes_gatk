@@ -61,7 +61,7 @@ rule ubam_align:
 
 rule QC_alignment:
     input:
-        "02_alignment/{sample}/{sample}-{unit}_dedub_sorted.bam"
+        "02_alignment/{sample}/{sample}-{unit}_mergedUnmapped.bam"
 
     conda: "../env/wes_gatk.yml"
     benchmark: "benchamrks/QC_alignment/{sample}/{sample}-{unit}.txt"
@@ -83,7 +83,7 @@ rule QC_alignment:
 
 rule qualimap:
     input:
-        "03_bamPrep/{sample}/{sample}-{unit}.pqsr.bam"
+        "02_alignment/{sample}/{sample}-{unit}_mergedUnmapped.bam"
     
     conda: "../env/wes_gatk.yml"
 

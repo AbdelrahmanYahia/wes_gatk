@@ -18,19 +18,19 @@ def get_final_output(wildcards):
         #     unit=units.loc[i, "unit"].tolist(),
         #     R=[1,2]
         # ))
-        final_output.extend(expand(
-            "02_alignment/{sample}/QC/{sample}-{unit}_mergedUnmapped.cov",
-                sample = i,
-                unit=units.loc[i, "unit"].tolist()
-        ))
-        final_output.extend(expand(
-            "03_bamPrep/{sample}/QC/{sample}-{unit}_Qualimap",
-                sample = i,
-                unit=units.loc[i, "unit"].tolist()
-        ))
+        # final_output.extend(expand(
+        #     "02_alignment/{sample}/QC/{sample}-{unit}_mergedUnmapped.cov",
+        #         sample = i,
+        #         unit=units.loc[i, "unit"].tolist()
+        # ))
+        # final_output.extend(expand(
+        #     "03_bamPrep/{sample}/QC/{sample}-{unit}_Qualimap",
+        #         sample = i,
+        #         unit=units.loc[i, "unit"].tolist()
+        # ))
 
         final_output.extend(expand(
-            "03_bamPrep/{sample}/QC/{sample}-{unit}.pdf",
+            "03_bamPrep/QC/{sample}.pdf",
                 sample = i,
                 unit=units.loc[i, "unit"].tolist()
         ))
@@ -57,7 +57,6 @@ def get_final_output(wildcards):
 
 
 def get_merge_input(wildcards):
-
     return expand(
             "02_alignment/{sample}/{sample}-{unit}_mergedUnmapped.bam",
             unit=units.loc[wildcards.sample, "unit"].tolist(),

@@ -24,8 +24,7 @@ rule MergeSamFiles:
         picard MergeSamFiles  \
             {params.bams} \
             -OUTPUT {output} \
-            --SORT_ORDER "unsorted" \
-            --create-output-bam-md5
+            --SORT_ORDER "unsorted" 
         """
 
 
@@ -104,7 +103,7 @@ rule SortNFix:
 
 
 rule BaseRecalibrator:
-    input: "02_alignment/{sample}.dedub.sorted.bam"
+    input: "03_bamPrep/{sample}.dedub.sorted.bam"
     
     conda: "../env/wes_gatk.yml"
 
@@ -142,7 +141,7 @@ rule BaseRecalibrator:
 
 rule applyBaseRecalibrator:
     input: 
-        bam = "02_alignment/{sample}.dedub.sorted.bam",
+        bam = "03_bamPrep/{sample}.dedub.sorted.bam",
         report = "03_bamPrep/{sample}.report"
     benchmark: "benchamrks/ApplyBaseRecab/{sample}.txt"
     
@@ -235,82 +234,3 @@ rule AnalyzeCovariates:
 
 
 # ## TODO: check difference between this and above
-
-# rule GatherBamFiles:
-#     input:
-#         get_merge_input
-    
-#     conda: "../env/wes_gatk.yml"
-
-#     output:
-#         "03_bamPrep/merged_bams/{sample}.gatherd.pqsr.bam"
-#     params:
-#         # "02_alignment/{sample}/{sample}-{unit}_mergedUnmapped.bam"
-#         bams = lambda wildcards: [f" -I 03_bamPrep/{wildcards.sample}/{wildcards.sample}-{b}.pqsr.bam" for b in units.loc[wildcards.sample, "unit"].tolist()],
-#         ref = ref_fasta
-#     benchmark: "benchamrks/GatherBamFiles/{sample}.txt"
-
-#     threads: 1
-#     resources:
-#         mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
-#         # cores=config["general_low_threads"],
-#         mem_gb=lambda wildcards, attempt: 8  * attempt,
-#         # nodes = 1,
-#         runtime = lambda wildcards, attempt: 60 * 2 * attempt
-#     shell:
-#         """
-#         gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
-#             GatherBamFiles \
-#             {params.bams} \
-#             -OUTPUT {output} \
-#             --CREATE_INDEX true \
-#             --CREATE_MD5_FILE true
-#         """
-
-## TODO: implememt this workflow
-# rule merge_bams:
-#     input:
-#         ubam = "0_samples/{sample}-{unit}.ubam",
-#         alignedBam = "02_alignment/{sample}-{unit}.bam"    
-#     conda: "../env/wes_gatk.yml"
-
-#     output:
-#         temp("02_alignment/{sample}-{unit}_mergedUnmapped.bam")
-
-#     threads: 4
-#     params:
-#         fa = ref_fasta
-
-#     resources:
-#         mem_mb=4096,
-#         cores=4,
-#         mem_gb=4,
-#         nodes = 1,
-#         time = lambda wildcards, attempt: 60 * 2 * attempt
-
-#     shell:
-#         """
-#         gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
-#             FastqToSam \
-#             --VALIDATION_STRINGENCY SILENT \
-#             --EXPECTED_ORIENTATIONS FR \
-#             --ATTRIBUTES_TO_RETAIN X0 \
-#             --ALIGNED_BAM {input.alignedBam} \
-#             --UNMAPPED_BAM {input.ubam} \
-#             --OUTPUT {output} \
-#             --REFERENCE_SEQUENCE {params.fa} \
-#             --PAIRED_RUN true \
-#             --SORT_ORDER "unsorted" \
-#             --IS_BISULFITE_SEQUENCE false \
-#             --ALIGNED_READS_ONLY false \
-#             --CLIP_ADAPTERS false \
-#             --MAX_RECORDS_IN_RAM 2000000 \
-#             --ADD_MATE_CIGAR true \
-#             --MAX_INSERTIONS_OR_DELETIONS -1 \
-#             --PRIMARY_ALIGNMENT_STRATEGY MostDistant \
-#             --PROGRAM_RECORD_ID "bwamem" \
-#             --PROGRAM_GROUP_NAME "bwamem" \
-#             --UNMAPPED_READ_STRATEGY COPY_TO_TAG \
-#             --ALIGNER_PROPER_PAIR_FLAGS true \
-#             --UNMAP_CONTAMINANT_READS true
-#         """
