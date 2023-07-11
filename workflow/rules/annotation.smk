@@ -66,7 +66,7 @@ rule Nirvana:
         "04_calling/{type}/variants_genotyped.filttered.gvcf.gz"
     
 
-    conda: "../env/wes_gatk.yml"
+    #conda: "../env/wes_gatk.yml"
 
     benchmark: "benchamrks/Nirvana/{type}/variants_genotyped_annotation.txt"
 
@@ -89,6 +89,8 @@ rule Nirvana:
 
     shell:
         """
+        eval "$(conda shell.bash hook)"
+        set +u; conda activate dotnet; set -u
         dotnet {params.Nirvana_cmd} \
             -i {input} \
             -o {params.file_name} \
