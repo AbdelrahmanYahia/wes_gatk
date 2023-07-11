@@ -48,9 +48,6 @@ rule MarkDuplicates:
         # nodes = 1,
         runtime = lambda wildcards, attempt: 60 * 2 * attempt
 
-    log: 
-        "logs/mrk-dub/{sample}.dedub.log"
-
     shell:
         """
         picard MarkDuplicates -I {input} \
