@@ -10,7 +10,7 @@ def get_gvcf(wildcards):
 def get_final_output(wildcards):
     final_output = []
     final_output.extend(expand(
-        "04_calling/QC/{sample}.eval.grp",
+            "04_calling/QC/{sample}.eval.grp",
             sample = samples_IDs
     ))
 
@@ -26,17 +26,17 @@ def get_final_output(wildcards):
 
     final_output.extend(expand(
             "03_bamPrep/QC/{sample}.cov",
-                sample = samples_IDs
+            sample = samples_IDs
     ))
 
     final_output.extend(expand(
             "03_bamPrep/QC/{sample}_Qualimap",
-                sample = samples_IDs
+            sample = samples_IDs
     ))
 
     final_output.extend(expand(
             "03_bamPrep/QC/{sample}.pdf",
-                sample = samples_IDs
+            sample = samples_IDs
     ))
 
     # final_output.extend(expand(
