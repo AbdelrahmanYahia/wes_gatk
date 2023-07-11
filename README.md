@@ -7,7 +7,10 @@
 WES GATK is a flexible and user-friendly whole exome sequencing workflow based on [GATK best practices](https://gatk.broadinstitute.org/hc/en-us/sections/360007226651-Best-Practices-Workflows). It is designed for processing Illumina WES short reads data and features automatic sample table generation, Snakemake configuration file, and simplified workflow execution.
 
 ## Workflow
+### Description:
+The workflow starts by converting `raw fastq` file to an `unmapped bam` file, in this read group information is added, We then mark Illumina adaptors and align them to the reference genome using BWA. If samples had been run on different lanes or different libraries, they will be merged. Now each sample is in a single `bam` file, duplicates in this file will be marked, read order will be sorted according to genome coordinates and some mapping QC will be performed. The following steps will include the Base Quality score recalibration calculation using known variants files and GATK's Machine learning algorithm to recalibrate the quality scores and apply these new qualities to the `bam` file. We now can call the variants using GATK's "haplotypecaller" in `GVCF` format, and combine all samples in a single `gvcf` file, Genotype all samples using this file. This will produce a single `gvcf` file that will be split into two files, one for indels, and the other for snps. The last steps are variant filtration and variant annotation using Nirvana and Annovar. 
 
+### Workflow Diagram:
 ![Workflow](workflow.png)
 
 ## Quick Start
