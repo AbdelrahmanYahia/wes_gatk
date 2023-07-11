@@ -18,16 +18,15 @@ def get_final_output(wildcards):
         #     unit=units.loc[i, "unit"].tolist(),
         #     R=[1,2]
         # ))
-        # final_output.extend(expand(
-        #     "02_alignment/{sample}/QC/{sample}-{unit}_mergedUnmapped.cov",
-        #         sample = i,
-        #         unit=units.loc[i, "unit"].tolist()
-        # ))
-        # final_output.extend(expand(
-        #     "03_bamPrep/{sample}/QC/{sample}-{unit}_Qualimap",
-        #         sample = i,
-        #         unit=units.loc[i, "unit"].tolist()
-        # ))
+        
+        final_output.extend(expand(
+            "03_bamPrep/QC/{sample}.cov",
+                sample = i
+        ))
+        final_output.extend(expand(
+            "03_bamPrep/QC/{sample}_Qualimap",
+                sample = i
+        ))
 
         final_output.extend(expand(
             "03_bamPrep/QC/{sample}.pdf",

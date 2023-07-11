@@ -62,13 +62,13 @@ rule ubam_align:
 
 rule QC_alignment:
     input:
-        "02_alignment/{sample}/{sample}-{unit}_mergedUnmapped.bam"
+        "03_bamPrep/{sample}.dedub.sorted.bam"
 
     conda: "../env/wes_gatk.yml"
-    benchmark: "benchamrks/QC_alignment/{sample}/{sample}-{unit}.txt"
+    benchmark: "benchamrks/QC_alignment/{sample}.txt"
     output:
-        cov = "02_alignment/{sample}/QC/{sample}-{unit}_mergedUnmapped.cov",
-        stats = "02_alignment/{sample}/QC/{sample}-{unit}_mergedUnmapped.stats"
+        cov = "03_bamPrep/QC/{sample}.cov",
+        stats = "03_bamPrep/QC/{sample}.stats"
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: (4 * 1024) * attempt,
@@ -84,12 +84,12 @@ rule QC_alignment:
 
 rule qualimap:
     input:
-        "02_alignment/{sample}/{sample}-{unit}_mergedUnmapped.bam"
+        "03_bamPrep/{sample}.dedub.sorted.bam"
     
     conda: "../env/wes_gatk.yml"
 
     output:
-        directory("03_bamPrep/{sample}/QC/{sample}-{unit}_Qualimap")
+        directory("03_bamPrep/QC/{sample}_Qualimap")
     benchmark: "benchamrks/Qualimap/{sample}/{sample}-{unit}.txt"
 
     threads: 2
