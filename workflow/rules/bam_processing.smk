@@ -56,7 +56,7 @@ rule MarkDuplicates:
             --VALIDATION_STRINGENCY SILENT \
             --OPTICAL_DUPLICATE_PIXEL_DISTANCE 2500 \
             --ASSUME_SORT_ORDER "queryname" \
-            --CREATE_MD5_FILE true > {log}
+            --CREATE_MD5_FILE true
         """
 
 
