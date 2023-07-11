@@ -90,7 +90,7 @@ rule qualimap:
 
     output:
         directory("03_bamPrep/QC/{sample}_Qualimap")
-    benchmark: "benchamrks/Qualimap/{sample}/{sample}-{unit}.txt"
+    benchmark: "benchamrks/Qualimap/{sample}.txt"
 
     threads: 2
     resources:
