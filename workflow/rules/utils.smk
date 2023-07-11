@@ -9,9 +9,42 @@ def get_gvcf(wildcards):
 
 def get_final_output(wildcards):
     final_output = []
+    final_output.extend(expand(
+        "04_calling/QC/{sample}.eval.grp",
+            sample = samples_IDs
+    ))
 
-    for i in samples_IDs:
-        # print(i)
+    final_output.extend(expand(
+            "05_Annotation/ANNOVAR/{type}",
+            type = ["snvs", "indels"]
+    ))
+
+    final_output.extend(expand(
+            "05_Annotation/Nirvana/{type}/Annotation.json.gz",
+            type = ["snvs", "indels"]
+    ))
+
+    final_output.extend(expand(
+            "03_bamPrep/QC/{sample}.cov",
+                sample = samples_IDs
+    ))
+
+    final_output.extend(expand(
+            "03_bamPrep/QC/{sample}_Qualimap",
+                sample = samples_IDs
+    ))
+
+    final_output.extend(expand(
+            "03_bamPrep/QC/{sample}.pdf",
+                sample = samples_IDs
+    ))
+
+    # final_output.extend(expand(
+    #         "04_calling/QC/{type}/bcftools.stats",
+    #         type = ["snvs", "indels"]
+    # ))
+
+    # for i in samples_IDs:
         # final_output.extend(expand(
         #     "01_QC/{sample}/{sample}-{unit}_{R}.trimmed_fastqc.zip",
         #     sample=i,
@@ -19,38 +52,6 @@ def get_final_output(wildcards):
         #     R=[1,2]
         # ))
         
-        final_output.extend(expand(
-            "03_bamPrep/QC/{sample}.cov",
-                sample = i
-        ))
-        final_output.extend(expand(
-            "03_bamPrep/QC/{sample}_Qualimap",
-                sample = i
-        ))
-
-        final_output.extend(expand(
-            "03_bamPrep/QC/{sample}.pdf",
-                sample = i,
-                unit=units.loc[i, "unit"].tolist()
-        ))
-    
-    final_output.extend(expand(
-        "04_calling/QC/{sample}.eval.grp",
-            sample = samples_IDs
-    ))
-    # final_output.extend(expand(
-    #         "04_calling/QC/{type}/bcftools.stats",
-    #         type = ["snvs", "indels"]
-    # ))
-    final_output.extend(expand(
-            "05_Annotation/ANNOVAR/{type}",
-            type = ["snvs", "indels"]
-    ))
-    final_output.extend(expand(
-            "05_Annotation/Nirvana/{type}/Annotation.json.gz",
-            type = ["snvs", "indels"]
-    ))
-
 
     return final_output
 
