@@ -25,7 +25,7 @@ This workflow is an implemetation of the Gold Standard GATK best practice in add
 - Joint Gentotyping for all samples 
 - Automatic sample name, group, lane and read number recognition.
 - Automatic snakemake sample table and config file generation.
-- progress bar of the analysis (use argument `--parse-snakemake-output`)
+- progress bar of the analysis (use argument `--parse-snakemake-output` [see below](#Advanced-Parameters))
   
 ### Workflow Diagram:
 ![Workflow](workflow.png)
