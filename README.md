@@ -124,6 +124,24 @@ snakemake \
   --configfile PTH/to/outdir/config.yml \
   -n -j THREADS
 ```
+
+Or you can run it by adding `--dry-run` argument to the python script:
+```
+conda activate wes_gatk
+python3 wes.py WES \
+  --input PTH/to/samples \
+  --output PTH/to/outdir \
+  --reference-fasta broad_hg38/Homo_sapiens_assembly38.fasta \
+  --bed-file exome_bed/S07604715_Padded.bed \
+  --gff-file broad_hg38/Homo_sapiens.GRCh38.109.gff3.gz \
+  --nirvana-path ~/Nirvana \
+  --annovar-path ~/annovar_source/annovar \
+  --known-variants broad_hg38/1000G_omni2.5.hg38.vcf.gz \
+  --reference-index broad_hg38/Homo_sapiens_assembly38.fasta \
+  --generate-confs-only \
+  --dry-run
+
+```
 ### Advanced Parameters
 
 For advanced usage, you can refer to the following command-line options:
