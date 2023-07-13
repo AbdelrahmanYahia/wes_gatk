@@ -10,6 +10,13 @@ WES GATK is a flexible and user-friendly whole exome sequencing workflow based o
 ### Description:
 The workflow starts by converting `raw fastq` file to an `unmapped bam` file to include the read group information. Then, Illumina adaptors are marked and reads are aligned to hg38 reference human genome using BWA and consdier the alternative haplotype mapping. Multiple `BAM` files of the same sample are merged then PCR and optical duplicates are marked and reads are sorted by genome coordinates. Sorted BAM files are analayzied to generate mapping QC metrics. The following steps include the Base Quality score recalibration calculation using known variants files and GATK's Machine learning algorithm to recalibrate the quality scores and apply these new qualities to the `BAM` file. We now can call the variants using GATK's "haplotypecaller" in `GVCF` format, and combine all samples in a single `gvcf` file. The merged file is used for a final joint variant calling step to produce a single `vcf` file the include the genotypes of all samples. For better annotation, the file is splitted into two files, one for indels, and the other for snps. The last steps are variant filtration and variant annotation using Nirvana and Annovar. 
 
+### Features:
+This workflow is an implemetation of the Gold Standard GATK best practice in addition to these features:
+- Exome implementation ( uses user provided intervals file for specefic location calling + X basepair padding (default = 100pb) [see below](###-Advanced-Parameters) )
+- 
+- Joint Gentotyping for all samples 
+- Automatic sample name, group, lane and read number recognition.
+- Automatic snakemake sample table and config file generation.
 ### Workflow Diagram:
 ![Workflow](workflow.png)
 
@@ -116,7 +123,7 @@ usage: Basic Run Usage example:
     guap WES -i indir -o outdir --bed-file file --reference-fasta fasta.fasta --reference-index indexpath 
         
 ```
-options:
+optional arguments:
   -h, --help            show this help message and exit
 
 basic config:
@@ -136,14 +143,21 @@ Workflow configure:
   --generate-confs-only
                         Generate sample table and config file only
 
+QC configuration:
+  --trimmomatic         Use trimmomatic
+  --trim-t N            Number of threads to use during trim step
+  --trim-min-length N   trimmomatic min length [default = 30]
+  --slidingwindow-size N
+                        trimmomatic sliding window size [default = 4]
+  --slidingwindow-quality N
+                        trimmomatic sliding window quality score [default = 10]
+  --trimmomatic-extra-args ='-args'
+                        A string value of extra args for trimmomatic (must be used with = with no spaces (--trimmomatic-extra-args='-arg1 -arg2'))
+  --skip-QC             Skipp Fastqc step
+
 Aligner configuration:
-  --threads-index N     Number of threads to use during indexing ref [default
-                        = 4]
-  --threads-align N     Number of threads to use during sample alignment
-                        [default = 4]
   --aligner-extra-args '-args'
-                        Extra arguments for aligner, use it with no spaces and
-                        add = ( --aligner-extra-args='-arg1 -arg2' )
+                        Extra arguments for aligner, use it with no spaces and add = ( --aligner-extra-args='-arg1 -arg2' )
   --reference-index path/to/ref
                         path to reference index
   --reference-output-path path/to/ref
@@ -153,27 +167,33 @@ Aligner configuration:
   --index-fasta         Index fasta file
 
 Variant caller configuration:
-  --known-variants path
+  --padding N           Interval padding to include
+  --known-variants-indels path
                         path to reference fasta file
+  --known-variants-indels2 path
+                        path to reference fasta file
+  --known-variants-snps path
+                        path to reference fasta file
+  --caller-extra-args '-args'
+                        Extra arguments for caller, use it with no spaces and add = ( --caller-extra-args='-arg1 -arg2' )
 
 Snakemake Options:
   --dry-run             performs snakemake dry run
   --export-dag          performs snakemake dry run and exports DAG
   --smk-extra-args ='-args'
-                        A string value of extra args for snakemake(must be
-                        used with = with no spaces (--smk-extra-args='-arg1
-                        -arg2'))
+                        A string value of extra args for snakemake(must be used with = with no spaces (--smk-extra-args='-arg1 -arg2'))
   --parse-snakemake-output
-                        prints progress bar instead of snakemake regular
-                        output
+                        prints progress bar instead of snakemake regular output
 
 Annotation configuration:
   --annovar-protocol str
-                        Annovar Protocol defaults: refGene,avsnp150,clinvar_20
-                        221231,cosmic70,dbnsfp31a_interpro,EAS.sites.2015_08,E
-                        UR.sites.2015_08,gme,gnomad211_exome,SAS.sites.2015_08
+                        Annovar Protocol defaults: refGene,avsnp150,clinvar_20221231,cosmic70,dbnsfp31a_interpro,EAS.sites.2015_08,EUR.sites.2015_08,gme,gnomad211_exome,SAS.sites.2015_08
   --annovar-operation str
                         Annovar Protocol defaults: g,f,f,f,f,f,f,f,f,f
+  --annovar-extra-args ='-args'
+                        A string value of extra args for annovar(must be used with = with no spaces (--annovar-extra-args='-arg1 -arg2'))
+  --nirvana-extra-args ='-args'
+                        A string value of extra args for nirvana(must be used with = with no spaces (--nirvana-extra-args='-arg1 -arg2'))
 
 Other:
   --continue            continue analysis when re-run
@@ -181,6 +201,5 @@ Other:
   -n str, --name str    Name of files [ default = guap_run[date time] ]
   --verbose             verbose
   --quit                print many output
-  --print-last-run      Prints last run on screen
 
 ```
