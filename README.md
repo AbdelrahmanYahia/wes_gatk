@@ -12,7 +12,7 @@ The workflow starts by converting `raw fastq` file to an `unmapped bam` file to 
 
 ### Features:
 This workflow is an implemetation of the Gold Standard GATK best practice in addition to these features:
-- Exome implementation ( uses user provided intervals file for specefic location calling + X basepair padding (default = 100pb) [see below](###-Advanced-Parameters) )
+- Exome implementation ( uses user provided intervals file for specefic location calling + X basepair padding (default = 100pb ![see below](###Advanced-Parameters) ) )
 - 
 - Joint Gentotyping for all samples 
 - Automatic sample name, group, lane and read number recognition.
@@ -116,7 +116,7 @@ snakemake \
   --configfile PTH/to/outdir/config.yml \
   -n -j THREADS
 ```
-### Advanced Parameters
+###Advanced Parameters
 
 For advanced usage, you can refer to the following command-line options:
 usage: Basic Run Usage example:
