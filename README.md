@@ -1,6 +1,6 @@
 ## THIS WORKFLOW IS STILL UNDER DEVELOPMENT AND IS NOT READY YET!
 Navigate to:
-- [Workflow](#Workflow)
+- [Description](#Workflow)
 - [Features](#Features)
 - [Workflow Diagram](#Workflow-Diagram)
 - [Installation](#Installation)
