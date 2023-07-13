@@ -116,7 +116,7 @@ snakemake \
   --configfile PTH/to/outdir/config.yml \
   -n -j THREADS
 ```
-###Advanced Parameters
+### Advanced Parameters
 
 For advanced usage, you can refer to the following command-line options:
 usage: Basic Run Usage example:
