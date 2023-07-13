@@ -1,4 +1,10 @@
 ## THIS WORKFLOW IS STILL UNDER DEVELOPMENT AND IS NOT READY YET!
+Navigate to:
+- [Workflow](#Workflow)
+- [Features](#Features)
+- [Workflow Diagram](#Workflow-Diagram)
+- [Installation](#Installation)
+- [Running the Analysis](#Running-the-Analysis)
 
 ## Introduction
 
