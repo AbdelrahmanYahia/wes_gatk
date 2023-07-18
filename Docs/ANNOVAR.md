@@ -22,7 +22,7 @@
     - [ ]  avsnp150
     - [ ]  COSMIC needs a custom script ([https://annovar.openbioinformatics.org/en/latest/user-guide/filter/#cosmic-annotations](https://annovar.openbioinformatics.org/en/latest/user-guide/filter/#cosmic-annotations) )
     - [ ]  the OMIM data are the property of Johns Hopkins University and will not be available for download from UCSC (alterante link: [https://omim.org/downloads](https://omim.org/downloads) )
-    - [ ]  No GWAS catalog supplied by annovar
+    - [ ]  GWAS
     - [ ]  No HGMD supplied by annovar
     - [ ]  No GO supplied by annovar
     - [ ]  No Kegg supplied by annovar
