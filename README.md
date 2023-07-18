@@ -21,7 +21,7 @@ This workflow is an implemetation of the Gold Standard GATK best practice in add
 - Exome implementation ( uses user provided intervals file for specefic location calling + X basepair padding (default = 100pb [see below](#Advanced-Parameters) ) )
 - Merging samples run on multiple lanes
 - QUALIMAP and multiqc QC reports
-- [Nirvana](https://illumina.github.io/NirvanaDocumentation/) and [Annovar](https://www.openbioinformatics.org/annovar/annovar_download_form.php) Annotation ([more info](Docs/ANNOVAR.md)
+- [Nirvana](https://illumina.github.io/NirvanaDocumentation/) and [Annovar](https://www.openbioinformatics.org/annovar/annovar_download_form.php) Annotation [(more info)](Docs/ANNOVAR.md)
 - Joint Gentotyping for all samples 
 - Automatic sample name, group, lane and read number recognition.
 - Automatic snakemake sample table and config file generation.
