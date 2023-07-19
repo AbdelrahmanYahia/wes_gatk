@@ -64,8 +64,8 @@ tar xvfz annovar.latest.tar.gz
 # done
 
 # ## NOTE: Please modify this file to have the proper path, then uncomment and run
-# chmod 777 ${script_dir}/scripts/download_annovar_db.sh 
-# bash ${script_dir}/scripts/download_annovar_db.sh
+chmod 777 ${script_dir}/scripts/download_annovar_db.sh 
+bash ${script_dir}/scripts/download_annovar_db.sh  ~/annDB/annovar_source/annovar
 
 ## not used!
 # # genome GFF for bcftools consequence 

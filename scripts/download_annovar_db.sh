@@ -13,11 +13,11 @@ annovar_path=$1
 try_download(){
     db_Name=$1
     echo -e "${YEL}Trying to download: ${NC}${db_Name} ..." 
-    ~/annovar/annotate_variation.pl -downdb -buildver hg38 -webfrom annovar $db_Name ~/annovar/humandb/
+    ${annovar_path}/annotate_variation.pl -downdb -buildver hg38 -webfrom annovar $db_Name ${annovar_path}/humandb/
     lastexit=$?
     if [[ $(( lastexit )) -ne 0 ]];then
         echo -e "${RED}ERROR IN:${NC} Downloading ${db_Name} from ANNOVAR's server, trying UCSC..."
-        ~/annovar/annotate_variation.pl -downdb -buildver hg38 $db_Name ~/annovar/humandb/
+        ${annovar_path}/annotate_variation.pl -downdb -buildver hg38 $db_Name ${annovar_path}/humandb/
         lastexit=$?
         if [[ $(( lastexit )) -ne 0 ]];then
             echo -e "${RED}DOWNLOADING ${db_Name} FAILED!${NC}"
@@ -40,10 +40,10 @@ wgEncodeUwDnaseSeqHotspotsRep2Gm12878 exac10 )
 
 for i in ${dbs_list_annovar[@]} ; do 
     echo -e "${YEL}Checking: ${NC}${i} ..."
-    [ -n "$(find ~/annovar/humandb/ -maxdepth 1 -name "hg38_${i}*")" ] || try_download $i
+    [ -n "$(find ${annovar_path}/humandb/ -maxdepth 1 -name "hg38_${i}*")" ] || try_download $i
 done
 
 for i in ${dbs_list_UCSC[@]} ; do 
     echo -e "${YEL}Checking: ${NC}${i} ..."
-    [ -n "$(find ~/annovar/humandb/ -maxdepth 1 -name "hg38_${i}*")" ] || try_download $i
+    [ -n "$(find ${annovar_path}/humandb/ -maxdepth 1 -name "hg38_${i}*")" ] || try_download $i
 done
