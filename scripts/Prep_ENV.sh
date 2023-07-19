@@ -56,17 +56,22 @@ wget -c "${annovar_link}"
 error_cheker $?
 echo -e "${YEL}Installing annovar and dbs${NC}"
 tar xvfz annovar.latest.tar.gz
-cd annovar
-for db in refGene avsnp150 gme gnomad211_exome cosmic70 dbnsfp31a_interpro 1000g2015aug clinvar_20221231 
-do
-    perl annotate_variation.pl -downdb -buildver hg38 -webfrom annovar $db humandb/
-    #error_cheker $?
-done
+# cd annovar
+# for db in refGene avsnp150 gme gnomad211_exome cosmic70 dbnsfp31a_interpro 1000g2015aug clinvar_20221231 
+# do
+#     perl annotate_variation.pl -downdb -buildver hg38 -webfrom annovar $db humandb/
+#     #error_cheker $?
+# done
 
-# genome GFF for bcftools consequence 
-echo -e "${YEL}Downloading Genome GFF for bcftools annotation${NC}"
-cd ~/annDB/bcftools/hg38/
-wget -c https://ftp.ensembl.org/pub/release-109/gff3/homo_sapiens/Homo_sapiens.GRCh38.109.gff3.gz
+# ## NOTE: Please modify this file to have the proper path, then uncomment and run
+# chmod 777 ${script_dir}/scripts/download_annovar_db.sh 
+# bash ${script_dir}/scripts/download_annovar_db.sh
+
+## not used!
+# # genome GFF for bcftools consequence 
+# echo -e "${YEL}Downloading Genome GFF for bcftools annotation${NC}"
+# cd ~/annDB/bcftools/hg38/
+# wget -c https://ftp.ensembl.org/pub/release-109/gff3/homo_sapiens/Homo_sapiens.GRCh38.109.gff3.gz
 
 # # downloading ref genome 
 # mkdir -p ~/annDB/ref/fa
@@ -81,13 +86,15 @@ mkdir -p ~/annDB/broad_hg38 && cd ~/annDB/broad_hg38
 source $script_dir/scripts/gatk_download_data.sh
 # wget https://ftp.ensembl.org/pub/release-109/gff3/homo_sapiens/Homo_sapiens.GRCh38.109.gff3.gz
 
-# downloading VEP db 
-echo -e "${YEL}Downloading veb cache${NC}"
-cd ~
-mamba create -n vep -c bioconda ensembl-vep 
-conda activate vep
-mamba install -c conda-forge perl-compress-raw-zlib=2.202
-vep_install -a cf -s homo_sapiens -y GRCh38 --CONVERT
-error_cheker $?
 
-echo -e "${GRE}seems that everything went well :D${NC}"
+## not used!
+# # downloading VEP db 
+# echo -e "${YEL}Downloading veb cache${NC}"
+# cd ~
+# mamba create -n vep -c bioconda ensembl-vep 
+# conda activate vep
+# mamba install -c conda-forge perl-compress-raw-zlib=2.202
+# vep_install -a cf -s homo_sapiens -y GRCh38 --CONVERT
+# error_cheker $?
+
+# echo -e "${GRE}seems that everything went well :D${NC}"
