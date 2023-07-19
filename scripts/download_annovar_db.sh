@@ -29,7 +29,7 @@ try_download(){
     fi
 }
 
-dbs_list_annovar=( refGeneWithVer knownGene ensGene 
+dbs_list_annovar=( refGene ensGene 
 esp6500siv2_all avsnp150 dbnsfp42c 1000g2015aug)
 
 dbs_list_UCSC=( phastConsElements46way cytoBand tfbsConsSites
