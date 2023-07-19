@@ -94,9 +94,9 @@ rule qualimap:
 
     threads: 2
     resources:
-        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
+        mem_mb=lambda wildcards, attempt: (16 * 1024) * attempt,
         # cores=config["general_low_threads"],
-        mem_gb=lambda wildcards, attempt: 8  * attempt,
+        mem_gb=lambda wildcards, attempt: 16  * attempt,
         # nodes = 1,
         runtime = lambda wildcards, attempt: 60 * 2 * attempt  
 
@@ -105,6 +105,7 @@ rule qualimap:
         qualimap \
             bamqc \
             -bam {input} \
+            --java-mem-size=15G \
             --paint-chromosome-limits \
             --genome-gc-distr HUMAN \
             -nt {threads} \
