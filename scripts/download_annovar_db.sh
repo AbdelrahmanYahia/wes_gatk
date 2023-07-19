@@ -8,6 +8,8 @@ BLU='\x1b[1;34m'
 CYN='\x1b[1;36m'
 NC='\e[0m'
 
+annovar_path=$1
+
 try_download(){
     db_Name=$1
     echo -e "${YEL}Trying to download: ${NC}${db_Name} ..." 
