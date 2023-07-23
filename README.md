@@ -76,7 +76,7 @@ Create the environment, install the tools, and download the annotations database
 ./wes_gatk/scripts/Prep_ENV.sh $ANNOVAR_LINK
 ```
 
-
+Follow the instruction [here](Docs/cnv_prep.md) to download GATK required python env for CNV workflow
 This process may take some time.
 
 You can also download all the required reference files using `wes_gatk/scripts/gatk_download_data.sh`:
