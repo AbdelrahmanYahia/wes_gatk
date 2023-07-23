@@ -39,6 +39,13 @@ def get_final_output(wildcards):
             sample = samples_IDs
     ))
 
+    if call_cnv:
+        # final_output.extend(["07_cnv/cohort-calls/Allsamples-calls"])
+        final_output.extend(expand(
+            "08_cnv_postprocessing/{sample}.intervals_cohort.vcf.gz",
+            sample = samples_IDs
+    ))
+
     # final_output.extend(expand(
     #         "04_calling/QC/{type}/bcftools.stats",
     #         type = ["snvs", "indels"]

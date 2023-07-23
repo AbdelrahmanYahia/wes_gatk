@@ -89,8 +89,8 @@ rule Nirvana:
 
     shell:
         """
-        eval "$(conda shell.bash hook)"
-        set +u; conda activate dotnet; set -u
+        # eval "$(conda shell.bash hook)"
+        # set +u; conda activate dotnet; set -u
         dotnet {params.Nirvana_cmd} \
             -i {input} \
             -o {params.file_name} \

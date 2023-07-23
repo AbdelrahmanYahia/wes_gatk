@@ -14,11 +14,11 @@ working_dir = config["working_dir"]
 sample_table_file=config.get('sampletable','samples.tsv')
 SampleTable = pd.read_table(sample_table_file)
 
-files_R1s = list(SampleTable.iloc[:, 1-1])
-files_R2s = list(SampleTable.iloc[:, 8-1])
-samples = list(SampleTable.iloc[:, 3-1]) # sample full name
-units = list(SampleTable.iloc[:, 2-1])
-samples_IDs = list(SampleTable.iloc[:, 4-1])
+files_R1s = set(SampleTable.iloc[:, 1-1])
+files_R2s = set(SampleTable.iloc[:, 8-1])
+samples = set(SampleTable.iloc[:, 3-1]) # sample full name
+units = set(SampleTable.iloc[:, 2-1])
+samples_IDs = set(SampleTable.iloc[:, 4-1])
 # print(SampleTable)
 units = (
     pd.read_csv('samples.tsv', sep="\t", dtype={"sample_id": str, "unit": str})
@@ -64,7 +64,11 @@ Nirvana_cache = f"{nirvana_path}/DB/Cache/GRCh38/Both"
 
 gff = config["gff_file"]
 
+call_cnv = config["call_CNV"]
+
 include: "utils.smk"
+include: "CNV.smk"
+include: "CNV_postprocessing.smk"
 include: "alignment.smk"
 include: "bam_processing.smk"
 include: "QC.smk"

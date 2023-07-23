@@ -29,14 +29,42 @@ try_download(){
     fi
 }
 
-dbs_list_annovar=( refGene ensGene 
-esp6500siv2_all avsnp150 dbnsfp42c 1000g2015aug)
+dbs_list_annovar=( 
+    refGene 
+    ensGene 
+    esp6500siv2_all 
+    avsnp150 
+    dbnsfp42c 
+    1000g2015aug
+)
 
-dbs_list_UCSC=( phastConsElements46way cytoBand tfbsConsSites
-wgRna targetScanS genomicSuperDups dgvMerged gwasCatalog 
-wgEncodeCaltechRnaSeqRawSignalRep1Gm12878CellLongpolyaBb12x75 
-wgEncodeRegTfbsClustered snp153 
-wgEncodeUwDnaseSeqHotspotsRep2Gm12878 exac10 )
+## source: http://hgdownload.cse.ucsc.edu/goldenPath/hg38/database/
+
+dbs_list_UCSC=( 
+    phastConsElements100way 
+    cytoBand
+    wgRna genomicSuperDups dgvMerged 
+    gwasCatalog 
+    snp151 
+    keggPathway keggMapDesc 
+    clinvarMain clinvarCnv
+    encRegTfbsClustered encTfChipPkENCFF998KDQ
+)
+
+
+dbs_wgENCODE=(
+    wgEncodeTreatment
+    wgEncodeRegDnaseClustered
+    wgEncodeGencodePdbV43
+    wgEncodeGencodePseudoGeneV43
+    wgEncodeRegDnaseUwHacHotspot
+)
+
+other_UCSC_dbs=(
+    orfeomeMrna
+    lincRNAsTranscripts
+)
+
 
 for i in ${dbs_list_annovar[@]} ; do 
     echo -e "${YEL}Checking: ${NC}${i} ..."
@@ -47,3 +75,22 @@ for i in ${dbs_list_UCSC[@]} ; do
     echo -e "${YEL}Checking: ${NC}${i} ..."
     [ -n "$(find ${annovar_path}/humandb/ -maxdepth 1 -name "hg38_${i}*")" ] || try_download $i
 done
+
+
+###
+
+# for i in ${dbs_wgENCODE[@]} ; do 
+#     echo -e "${YEL}Checking: ${NC}${i} ..."
+#     [ -n "$(find ${annovar_path}/humandb/ -maxdepth 1 -name "hg38_${i}*")" ] || try_download $i
+# done
+
+# for i in ${other_UCSC_dbs[@]} ; do 
+#     echo -e "${YEL}Checking: ${NC}${i} ..."
+#     [ -n "$(find ${annovar_path}/humandb/ -maxdepth 1 -name "hg38_${i}*")" ] || try_download $i
+# done
+
+ 
+
+
+
+

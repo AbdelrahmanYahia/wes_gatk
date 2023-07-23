@@ -85,36 +85,52 @@ class WES(WorkflowCli):
         )
 
         workflow_conf.add_argument(
-            '--general-low-threads', 
-            help= "Number of threads to use during genral tasks that requires low threads [default = 1]", 
-            type=int, 
-            default= 1,
-            metavar = "N",
+            '--contig-ploidy-priors', 
+            help='Path prior ploidy file', 
+            metavar='path',
+            default="$HOME/wes_gatk/test/dummy_contig_ploidy_prior_hg38.tsv"
         )
 
         workflow_conf.add_argument(
-            '--general-high-threads', 
-            help= "Number of threads to use during genral tasks that requires many threads [default = 4]", 
-            type=int, 
-            default= 4,
-            metavar = "N",
+            '--call-CNV',
+            dest='call_CNV',
+            action='store_true',
+            help="Perform GATK CNV pipeline"
         )
 
-        workflow_conf.add_argument(
-            '--general-low-mem', 
-            help= "Memory required in general tasks that doesn't need much memory [default = 2]", 
-            type=int, 
-            default= 2,
-            metavar = "N",
-        )
+        workflow_conf.set_defaults(call_CNV=True)
 
-        workflow_conf.add_argument(
-            '--general-high-mem', 
-            help= "Memory required in general tasks that need medium memory [default = 5]", 
-            type=int, 
-            default= 5,
-            metavar = "N",
-        )
+        # workflow_conf.add_argument(
+        #     '--general-low-threads', 
+        #     help= "Number of threads to use during genral tasks that requires low threads [default = 1]", 
+        #     type=int, 
+        #     default= 1,
+        #     metavar = "N",
+        # )
+
+        # workflow_conf.add_argument(
+        #     '--general-high-threads', 
+        #     help= "Number of threads to use during genral tasks that requires many threads [default = 4]", 
+        #     type=int, 
+        #     default= 4,
+        #     metavar = "N",
+        # )
+
+        # workflow_conf.add_argument(
+        #     '--general-low-mem', 
+        #     help= "Memory required in general tasks that doesn't need much memory [default = 2]", 
+        #     type=int, 
+        #     default= 2,
+        #     metavar = "N",
+        # )
+
+        # workflow_conf.add_argument(
+        #     '--general-high-mem', 
+        #     help= "Memory required in general tasks that need medium memory [default = 5]", 
+        #     type=int, 
+        #     default= 5,
+        #     metavar = "N",
+        # )
         
         workflow_conf.add_argument(
             '--dont-use-gatk-bestparctice', 
