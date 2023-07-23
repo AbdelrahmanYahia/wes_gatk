@@ -1,4 +1,4 @@
-# cmd prep
+# CNV GATK env prep
 
 ### Prep gatk env:
 
