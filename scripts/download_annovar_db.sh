@@ -77,17 +77,17 @@ for i in ${dbs_list_UCSC[@]} ; do
 done
 
 
-###
+### you can turn those of if needed
 
-# for i in ${dbs_wgENCODE[@]} ; do 
-#     echo -e "${YEL}Checking: ${NC}${i} ..."
-#     [ -n "$(find ${annovar_path}/humandb/ -maxdepth 1 -name "hg38_${i}*")" ] || try_download $i
-# done
+for i in ${dbs_wgENCODE[@]} ; do 
+    echo -e "${YEL}Checking: ${NC}${i} ..."
+    [ -n "$(find ${annovar_path}/humandb/ -maxdepth 1 -name "hg38_${i}*")" ] || try_download $i
+done
 
-# for i in ${other_UCSC_dbs[@]} ; do 
-#     echo -e "${YEL}Checking: ${NC}${i} ..."
-#     [ -n "$(find ${annovar_path}/humandb/ -maxdepth 1 -name "hg38_${i}*")" ] || try_download $i
-# done
+for i in ${other_UCSC_dbs[@]} ; do 
+    echo -e "${YEL}Checking: ${NC}${i} ..."
+    [ -n "$(find ${annovar_path}/humandb/ -maxdepth 1 -name "hg38_${i}*")" ] || try_download $i
+done
 
  
 
