@@ -151,7 +151,7 @@ usage: Basic Run Usage example:
     guap WES -i indir -o outdir --bed-file file --reference-fasta fasta.fasta --reference-index indexpath 
         
 ```
-optional arguments:
+options:
   -h, --help            show this help message and exit
 
 basic config:
@@ -170,6 +170,11 @@ Workflow configure:
   --annovar-path path   Path for annovar
   --generate-confs-only
                         Generate sample table and config file only
+  --contig-ploidy-priors path
+                        Path prior ploidy file
+  --call-CNV            Perform GATK CNV pipeline
+  --dont-use-gatk-bestparctice
+                        Generate sample table and config file only
 
 QC configuration:
   --trimmomatic         Use trimmomatic
@@ -183,7 +188,14 @@ QC configuration:
                         A string value of extra args for trimmomatic (must be used with = with no spaces (--trimmomatic-extra-args='-arg1 -arg2'))
   --skip-QC             Skipp Fastqc step
 
+Samples pre-processing:
+  --gen-ubam-threads N  Number of threads to use during creating ubam and marking adaptors [default = 4]
+  --gen-ubam-mem N      Memory (GB) to use during creating ubam and marking adaptors [default = 5]
+
 Aligner configuration:
+  --index-threads N     Number of threads to use during indexing ref [default = 4]
+  --align-threads N     Number of threads to use during sample alignment [default = 4]
+  --align-mem N         Memory (GB) to use during sample alignment [default = 32]
   --aligner-extra-args '-args'
                         Extra arguments for aligner, use it with no spaces and add = ( --aligner-extra-args='-arg1 -arg2' )
   --reference-index path/to/ref
@@ -204,6 +216,8 @@ Variant caller configuration:
                         path to reference fasta file
   --caller-extra-args '-args'
                         Extra arguments for caller, use it with no spaces and add = ( --caller-extra-args='-arg1 -arg2' )
+  --calling-threads N   Number of threads to use during variant calling [default = 4]
+  --calling-mem N       Memory in GB to use during variant calling [default = 8]
 
 Snakemake Options:
   --dry-run             performs snakemake dry run
@@ -222,6 +236,9 @@ Annotation configuration:
                         A string value of extra args for annovar(must be used with = with no spaces (--annovar-extra-args='-arg1 -arg2'))
   --nirvana-extra-args ='-args'
                         A string value of extra args for nirvana(must be used with = with no spaces (--nirvana-extra-args='-arg1 -arg2'))
+  --annotation-threads N
+                        Number of threads to use during creating ubam and marking adaptors [default = 4]
+  --annotation-mem N    Memory (GB) to use during creating ubam and marking adaptors [default = 5]
 
 Other:
   --continue            continue analysis when re-run
@@ -229,5 +246,4 @@ Other:
   -n str, --name str    Name of files [ default = guap_run[date time] ]
   --verbose             verbose
   --quit                print many output
-
 ```
