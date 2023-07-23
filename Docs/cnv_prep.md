@@ -2,7 +2,7 @@
 
 ### Prep gatk env:
 
-You can update choose one of those options:
+You can choose one of those options:
 
 1. create gatk env and use it while runnig the CNVworkflow”:
     
