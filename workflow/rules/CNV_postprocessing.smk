@@ -71,12 +71,12 @@ rule VariantsToTable :
         """
 
 # [ii] Unix shell commands to convert to SEG format data
-rule VariantsToTable :
+rule VariantsToTable_seg:
     input:
         txt = "08_cnv_postprocessing/{sample}/genotyped-segments-case-{sample}-vs-cohort.table.txt",
         vcf = "08_cnv_postprocessing/{sample}.segments_cohort.vcf.gz"
     output:
-        "08_cnv_postprocessing/{sample}/genotyped-segments-case-{sample}-vs-cohort.table.txt"
+        "08_cnv_postprocessing/{sample}/genotyped-segments-case-{sample}-vs-cohort.table.txt.seg"
 
     conda: "../env/wes_gatk.yml"
 
