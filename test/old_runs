@@ -1,0 +1,40 @@
+python3 wes.py WES -i /home/marc/Desktop/data/samples/complex_wes -o /home/marc/Desktop/output_wes_test3 --reference-fasta /home/marc/Desktop/data/refs/fa/hg38/hg38.fa --reference-index /home/marc/Desktop/data/refs/indexes/bwa/hg38/hg38 --known-variants-indels /home/marc/Desktop/data/refs/vcf/resources_broad_hg38_v0_1000G_omni2.5.hg38.vcf.gz --known-variants-snps /home/marc/Desktop/data/refs/vcf/chr19/chr_19_known.vcf.gz --bed-file /home/marc/Desktop/data/refs/BED/Twist_Exome_Core_Covered_Targets_hg38.bed --gff-file /home/marc/Desktop/data/refs/Genome_beds/exon_coding_seq.bed.gz --nirvana-path /home/marc/Nirvana --annovar-path /home/marc/annovar --known-variants-indels2 /home/marc/Desktop/data/refs/vcf/resources_broad_hg38_v0_1000G_omni2.5.hg38.vcf.gz --smk-extra-args="--keep-going --rerun-incomplete" --parse-snakemake-output
+
+
+python3 wes.py WES -i /home/marc/Desktop/data/samples/complex_wes -o /home/marc/Desktop/output_wes_test3 --reference-fasta /home/marc/Desktop/data/refs/fa/hg38/hg38.fa --reference-index /home/marc/Desktop/data/refs/indexes/bwa/hg38/hg38 --known-variants-indels /home/marc/Desktop/data/refs/vcf/resources_broad_hg38_v0_1000G_omni2.5.hg38.vcf.gz --known-variants-snps /home/marc/Desktop/data/refs/vcf/chr19/chr_19_known.vcf.gz --bed-file /home/marc/Desktop/data/refs/BED/Twist_Exome_Core_Covered_Targets_hg38.bed --gff-file /home/marc/Desktop/data/refs/Genome_beds/exon_coding_seq.bed.gz --nirvana-path /home/marc/Nirvana --annovar-path /home/marc/annovar --known-variants-indels2 /home/marc/Desktop/data/refs/vcf/resources_broad_hg38_v0_1000G_omni2.5.hg38.vcf.gz --smk-extra-args="--keep-going --rerun-incomplete" --parse-snakemake-output --overwrite
+
+
+python3 wes.py WES -i /home/marc/Desktop/data/samples/complex_wes -o /home/marc/Desktop/output_wes_test3 --reference-fasta /home/marc/Desktop/data/refs/fa/hg38/hg38.fa --reference-index /home/marc/Desktop/data/refs/indexes/bwa/hg38/hg38 --known-variants-indels /home/marc/Desktop/data/refs/vcf/resources_broad_hg38_v0_1000G_omni2.5.hg38.vcf.gz --known-variants-snps /home/marc/Desktop/data/refs/vcf/chr19/chr_19_known.vcf.gz --bed-file /home/marc/Desktop/data/refs/BED/Twist_Exome_Core_Covered_Targets_hg38.bed --gff-file /home/marc/Desktop/data/refs/Genome_beds/exon_coding_seq.bed.gz --nirvana-path /home/marc/Nirvana --annovar-path /home/marc/annovar --known-variants-indels2 /home/marc/Desktop/data/refs/vcf/resources_broad_hg38_v0_1000G_omni2.5.hg38.vcf.gz --smk-extra-args="--keep-going --rerun-incomplete" --export-dag
+
+
+        gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
+            SplitIntervals \
+            -R {input} {params.use_interval} \
+            --scatter-count {params.scatter_count} \
+            --interval-merging-rule ALL \
+            -mode INTERVAL_SUBDIVISION \
+            -O {output.dir} 
+
+bedfile=/home/marc/Desktop/data/refs/BED/Twist_Exome_Core_Covered_Targets_hg38.bed
+
+sort -k1,1 -k2,2n $bedfile | awk '
+{
+    # If it is a different chromosome or if it is a non-overlapping interval
+    if ($1 != chrom || $2 > end) {
+        # If it is not the first interval
+        if (chrom) {
+            print chrom, start, end;
+        }
+        chrom = $1;
+        start = $2;
+        end = $3;
+    } else if ($3 > end) {
+        # If it is an overlapping interval
+        end = $3;
+    }
+}
+END {
+    # Print the last interval
+    print chrom, start, end;
+}
+' > output.bed

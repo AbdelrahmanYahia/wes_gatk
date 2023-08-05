@@ -95,10 +95,26 @@ class WES(WorkflowCli):
             '--call-CNV',
             dest='call_CNV',
             action='store_true',
-            help="Perform GATK CNV pipeline"
+            help="Perform GATK CNV pipeline [default = False]"
         )
 
-        workflow_conf.set_defaults(call_CNV=True)
+        workflow_conf.add_argument(
+            '--scatter-count',
+            help="Number of intervals to generate",
+            metavar = "N",
+            default= 50, 
+            type=int
+        )
+
+        workflow_conf.add_argument(
+            '--use-supplied-interval',
+            dest='use_supplied_interval',
+            action='store_true',
+            help="Use supplied interval to scatter over in genomics db import, [default = False]"
+        )
+        
+        workflow_conf.set_defaults(call_CNV=False)
+        workflow_conf.set_defaults(use_supplied_interval=False)
 
         # workflow_conf.add_argument(
         #     '--general-low-threads', 

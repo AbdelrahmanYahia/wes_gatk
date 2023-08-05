@@ -50,6 +50,8 @@ ref_fasta_path = os.path.dirname(ref_fasta)
 
 bed_file = config["bed_file"]
 
+unique_values = set(line.split('\t')[0] for line in open(bed_file))
+
 known_variants_snps = config["known_variants_snps"]
 known_variants_indels = config["known_variants_indels"]
 known_variants_indels2 = config["known_variants_indels2"]

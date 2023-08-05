@@ -1,6 +1,10 @@
 
-def get_gvcf(wildcards):
+def get_raw_gvcf(wildcards):
     return [f"04_calling/{sample}_raw.gvcf.gz" \
+        for sample in set(samples_IDs)]
+
+def get_reblocked_gvcf(wildcards):
+    return [f"04-1_gvcf-processing/{sample}_reblocked.gvcf.gz" \
         for sample in set(samples_IDs)]
 
 # def get_bams(wildcards):

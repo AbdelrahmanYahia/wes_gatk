@@ -284,7 +284,8 @@ def parse_input_args(args): # takes args (object) returns dict of args informati
     
     # check if analysis run before and created sample table 
     if os.path.exists(outpath+"/"+"samples.tsv"):
-        glogger.prnt_warning(f"Found an exsiting sample.tsv file in output directory, will not override.")
+        glogger.prnt_warning(f"Found an exsiting sample.tsv file in output directory, WILL OVERWRIDE!!")
+        samples.to_csv(outpath+"/"+"samples.tsv",sep='\t',index=False)
     else:
         samples.to_csv(outpath+"/"+"samples.tsv",sep='\t',index=False)  
     
