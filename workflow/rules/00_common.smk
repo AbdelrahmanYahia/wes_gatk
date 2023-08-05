@@ -68,14 +68,13 @@ gff = config["gff_file"]
 
 call_cnv = config["call_CNV"]
 
-include: "utils.smk"
-include: "CNV.smk"
-include: "CNV_postprocessing.smk"
-include: "alignment.smk"
-include: "bam_processing.smk"
-include: "QC.smk"
-include: "variant_calling.smk"
-include: "variant_processing.smk"
-include: "annotation.smk"
-include: "samples_preprocessing.smk"
-
+include: "01_utils.smk"
+include: "02_samples_preprocessing.smk"
+include: "03_alignment.smk"
+include: "04_bam_processing.smk"
+include: "05_variant_calling.smk"
+include: "06_variant_processing.smk"
+include: "07_annotation.smk"
+include: "08_CNV.smk"
+include: "09_CNV_postprocessing.smk"  
+include: "10_QC.smk"
