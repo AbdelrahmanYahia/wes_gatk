@@ -228,6 +228,4 @@ rule AnalyzeCovariates:
         gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" AnalyzeCovariates -before {input.raw} \
             -after {input.bqsr} -plots {output}
         """
-
-
 # ## TODO: check difference between this and above

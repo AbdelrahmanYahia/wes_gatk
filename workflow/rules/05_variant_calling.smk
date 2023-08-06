@@ -9,8 +9,14 @@ rule HaplotypeCaller:
         ref = ref_fasta,
         bed = bed_file,
         extra_args = config["caller_extra_args"],
-        padding = config["padding"]
+        padding = config["padding"],
+        WRAP_args35 = "--max_alternate_alleles 3 -variant_index_parameter 128000 -variant_index_type LINEAR -contamination 0 --read_filter OverclippedRead",
+        # WRAP_args4 = "-contamination 0 ",
+        # DragenMode = lambda wildcards: f"--dragen-mode" if config['use_dragon_mod'] else "",
+        # dontUse_SEG = f"--disable-spanning-event-genotyping" if config['dont_use_SEG'] else "",
 
+
+        # ~{if defined(dragstr_model) then "--dragstr-params-path " + dragstr_model else ""} 
     benchmark: "benchamrks/HaplotypeCaller/{sample}.txt"
 
     resources:
@@ -70,12 +76,56 @@ rule ReblockGVCF:
             -G StandardAnnotation \
             -G StandardHCAnnotation \
             -G AS_StandardAnnotation \
-            --floor-blocks \
+            --floor-blocks -OVI \
             -GQB 20 -GQB 30 -GQB 40 -GQB 50 -GQB 60 -GQB 70 -GQB 80 -GQB 90 \
             -L {params.bed} \
+            -do-qual-approx \
             --interval-padding {params.padding} \
             -V {input} -O {output}
+
         """
+
+"""
+hard filter GVCF:
+    gatk --java-options "-Xms2000m -Xmx2500m" \
+      VariantFiltration \
+      -V ~{input_vcf} \
+      -L ~{interval_list} \
+      --filter-expression "QD < 2.0 || FS > 30.0 || SOR > 3.0 || MQ < 40.0 || MQRankSum < -3.0 || ReadPosRankSum < -3.0" \
+      --filter-name "HardFiltered" \
+      -O ~{output_vcf_name}
+
+DragenHardFilterVcf 
+     gatk --java-options "-Xms2000m -Xmx2500m" \
+      VariantFiltration \
+      -V ~{input_vcf} \
+      --filter-expression "QUAL < 10.4139" \
+      --filter-name "DRAGENHardQUAL" \
+      -O ~{output_vcf_name}
+
+CNNScoreVariants 
+     gatk --java-options "-Xmx10000m" CNNScoreVariants \
+       -V ~{input_vcf} \
+       -R ~{ref_fasta} \
+       -O ~{output_vcf} \
+       ~{bamout_param} \
+       -tensor-type ~{tensor_type}
+
+FilterVariantTranches 
+    gatk --java-options "-Xmx6000m" FilterVariantTranches \
+      -V ~{input_vcf} \
+      -O ~{vcf_basename}.filtered.vcf.gz \
+      ~{sep=" " prefix("--snp-tranche ", snp_tranches)} \
+      ~{sep=" " prefix("--indel-tranche ", indel_tranches)} \
+      --resource ~{hapmap_resource_vcf} \
+      --resource ~{omni_resource_vcf} \
+      --resource ~{one_thousand_genomes_resource_vcf} \
+      --resource ~{dbsnp_resource_vcf} \
+      --info-key ~{info_key} \
+      --create-output-variant-index true
+
+"""
+
 
 rule CreateSampleSheet:
     input:
@@ -104,9 +154,52 @@ rule CreateSampleSheet:
         done
         """
 
+rule create_new_interval:
+    input: 
+        bedfile = bed_file
+    output:
+        newbed = "resources/Processed_intervals.bed"
+
+    threads: 1
+
+    conda: "../env/wes_gatk.yml"
+
+    resources:
+        mem_mb=lambda wildcards, attempt: (4 * 1024) * attempt,
+        mem_gb=lambda wildcards, attempt: 4  * attempt,
+        runtime = lambda wildcards, attempt: 60 * 2 * attempt
+        
+
+    shell:
+        """
+        sort -k1,1 -k2,2n {input.bedfile} | awk '
+        {{
+            # If it is a different chromosome or if it is a non-overlapping interval
+            if ($1 != chrom) {{
+                # If it is not the first interval
+                if (chrom) {{
+                    print chrom, start, end;
+                }}
+                chrom = $1;
+                start = $2;
+                end = $3;
+            }} else if ($3 > end) {{
+                # If it is an overlapping interval
+                end = $3;
+            }}
+        }}
+        END {{
+            # Print the last interval
+            print chrom, start, end;
+        }}
+        ' > {output.newbed}
+        """
+
+
 rule scatter_intervals:
     input:
-        ref = ref_fasta
+        ref = ref_fasta,
+        intervals = "resources/Processed_intervals.bed"
     
     conda: "../env/wes_gatk.yml"
 
@@ -116,79 +209,52 @@ rule scatter_intervals:
 
     params:
         scatter_count = int(config['scatter_count']),
-        use_interval = lambda wildcards: f"-L {bed_file}" if config['use_supplied_interval'] else "",
-        use_interval = lambda wildcards: [f" -L {v}" for v in ],
-    
+        # use_interval = lambda wildcards: f"-L {bed_file}" if config['use_supplied_interval'] else "",
+
+
     threads: 1
     resources:
         mem_mb=lambda wildcards, attempt: (4 * 1024) * attempt,
         mem_gb=lambda wildcards, attempt: 4  * attempt,
         runtime = lambda wildcards, attempt: 60 * 2 * attempt
-
-        # gatk SplitIntervals -L {input.intervals} \
-        # -O {output.out_dir} -R {input.ref} -scatter {params} \
-        # -mode INTERVAL_SUBDIVISION \
-        # --interval-merging-rule OVERLAPPING_ONLY &> {log}
-        # ls -l {output.out_dir}/*scattered.interval_list > {output.fof}
-        # --subdivision-mode,-mode <IntervalListScatterMode>
-        #                       How to divide intervals.  Default value: INTERVAL_SUBDIVISION. INTERVAL_SUBDIVISION
-        #                       (Scatter the interval list into similarly sized interval lists (by base count), breaking
-        #                       up intervals as needed.)
-        #                       BALANCING_WITHOUT_INTERVAL_SUBDIVISION (Scatter the interval list into similarly sized
-        #                       interval lists (by base count), but without breaking up intervals.)
-        #                       BALANCING_WITHOUT_INTERVAL_SUBDIVISION_WITH_OVERFLOW (Scatter the interval list into
-        #                       similarly sized interval lists (by base count), but without breaking up intervals. Will
-        #                       overflow current interval list so that the remaining lists will not have too many bases to
-        #                       deal with.)
-        #                       INTERVAL_COUNT (Scatter the interval list into similarly sized interval lists (by interval
-        #                       count, not by base count). Resulting interval lists will contain the same number of
-        #                       intervals except for the last, which contains the remainder.)
-        #                       INTERVAL_COUNT_WITH_DISTRIBUTED_REMAINDER (Scatter the interval list into similarly sized
-        #                       interval lists (by interval count, not by base count). Resulting interval lists will
-        #                       contain similar number of intervals.)
-        # --interval-merging-rule OVERLAPPING_ONLY or ALL [default all]
         
     shell:
         """
         gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
             SplitIntervals \
-            -R {input} {params.use_interval} \
+            -R {input.ref} \
+            -L {input.intervals} \
             --scatter-count {params.scatter_count} \
             --interval-merging-rule ALL \
             -mode INTERVAL_SUBDIVISION \
             -O {output.dir} 
         """
 
-
-
-
 """
-sort -k1,1 -k2,2n $bedfile | awk '
-{
-    # If it is a different chromosome or if it is a non-overlapping interval
-    if ($1 != chrom) {
-        # If it is not the first interval
-        if (chrom) {
-            print chrom, start, end;
-        }
-        chrom = $1;
-        start = $2;
-        end = $3;
-    } else if ($3 > end) {
-        # If it is an overlapping interval
-        end = $3;
-    }
-}
-END {
-    # Print the last interval
-    print chrom, start, end;
-}
-' > output.bed
+ScatterIntervalList 
+    set -e
+    mkdir out
+    java -Xms1000m -Xmx1500m -jar /usr/gitc/picard.jar \
+      IntervalListTools \
+      SCATTER_COUNT=~{scatter_count} \
+      SUBDIVISION_MODE=BALANCING_WITHOUT_INTERVAL_SUBDIVISION_WITH_OVERFLOW \
+      UNIQUE=true \
+      SORT=true \
+      BREAK_BANDS_AT_MULTIPLES_OF=~{break_bands_at_multiples_of} \
+      INPUT=~{interval_list} \
+      OUTPUT=out
+
+    python3 <<CODE
+    import glob, os
+    # Works around a JES limitation where multiples files with the same name overwrite each other when globbed
+    intervals = sorted(glob.glob("out/*/*.interval_list"))
+    for i, interval in enumerate(intervals):
+      (directory, filename) = os.path.split(interval)
+      newName = os.path.join(directory, str(i + 1) + filename)
+      os.rename(interval, newName)
+    print(len(intervals))
+    CODE
 """
-
-
-
-
 
 rule GenomicsDBImport:
     input:
@@ -304,7 +370,8 @@ rule combine_gvcf:
     conda: "../env/wes_gatk.yml"
 
     output:
-        "04_calling/variants.gvcf.gz"
+        "04_calling/variants_genotyped.gvcf.gz"
+
     params:
         gvcfs = lambda wildcards, input: [f" --variant {v}" for v in input["gvcfs"]],
         ref = ref_fasta

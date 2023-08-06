@@ -166,3 +166,30 @@ rule variant_filteration_snps:
             --create-output-variant-index true \
             --output {output}
         """
+
+
+"""
+ValidateVCF 
+    # Note that WGS needs a lot of memory to do the -L *.vcf if an interval file is not supplied
+    gatk --java-options "-Xms6000m -Xmx6500m" \
+      ValidateVariants \
+      -V ~{input_vcf} \
+      -R ~{ref_fasta} \
+      -L ~{calling_interval_list} \
+      ~{true="-gvcf" false="" is_gvcf} \
+      --validation-type-to-exclude ALLELES \
+      ~{"--dbsnp " + dbsnp_vcf} \
+      ~{extra_args}
+
+CollectVariantCallingMetrics 
+    java -Xms2000m -Xmx2500m -jar /usr/picard/picard.jar \
+      CollectVariantCallingMetrics \
+      INPUT=~{input_vcf} \
+      OUTPUT=~{metrics_basename} \
+      DBSNP=~{dbsnp_vcf} \
+      SEQUENCE_DICTIONARY=~{ref_dict} \
+      TARGET_INTERVALS=~{evaluation_interval_list} \
+      ~{true="GVCF_INPUT=true" false="" is_gvcf}
+
+
+"""

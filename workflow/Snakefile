@@ -4,7 +4,7 @@ import pandas as pd
 workdir: config["working_dir"]
 
 
-include: "rules/common.smk"
+include: "rules/00_common.smk"
 
 rule all:
     input:
