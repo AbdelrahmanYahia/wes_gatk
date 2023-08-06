@@ -60,6 +60,59 @@ rule ubam_align:
             --UNMAP_CONTAMINANT_READS true
         '''
 
+# rule dragon_align:
+#     input:
+#         bam="0_samples/{sample}/{sample}-{unit}.adab.ubam"
+
+#     output:
+#         bam="02_alignment-Dragon/{sample}/{sample}-{unit}_mergedUnmapped.bam"
+
+#     conda: "../env/wes_gatk.yml"
+#     threads: 4
+#     params:
+#         fa = ref_fasta,
+#         index = ref_bwa,
+#         bwa_args = config["aligner_extra_args"]
+
+#     benchmark: "benchamrks/ubam_align/{sample}/{sample}-{unit}.txt"
+#     resources:
+#         mem_mb = 32* 1024,
+#         # cores=config["align_threads"],
+#         mem_gb = 32,
+#         # nodes = 1,
+#         runtime = lambda wildcards, attempt: 60 * 2 * attempt
+#     shell:
+#         '''
+#         gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
+#             SamToFastq \
+#             -I {input.bam} \
+#             --FASTQ /dev/stdout \
+#             --CLIPPING_ATTRIBUTE XT --CLIPPING_ACTION 2 \
+#             --INTERLEAVE true -NON_PF true | bwa mem -K 100000000 \
+#             -v 3 {params.bwa_args} -t {threads} -p  -Y {params.index} /dev/stdin | gatk \
+#             --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
+#             MergeBamAlignment \
+#             --VALIDATION_STRINGENCY SILENT \
+#             --EXPECTED_ORIENTATIONS FR \
+#             --ATTRIBUTES_TO_RETAIN X0 \
+#             --ALIGNED_BAM /dev/stdin \
+#             --UNMAPPED_BAM {input.bam} \
+#             --OUTPUT {output.bam} \
+#             -R {params.fa} \
+#             --PAIRED_RUN true \
+#             --SORT_ORDER "unsorted" \
+#             --IS_BISULFITE_SEQUENCE false \
+#             --ALIGNED_READS_ONLY false \
+#             --CLIP_ADAPTERS false \
+#             --MAX_RECORDS_IN_RAM 2000000 \
+#             --ADD_MATE_CIGAR true \
+#             --MAX_INSERTIONS_OR_DELETIONS -1 \
+#             --PRIMARY_ALIGNMENT_STRATEGY MostDistant \
+#             --UNMAPPED_READ_STRATEGY COPY_TO_TAG \
+#             --ALIGNER_PROPER_PAIR_FLAGS true \
+#             --UNMAP_CONTAMINANT_READS true
+#         '''
+
 rule QC_alignment:
     input:
         "03_bamPrep/{sample}.dedub.sorted.bam"
