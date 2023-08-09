@@ -112,8 +112,15 @@ class WES(WorkflowCli):
             action='store_true',
             help="Use supplied interval to scatter over in genomics db import, [default = False]"
         )
+        workflow_conf.add_argument(
+            '--Dragon-mode',
+            dest='Dragon_mode',
+            action='store_true',
+            help="Use Dragton mode in aligner and variant caller, [default = False]"
+        )
         
         workflow_conf.set_defaults(call_CNV=False)
+        workflow_conf.set_defaults(Dragon_mode=False)
         workflow_conf.set_defaults(use_supplied_interval=False)
 
         # workflow_conf.add_argument(
@@ -323,6 +330,14 @@ class WES(WorkflowCli):
             metavar='path', 
             type=os.path.abspath, 
             help="path to reference fasta file",
+
+        )
+
+        variant_caller_conf.add_argument(
+            '--dbSNP',
+            metavar='path', 
+            type=os.path.abspath, 
+            help="path to dbSNP vcf file",
 
         )
 

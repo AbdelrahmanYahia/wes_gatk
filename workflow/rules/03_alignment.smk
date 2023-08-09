@@ -167,6 +167,8 @@ rule qualimap:
             -outdir {output} \
             -outformat HTML
         """
+
+
 ## TODO: implement automatic indexing 
 # rule index_ref:
 #     input: f"{ref_fasta}"

@@ -3,8 +3,8 @@ import pandas as pd
 
 workdir: config["working_dir"]
 
-
-include: "rules/00_common.smk"
+include: "rules/gatk-bwa-pipeline.smk"
+# include: "rules/00_common.smk"
 
 rule all:
     input:

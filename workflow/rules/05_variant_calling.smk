@@ -85,6 +85,51 @@ rule ReblockGVCF:
 
         """
 
+
+rule ReblockGVCF:
+    input: "04_calling/{sample}_raw.gvcf.gz"
+    
+    conda: "../env/wes_gatk.yml"
+
+    output: "04-1_gvcf-processing/{sample}_reblocked.gvcf.gz"
+    params: 
+        ref = ref_fasta,
+        bed = bed_file,
+        padding = config["padding"]
+
+    benchmark: "benchamrks/Reblock/{sample}.txt"
+
+    resources:
+        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
+        # cores=config["general_low_threads"],
+        mem_gb=lambda wildcards, attempt: 8  * attempt,
+        # nodes = 1,
+        runtime = lambda wildcards, attempt: 60 * 2 * attempt
+
+    threads: 4
+
+    shell:
+        """
+        ## IMPORTANT!
+        # Note that when uncalled alleles are dropped, 
+        # the original GQ may increase. Use --keep-all-alts 
+        # if GQ accuracy is a concern.
+
+        gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
+            ReblockGVCF \
+            -R {params.ref} \
+            -G StandardAnnotation \
+            -G StandardHCAnnotation \
+            -G AS_StandardAnnotation \
+            --floor-blocks -OVI \
+            -GQB 20 -GQB 30 -GQB 40 -GQB 50 \
+            -GQB 60 -GQB 70 -GQB 80 -GQB 90 \
+            -L {params.bed} \
+            -do-qual-approx \
+            --interval-padding {params.padding} \
+            -V {input} -O {output}
+        """
+
 """
 hard filter GVCF:
     gatk --java-options "-Xms2000m -Xmx2500m" \
