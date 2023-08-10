@@ -13,16 +13,16 @@ fi
 
 
 
-wget $cmd -c "https://storage.googleapis.com/genomics-public-data/references/hg38/v0/GRCh38_gencode.v27.refFlat.txt"
+#wget $cmd -c "https://storage.googleapis.com/genomics-public-data/references/hg38/v0/GRCh38_gencode.v27.refFlat.txt"
 wget $cmd -c "https://storage.googleapis.com/genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.contam.UD"
 wget $cmd -c "https://storage.googleapis.com/genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.contam.mu"
-wget $cmd -c "https://storage.googleapis.com/genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.contam.V"
+#wget $cmd -c "https://storage.googleapis.com/genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.contam.V"
 wget $cmd -c "https://storage.googleapis.com/genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.contam.bed"
-wget $cmd -c "https://storage.googleapis.com/genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.contam.exome_calling_regions.v1.README.sh"
-wget $cmd -c "https://storage.googleapis.com/genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.contam.exome_calling_regions.v1.UD"
-wget $cmd -c "https://storage.googleapis.com/genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.contam.exome_calling_regions.v1.bed"
-wget $cmd -c "https://storage.googleapis.com/genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.contam.exome_calling_regions.v1.mu"
-wget $cmd -c "https://storage.googleapis.com/genomics-public-data/references/hg38/v0/README"
+#wget $cmd -c "https://storage.googleapis.com/genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.contam.exome_calling_regions.v1.README.sh"
+#wget $cmd -c "https://storage.googleapis.com/genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.contam.exome_calling_regions.v1.UD"
+#wget $cmd -c "https://storage.googleapis.com/genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.contam.exome_calling_regions.v1.bed"
+#wget $cmd -c "https://storage.googleapis.com/genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.contam.exome_calling_regions.v1.mu"
+#wget $cmd -c "https://storage.googleapis.com/genomics-public-data/references/hg38/v0/README"
 wget $cmd -c "https://storage.googleapis.com/genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.haplotype_database.txt"
 
 # wget $cmd -c "https://storage.googleapis.com/genomics-public-data/references/hg38/v0/1000G.phase3.integrated.sites_only.no_MATCHED_REV.hg38.vcf"
