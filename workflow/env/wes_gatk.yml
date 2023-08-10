@@ -21,6 +21,7 @@ dependencies:
   - r-gplots
   - r-gsalib
   - ucsc-twobittofa
+  - verifybamid2
   
   - pip:
     - pandas 

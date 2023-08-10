@@ -91,6 +91,14 @@ def get_final_output(wildcards):
             "04_calling/QC/{sample}.eval.grp",
             sample = samples_IDs
     ))
+    final_output.extend(expand(
+            "03-2_contamitnation_check/{sample}.contamination.txt",
+            sample = samples_IDs
+    ))
+    final_output.extend(expand(
+            "03-3_bamQC/SequencingArtifactToOxoG/{sample}.oxog_metrics",
+            sample = samples_IDs
+    ))
 
     final_output.extend(expand(
             "05_Annotation/ANNOVAR/{type}",
@@ -179,24 +187,18 @@ rule FastqToSam:
         """
         ext={params.ext}
         R1={input.R1}
-        echo "R1 $R1"
         SM={wildcards.sample}
-        echo "SM $SM"
         PL="Illumina"
         LB=$SM
-        echo "LB $LB"      
         if [[ "$ext" == *".gz" ]]; then
             RGID=$(head -n1 <(zcat {input.R1}) | sed 's/:/_/g' |cut -d "_" -f1,2,3,4)
             #RGID=$(zcat {input.R1} | head -n1 | sed 's/:/_/g' |cut -d "_" -f1,2,3,4)
         else
-            echo "non gz file"
             RGID=$(head {input.R1} -n1 | sed 's/:/_/g' |cut -d "_" -f1,2,3,4)
         fi
-        echo "RGID $RGID"
         ## TODO: confirm to use this
         PU=$RGID.$LB 
-        echo "PU $PU" 
-
+        
         gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
             FastqToSam \
             -F1 {input.R1} \
@@ -207,7 +209,6 @@ rule FastqToSam:
             -PL $PL \
             -RG $RGID \
             -PU $PU \
-            # > {log} 2>&1
         """
 
 rule MarkIlluminaAdapters:
@@ -250,7 +251,8 @@ rule ubam_align:
     params:
         fa = ref_fasta,
         index = ref_bwa,
-        bwa_args = config["aligner_extra_args"]
+        bwa_args = config["aligner_extra_args"],
+        daragon_workflow_params = "--ATTRIBUTES_TO_REMOVE NM --ATTRIBUTES_TO_REMOVE MD --ADD_PG_TAG_TO_READS false"
 
     benchmark: "benchamrks/ubam_align/{sample}/{sample}-{unit}.txt"
     resources:
@@ -287,7 +289,7 @@ rule ubam_align:
             --PRIMARY_ALIGNMENT_STRATEGY MostDistant \
             --UNMAPPED_READ_STRATEGY COPY_TO_TAG \
             --ALIGNER_PROPER_PAIR_FLAGS true \
-            --UNMAP_CONTAMINANT_READS true
+            --UNMAP_CONTAMINANT_READS true {params.daragon_workflow_params}
         '''
 
 #################################################
@@ -564,146 +566,256 @@ rule AnalyzeCovariates:
             -after {input.bqsr} -plots {output}
         """
 
+#-----------------------------------------------#
+#               get contamination               #
+#-----------------------------------------------#
 
-"""
+rule create_padded_interval:
+    input: 
+        bed = bed_file
 
-    #-----------------------------------------------#
-    #           DRAGON-specific rules               #
-    #-----------------------------------------------#
+    conda: "../env/wes_gatk.yml"
+    params:
+        padding = config["padding"],
+        ref = ref_fasta
 
-    # Don't know what are those files!
+    output: "resources/padded.bed"
 
-    # rule GenerateSubsettedContaminationResources:
-    #     input: 
-    #         bam = "03_bamPrep/{sample}.pqsr.bam",
-    #         target_overlap_counts = "03-1_SubsettedContamination/target_overlap_counts.txt",
+    shell:
+        """
+        bedtools slop -i {input.bed} -g {params.ref}.fai -b {params.padding} > {output}
+        """
 
+rule GenerateSubsettedContaminationResources:
+    input: 
+        intervalslist = "resources/padded.bed",
+        UD = "/home/marc/Desktop/data/refs/GATK-Resources/Homo_sapiens_assembly38.contam.UD",
+        BED = "/home/marc/Desktop/data/refs/GATK-Resources/Homo_sapiens_assembly38.contam.bed",
+        MU = "/home/marc/Desktop/data/refs/GATK-Resources/Homo_sapiens_assembly38.contam.mu",
 
-    #     conda: "../env/wes_gatk.yml"
+    conda: "../env/wes_gatk.yml"
 
-    #     benchmark: "benchamrks/GenSubCont/{sample}.txt"
+    benchmark: "benchamrks/GenSubCont/GenerateSubsettedContaminationResources.txt"
 
-    #     output: 
-    #         UD = "03-1_SubsettedContamination/{sample}.ud",
-    #         BED = "03-1_SubsettedContamination/{sample}.bed",
-    #         MU = "03-1_SubsettedContamination/{sample}.mu",
+    output: 
+        UD = "03-1_SubsettedContamination/EXOME_Contams.UD",
+        BED = "03-1_SubsettedContamination/EXOME_Contams.bed",
+        MU = "03-1_SubsettedContamination/EXOME_Contams.mu",
+        target_overlap_counts = "03-1_SubsettedContamination/target_overlap_counts.txt"
 
-    #     threads: 2
-    #     resources:
-    #         mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
-    #         mem_gb=lambda wildcards, attempt: 8  * attempt,
-    #         runtime = lambda wildcards, attempt: 60 * 2 * attempt
+    threads: 2
+    resources:
+        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
+        mem_gb=lambda wildcards, attempt: 8  * attempt,
+        runtime = lambda wildcards, attempt: 60 * 2 * attempt
 
-    #     shell:
-    #         '''
-    #         grep -vE "^@" ~{target_interval_list} |
-    #             awk -v OFS='\t' '$2=$2-1' |
-    #             /app/bedtools intersect -c -a ~{contamination_sites_bed} -b - |
-    #             cut -f6 > ~{target_overlap_counts}
+    shell:
+        '''
+        grep -vE "^@" {input.intervalslist} |
+            awk -v OFS='\t' '$2=$2-1' |
+            bedtools intersect -c -a {input.BED} -b - |
+            cut -f6 > {output.target_overlap_counts}
 
-    #         function restrict_to_overlaps() {
-    #             # print lines from whole-genome file from loci with non-zero overlap
-    #             # with target intervals
-    #             WGS_FILE=$1
-    #             EXOME_FILE=$2
-    #             paste ~{target_overlap_counts} $WGS_FILE |
-    #                 grep -Ev "^0" |
-    #                 cut -f 2- > $EXOME_FILE
-    #             echo "Generated $EXOME_FILE"
-    #         }
+        function restrict_to_overlaps() {{
+            # print lines from whole-genome file from loci with non-zero overlap
+            # with target intervals
+            WGS_FILE=$1
+            EXOME_FILE=$2
+            paste {output.target_overlap_counts} $WGS_FILE |
+                grep -Ev "^0" |
+                cut -f 2- > $EXOME_FILE
+            echo "Generated $EXOME_FILE"
+        }}
 
-    #         restrict_to_overlaps ~{contamination_sites_ud} ~{output_ud}
-    #         restrict_to_overlaps ~{contamination_sites_bed} ~{output_bed}
-    #         restrict_to_overlaps ~{contamination_sites_mu} ~{output_mu}
+        restrict_to_overlaps {input.UD} {output.UD}
+        restrict_to_overlaps {input.BED} {output.BED}
+        restrict_to_overlaps {input.MU} {output.MU}
 
-    #         '''
+        '''
 
+## from https://github.com/broadinstitute/warp/blob/develop/tasks/broad/BamProcessing.wdl
+# Notes on the contamination estimate:
+# The contamination value is read from the FREEMIX field of the selfSM file output by verifyBamId
+#
+# In Zamboni production, this value is stored directly in METRICS.AGGREGATION_CONTAM
+#
+# Contamination is also stored in GVCF_CALLING and thereby passed to HAPLOTYPE_CALLER
+# But first, it is divided by an underestimation factor thusly:
+#   float(FREEMIX) / ContaminationUnderestimationFactor
+#     where the denominator is hardcoded in Zamboni:
+#     val ContaminationUnderestimationFactor = 0.75f
+#
+# Here, I am handling this by returning both the original selfSM file for reporting, and the adjusted
+# contamination estimate for use in variant calling
 
-    # Notes on the contamination estimate:
-    # The contamination value is read from the FREEMIX field of the selfSM file output by verifyBamId
-    #
-    # In Zamboni production, this value is stored directly in METRICS.AGGREGATION_CONTAM
-    #
-    # Contamination is also stored in GVCF_CALLING and thereby passed to HAPLOTYPE_CALLER
-    # But first, it is divided by an underestimation factor thusly:
-    #   float(FREEMIX) / ContaminationUnderestimationFactor
-    #     where the denominator is hardcoded in Zamboni:
-    #     val ContaminationUnderestimationFactor = 0.75f
-    #
-    # Here, I am handling this by returning both the original selfSM file for reporting, and the adjusted
-    # contamination estimate for use in variant calling
+rule CheckContamination:
+    input: 
+        UD = "03-1_SubsettedContamination/EXOME_Contams.UD",
+        BED = "03-1_SubsettedContamination/EXOME_Contams.bed",
+        MU = "03-1_SubsettedContamination/EXOME_Contams.mu",
+        target_bam = "03_bamPrep/{sample}.bam",
 
+        ref = ref_fasta,
 
-    # task CheckContamination {
-    #   input {
-    #     File input_bam
-    #     File input_bam_index
-    #     File contamination_sites_ud
-    #     File contamination_sites_bed
-    #     File contamination_sites_mu
-    #     File ref_fasta
-    #     File ref_fasta_index
-    #     String output_prefix
-    #     Int preemptible_tries
-    #     Float contamination_underestimation_factor
-    #     Boolean disable_sanity_check = false
-    #   }
+    conda: "../env/wes_gatk.yml"
 
-    #   Int disk_size = ceil(size(input_bam, "GiB") + size(ref_fasta, "GiB")) + 30
+    benchmark: "benchamrks/GenSubCont/CheckContamination.{sample}.txt"
 
-    #   command <<<
-    #     set -e
+    output: 
+        selfSM = "03-2_contamitnation_check/{sample}.selfSM",
+        contamination = "03-2_contamitnation_check/{sample}.contamination.txt"  
+    params:
+        get_con_file = f"{source_dir}/workflow/scripts/get_contamination.py",
+        prefix = "03-2_contamitnation_check/{sample}",
+        svdprefix = "03-1_SubsettedContamination/EXOME_Contams"
 
-    #     # creates a ~{output_prefix}.selfSM file, a TSV file with 2 rows, 19 columns.
-    #     # First row are the keys (e.g., SEQ_SM, RG, FREEMIX), second row are the associated values
-    #     /usr/gitc/VerifyBamID \
-    #     --Verbose \
-    #     --NumPC 4 \
-    #     --Output ~{output_prefix} \
-    #     --BamFile ~{input_bam} \
-    #     --Reference ~{ref_fasta} \
-    #     --UDPath ~{contamination_sites_ud} \
-    #     --MeanPath ~{contamination_sites_mu} \
-    #     --BedPath ~{contamination_sites_bed} \
-    #     ~{true="--DisableSanityCheck" false="" disable_sanity_check} \
-    #     1>/dev/null
+    threads: 2
+    resources:
+        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
+        mem_gb=lambda wildcards, attempt: 8  * attempt,
+        runtime = lambda wildcards, attempt: 60 * 2 * attempt
 
-    #     # used to read from the selfSM file and calculate contamination, which gets printed out
-    #     python3 <<CODE
-    #     import csv
-    #     import sys
-    #     with open('~{output_prefix}.selfSM') as selfSM:
-    #       reader = csv.DictReader(selfSM, delimiter='\t')
-    #       i = 0
-    #       for row in reader:
-    #         if float(row["FREELK0"])==0 and float(row["FREELK1"])==0:
-    #           # a zero value for the likelihoods implies no data. This usually indicates a problem rather than a real event.
-    #           # if the bam isn't really empty, this is probably due to the use of a incompatible reference build between
-    #           # vcf and bam.
-    #           sys.stderr.write("Found zero likelihoods. Bam is either very-very shallow, or aligned to the wrong reference (relative to the vcf).")
-    #           sys.exit(1)
-    #         print(float(row["FREEMIX"])/~{contamination_underestimation_factor})
-    #         i = i + 1
-    #         # there should be exactly one row, and if this isn't the case the format of the output is unexpectedly different
-    #         # and the results are not reliable.
-    #         if i != 1:
-    #           sys.stderr.write("Found %d rows in .selfSM file. Was expecting exactly 1. This is an error"%(i))
-    #           sys.exit(2)
-    #     CODE
-    #   >>>
-    #   runtime {
-    #     preemptible: preemptible_tries
-    #     memory: "7.5 GiB"
-    #     disks: "local-disk " + disk_size + " HDD"
-    #     docker: "us.gcr.io/broad-gotc-prod/verify-bam-id:1.0.1-c1cba76e979904eb69c31520a0d7f5be63c72253-1639071840"
-    #     cpu: 2
-    #   }
-    #   output {
-    #     File selfSM = "~{output_prefix}.selfSM"
-    #     Float contamination = read_float(stdout())
-    #   }
-    # }
-"""
+    shell:
+        '''
+        verifybamid2 \
+            --Verbose \
+            --NumPC 4 \
+            --NumThread {threads} \
+            --Output {params.prefix} \
+            --BamFile {input.target_bam} \
+            --Reference {input.ref} \
+            --SVDPrefix {params.svdprefix} \
+
+        # extract the contamination value from the selfSM file  
+        python3 {params.get_con_file} \
+            --input {output.selfSM} \
+            --output {output.contamination} 
+
+        '''
+
+#-----------------------------------------------#
+#                    BAM QC                     #
+#-----------------------------------------------#
+
+# Input is the final processed bam file
+
+# Collect sequencing yield quality metrics
+rule CollecQualityYieldMetrics:
+    input:
+        "03_bamPrep/{sample}.bam",
+    output:
+        "03-3_bamQC/{sample}.metrics.txt",
+
+    conda: "../env/wes_gatk.yml"
+    resources:
+        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
+        mem_gb=lambda wildcards, attempt: 8  * attempt,
+        runtime = lambda wildcards, attempt: 60 * 2 * attempt
+    threads: 1
+    shell:
+        """
+        gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" 
+            CollectQualityYieldMetrics \
+            --INPUT {input} \
+            --OQ true \
+            --OUTPUT {output}
+        """
+
+# Collect alignment summary and GC bias quality metrics
+rule CollectBamQualityMetrics:
+    input:
+        "03_bamPrep/{sample}.bam",
+    output:
+        directory("03-3_bamQC/CBQmatrix/{sample}"),
+        pre_adapter_detail_metrics = "03-3_bamQC/CBQmatrix/{sample}/BamMatrix.pre_adapter_detail_metrics",
+        pre_adapter_summary_metrics = "03-3_bamQC/CBQmatrix/{sample}/BamMatrix.pre_adapter_summary_metrics",
+
+    conda: "../env/wes_gatk.yml"
+    params: 
+        prefix = "03-3_bamQC/CBQmatrix/{sample}/BamMatrix",
+        ref = ref_fasta,
+
+    resources:
+        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
+        mem_gb=lambda wildcards, attempt: 8  * attempt,
+        runtime = lambda wildcards, attempt: 60 * 2 * attempt
+    threads: 1
+    shell:
+        """
+        gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
+            CollectMultipleMetrics \
+            --INPUT {input} \
+            --REFERENCE_SEQUENCE {params.ref} \
+            --OUTPUT {params.prefix} \
+            --ASSUME_SORTED true \
+            --PROGRAM null \
+            --PROGRAM CollectAlignmentSummaryMetrics \
+            --PROGRAM CollectInsertSizeMetrics \
+            --PROGRAM CollectSequencingArtifactMetrics \
+            --PROGRAM QualityScoreDistribution \
+            --PROGRAM CollectGcBiasMetrics \
+            --PROGRAM CollectBaseDistributionByCycle \
+            --METRIC_ACCUMULATION_LEVEL null \
+            --METRIC_ACCUMULATION_LEVEL SAMPLE \
+            --METRIC_ACCUMULATION_LEVEL LIBRARY \
+            --METRIC_ACCUMULATION_LEVEL READ_GROUP \
+            --METRIC_ACCUMULATION_LEVEL ALL_READS
+
+        """
+
+# Collect ConvertSequencingArtifactToOxoG
+rule ConvertSequencingArtifactToOxoG:
+    input:
+        bam = "03_bamPrep/{sample}.bam",
+        pre_adapter_detail_metrics = "03-3_bamQC/CBQmatrix/{sample}/BamMatrix.pre_adapter_detail_metrics",
+    output:
+        "03-3_bamQC/SequencingArtifactToOxoG/{sample}.oxog_metrics"
+
+    conda: "../env/wes_gatk.yml"
+    params: 
+        prefix = "03-3_bamQC/SequencingArtifactToOxoG/{sample}",
+        inPasename = "03-3_bamQC/CBQmatrix/{sample}/BamMatrix",
+        ref = ref_fasta,
+    resources:
+        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
+        mem_gb=lambda wildcards, attempt: 8  * attempt,
+        runtime = lambda wildcards, attempt: 60 * 2 * attempt
+    threads: 1
+    shell:
+        """
+        gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
+            ConvertSequencingArtifactToOxoG \
+            --INPUT_BASE {params.inPasename} \
+            --OUTPUT_BASE {params.prefix} \
+            --REFERENCE_SEQUENCE {params.ref} \
+        """
+
+# Check that the fingerprints of separate readgroups all match
+# rule CrossCheckFingerprints:
+#     input:
+#         bam = "03_bamPrep/{sample}.bam",
+#         pre_adapter_detail_metrics = "03-3_bamQC/CBQmatrix/{sample}/BamMatrix.pre_adapter_detail_metrics",
+#     output:
+#         "03-3_bamQC/SequencingArtifactToOxoG/{sample}.oxog_metrics"
+
+#     conda: "../env/wes_gatk.yml"
+#     params: 
+#         prefix = "03-3_bamQC/SequencingArtifactToOxoG/{sample}",
+#         inPasename = "03-3_bamQC/CBQmatrix/{sample}/BamMatrix",
+#         ref = ref_fasta,
+#     resources:
+#         mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
+#         mem_gb=lambda wildcards, attempt: 8  * attempt,
+#         runtime = lambda wildcards, attempt: 60 * 2 * attempt
+#     threads: 1
+#     shell:
+#         """
+#         gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
+#             ConvertSequencingArtifactToOxoG \
+#             --INPUT_BASE {params.inPasename} \
+#             --OUTPUT_BASE {params.prefix} \
+#             --REFERENCE_SEQUENCE {params.ref} \
+#         """
 
 #################################################
 #             07 variant callign                #
@@ -809,7 +921,6 @@ rule ReblockGVCF:
 # sample runs as said here:
 # https://www.melbournebioinformatics.org.au/tutorials/tutorials/variant_calling_gatk1/variant_calling_gatk1/
 
-
 rule HardFilterVcf:
     input: "04-1_gvcf-processing/reblocked/{sample}.gvcf.gz"
     
@@ -844,7 +955,6 @@ rule HardFilterVcf:
             -O {output}
         """
 
-# For single sample filteration :D 
 rule CNNScoreVariants:
     input: 
         vcf = "04-1_gvcf-processing/filtterd/{sample}_reblocked.gvcf.gz",
@@ -878,7 +988,6 @@ rule CNNScoreVariants:
             -I {input.bam} \
             -tensor-type read-tensor
         """
-
 
 rule FilterVariantTranches:
     input: 
@@ -1104,7 +1213,6 @@ rule genotype_gvcfs:
     params:
         ref = ref_fasta,
         Additional_annotation = "",
-        # dbsnp = lambda wildcards: f"-D {config['dbSNP']}" if config['dbSNP'] != "" else "",
 
     threads: 4
     resources:
@@ -1122,7 +1230,6 @@ rule genotype_gvcfs:
             {params.Additional_annotation} --merge-input-intervals \
             -L {input.intervals} \
             --only-output-calls-starting-in-intervals \
-            # {params.dbsnp} \
 
         """
 
@@ -1373,8 +1480,8 @@ rule Nirvana:
 
     shell:
         """
-        # eval "$(conda shell.bash hook)"
-        # set +u; conda activate dotnet; set -u
+        eval "$(conda shell.bash hook)"
+        set +u; conda activate dotnet; set -u
         dotnet {params.Nirvana_cmd} \
             -i {input} \
             -o {params.file_name} \
