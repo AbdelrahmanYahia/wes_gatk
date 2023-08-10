@@ -7,6 +7,9 @@ import pandas as pd
 #################################################
 
 # get options
+HTDBfile = "/home/marc/Desktop/data/refs/GATK-Resources/Homo_sapiens_assembly38.haplotype_database.txt"
+# config["HtDBfile"]
+
 PATH = config["path"]
 EXTT = config["ext"]
 RS = config["R"]
@@ -73,6 +76,7 @@ gff = config["gff_file"]
 
 call_cnv = config["call_CNV"]
 
+
 #################################################
 #            02 define main functions           #
 #################################################
@@ -86,15 +90,12 @@ def get_reblocked_gvcf(wildcards):
         for sample in set(samples_IDs)]
 
 def get_final_output(wildcards):
-    final_output = []
+    final_output = ["03-3_bamQC/CrossCheckFingerprints/metrics.file"]
     final_output.extend(expand(
             "04_calling/QC/{sample}.eval.grp",
             sample = samples_IDs
     ))
-    final_output.extend(expand(
-            "03-2_contamitnation_check/{sample}.contamination.txt",
-            sample = samples_IDs
-    ))
+
     final_output.extend(expand(
             "03-3_bamQC/SequencingArtifactToOxoG/{sample}.oxog_metrics",
             sample = samples_IDs
@@ -238,7 +239,28 @@ rule MarkIlluminaAdapters:
 #################################################
 #            04 mapping to reference            #
 #################################################
+"""
+--ATTRIBUTES_TO_REMOVE NM:
+The --ATTRIBUTES_TO_REMOVE parameter specifies a list of attributes to remove from the read records in the BAM file. In this case, NM refers to the "Edit distance to the reference" attribute, which indicates the number of mismatches and gaps in the alignment between a read and the reference genome. Removing this attribute could impact downstream analyses that rely on this information, such as variant calling and quality assessment.
 
+Implication: Removing the NM attribute might affect the quality of variant calling and other analyses that depend on alignment information. It's generally advisable to retain this attribute unless you have a specific reason to remove it.
+
+--ATTRIBUTES_TO_REMOVE MD:
+The MD attribute stands for "Mismatching positions," which indicates the positions in the read that differ from the reference sequence. Similar to the NM attribute, removing the MD attribute could impact variant calling and alignment-related analyses.
+
+Implication: Removing the MD attribute may affect alignment-based analyses. Keeping this attribute is usually recommended.
+
+--ADD_PG_TAG_TO_READS false:
+The --ADD_PG_TAG_TO_READS parameter controls whether Program Group (PG) tags should be added to the read groups of the output BAM file. PG tags provide information about the program and version used to generate the data, which can be useful for tracking the processing history of the data.
+
+Implication: If you set this parameter to false, PG tags will not be added to the read groups in the output BAM file. This might not have a significant impact on the variant calling process itself, but it could affect downstream data analysis workflows that rely on accurate metadata tracking.
+
+MergeBamAlignment step ensures that the attributes from both sets of reads are properly integrated. The purpose of removing these attributes could be related to consistency and avoiding redundancy, as merging may introduce duplicates or conflicts in attribute values. However, removing them could affect downstream analyses that rely on accurate alignment and mismatch information.
+
+Regarding whether you need to rerun the analysis if you didn't use these parameters: It depends on the specific goals of your analysis and the downstream analyses you plan to perform. If you have already performed variant calling without these parameters and are satisfied with the results, you may not necessarily need to rerun the analysis. However, it's a good practice to carefully consider the implications of removing important attributes and metadata from the BAM file, as it could affect the reliability and interpretability of your results.
+
+When using the Haplotype Caller (part of GATK), the impact of these parameters could be similar, as the principles of alignment and variant calling still apply. However, the specific implications might vary depending on the algorithm's behavior and the downstream analyses you plan to perform on the haplotype-called variants. It's always a good idea to refer to the GATK documentation and best practices for guidance on parameter choices and their effects on different analysis scenarios.
+"""
 rule ubam_align:
     input:
         bam="0_samples/{sample}/{sample}-{unit}.adab.ubam"
@@ -257,7 +279,6 @@ rule ubam_align:
     benchmark: "benchamrks/ubam_align/{sample}/{sample}-{unit}.txt"
     resources:
         mem_mb = 32* 1024,
-        # cores=config["align_threads"],
         mem_gb = 32,
         runtime = lambda wildcards, attempt: 60 * 2 * attempt
     shell:
@@ -510,6 +531,8 @@ rule applyBaseRecalibrator:
             --add-output-sam-program-record \
             --create-output-bam-md5 \
             --use-original-qualities
+
+        samtools index {output} 
         """
 
 rule bqsr_calibrated_report:
@@ -633,20 +656,6 @@ rule GenerateSubsettedContaminationResources:
 
         '''
 
-## from https://github.com/broadinstitute/warp/blob/develop/tasks/broad/BamProcessing.wdl
-# Notes on the contamination estimate:
-# The contamination value is read from the FREEMIX field of the selfSM file output by verifyBamId
-#
-# In Zamboni production, this value is stored directly in METRICS.AGGREGATION_CONTAM
-#
-# Contamination is also stored in GVCF_CALLING and thereby passed to HAPLOTYPE_CALLER
-# But first, it is divided by an underestimation factor thusly:
-#   float(FREEMIX) / ContaminationUnderestimationFactor
-#     where the denominator is hardcoded in Zamboni:
-#     val ContaminationUnderestimationFactor = 0.75f
-#
-# Here, I am handling this by returning both the original selfSM file for reporting, and the adjusted
-# contamination estimate for use in variant calling
 
 rule CheckContamination:
     input: 
@@ -678,7 +687,6 @@ rule CheckContamination:
     shell:
         '''
         verifybamid2 \
-            --Verbose \
             --NumPC 4 \
             --NumThread {threads} \
             --Output {params.prefix} \
@@ -726,7 +734,6 @@ rule CollectBamQualityMetrics:
     input:
         "03_bamPrep/{sample}.bam",
     output:
-        directory("03-3_bamQC/CBQmatrix/{sample}"),
         pre_adapter_detail_metrics = "03-3_bamQC/CBQmatrix/{sample}/BamMatrix.pre_adapter_detail_metrics",
         pre_adapter_summary_metrics = "03-3_bamQC/CBQmatrix/{sample}/BamMatrix.pre_adapter_summary_metrics",
 
@@ -750,18 +757,17 @@ rule CollectBamQualityMetrics:
             --ASSUME_SORTED true \
             --PROGRAM null \
             --PROGRAM CollectAlignmentSummaryMetrics \
-            --PROGRAM CollectInsertSizeMetrics \
             --PROGRAM CollectSequencingArtifactMetrics \
             --PROGRAM QualityScoreDistribution \
             --PROGRAM CollectGcBiasMetrics \
-            --PROGRAM CollectBaseDistributionByCycle \
             --METRIC_ACCUMULATION_LEVEL null \
             --METRIC_ACCUMULATION_LEVEL SAMPLE \
             --METRIC_ACCUMULATION_LEVEL LIBRARY \
-            --METRIC_ACCUMULATION_LEVEL READ_GROUP \
-            --METRIC_ACCUMULATION_LEVEL ALL_READS
+            --METRIC_ACCUMULATION_LEVEL ALL_READS 
 
         """
+
+
 
 # Collect ConvertSequencingArtifactToOxoG
 rule ConvertSequencingArtifactToOxoG:
@@ -790,19 +796,50 @@ rule ConvertSequencingArtifactToOxoG:
             --REFERENCE_SEQUENCE {params.ref} \
         """
 
+
 # Check that the fingerprints of separate readgroups all match
-# rule CrossCheckFingerprints:
+rule CrossCheckFingerprints:
+    input:
+        bams = expand("03_bamPrep/{sample}.bam", sample = samples_IDs),
+
+    output:
+        "03-3_bamQC/CrossCheckFingerprints/metrics.file"
+
+    conda: "../env/wes_gatk.yml"
+    params: 
+        files = lambda wildcards, input: [f" --INPUT {v}" for v in input["bams"]],
+        ref = ref_fasta,
+        htdbf = HTDBfile
+    resources:
+        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
+        mem_gb=lambda wildcards, attempt: 8  * attempt,
+        runtime = lambda wildcards, attempt: 60 * 2 * attempt
+    threads: 1
+    shell:
+        """
+        gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
+            CrosscheckFingerprints \
+            --OUTPUT {output} \
+            --HAPLOTYPE_MAP {params.htdbf} \
+            --EXPECT_ALL_GROUPS_TO_MATCH true \
+            {params.files} \
+            --LOD_THRESHOLD -10.0 \
+        """
+
+# Checks the sample identity of the sequence/genotype data in the provided file (SAM/BAM or VCF) against a set of known genotypes in the supplied genotype file (in VCF format).
+# rule CheckFingerprintTask:
 #     input:
-#         bam = "03_bamPrep/{sample}.bam",
-#         pre_adapter_detail_metrics = "03-3_bamQC/CBQmatrix/{sample}/BamMatrix.pre_adapter_detail_metrics",
+#         "03_bamPrep/{sample}.bam",
+#         "03-3_bamQC/CrossCheckFingerprints/metrics.file"
+    
 #     output:
-#         "03-3_bamQC/SequencingArtifactToOxoG/{sample}.oxog_metrics"
+#         "03-3_bamQC/CheckFingerprintTask/metrics.file"
 
 #     conda: "../env/wes_gatk.yml"
 #     params: 
-#         prefix = "03-3_bamQC/SequencingArtifactToOxoG/{sample}",
-#         inPasename = "03-3_bamQC/CBQmatrix/{sample}/BamMatrix",
+#         files = lambda wildcards, input: [f" --INPUT {v}" for v in input["bams"]],
 #         ref = ref_fasta,
+#         htdbf = HTDBfile
 #     resources:
 #         mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
 #         mem_gb=lambda wildcards, attempt: 8  * attempt,
@@ -811,10 +848,22 @@ rule ConvertSequencingArtifactToOxoG:
 #     shell:
 #         """
 #         gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
-#             ConvertSequencingArtifactToOxoG \
-#             --INPUT_BASE {params.inPasename} \
-#             --OUTPUT_BASE {params.prefix} \
-#             --REFERENCE_SEQUENCE {params.ref} \
+#             CheckFingerprint \
+#             --INPUT ~{input_file} \
+#             --GENOTYPES ~{genotypes} \
+#             --EXPECTED_SAMPLE_ALIAS "~{expected_sample_alias}" \
+#             ~{if defined(input_bam) then "--IGNORE_READ_GROUPS true" else ""} \
+#             --HAPLOTYPE_MAP ~{haplotype_database_file} \
+#             --GENOTYPE_LOD_THRESHOLD ~{genotype_lod_threshold} \
+#             --SUMMARY_OUTPUT ~{summary_metrics_location} \
+#             --DETAIL_OUTPUT ~{detail_metrics_location} \
+#             ~{"--REFERENCE_SEQUENCE " + ref_fasta}
+
+#             CONTENT_LINE=$(cat ~{summary_metrics_location} |
+#             grep -n "## METRICS CLASS\tpicard.analysis.FingerprintingSummaryMetrics" |
+#             cut -f1 -d:)
+#             CONTENT_LINE=$(($CONTENT_LINE+2))
+#             sed '8q;d' ~{summary_metrics_location} | cut -f5 > lod
 #         """
 
 #################################################
@@ -825,7 +874,9 @@ rule ConvertSequencingArtifactToOxoG:
 Dragon_STR_Model_path = ""
 
 rule HaplotypeCaller:
-    input: "03_bamPrep/{sample}.pqsr.bam"
+    input: 
+        bam = "03_bamPrep/{sample}.pqsr.bam",
+        contamination = "03-2_contamitnation_check/{sample}.contamination.txt"
     
     conda: "../env/wes_gatk.yml"
 
@@ -853,6 +904,12 @@ rule HaplotypeCaller:
 
     shell:
         """
+        if [ -s "{input.contamination}" ]; then
+            cont=$(<{input.contamination})
+        else
+            cont=0
+        fi
+
         gatk --java-options "-Xmx{resources.reduced}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
             HaplotypeCaller -R {params.ref} \
             -G StandardAnnotation -G StandardHCAnnotation \
@@ -861,7 +918,7 @@ rule HaplotypeCaller:
             -L {params.bed} \
             --interval-padding {params.padding} \
             -I {input} --native-pair-hmm-threads {threads} -ERC GVCF -O {output.vcf} \
-            -contamination 0 {params.Dragon_mode} \
+            -contamination $cont {params.Dragon_mode} \
             -bamout {output.bam} \
 
         """

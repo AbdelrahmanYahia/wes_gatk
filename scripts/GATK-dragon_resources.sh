@@ -23,6 +23,7 @@ wget $cmd -c "https://storage.googleapis.com/genomics-public-data/references/hg3
 wget $cmd -c "https://storage.googleapis.com/genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.contam.exome_calling_regions.v1.bed"
 wget $cmd -c "https://storage.googleapis.com/genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.contam.exome_calling_regions.v1.mu"
 wget $cmd -c "https://storage.googleapis.com/genomics-public-data/references/hg38/v0/README"
+wget $cmd -c "https://storage.googleapis.com/genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.haplotype_database.txt"
 
 # wget $cmd -c "https://storage.googleapis.com/genomics-public-data/references/hg38/v0/1000G.phase3.integrated.sites_only.no_MATCHED_REV.hg38.vcf"
 # wget $cmd -c "https://storage.googleapis.com/genomics-public-data/references/hg38/v0/1000G.phase3.integrated.sites_only.no_MATCHED_REV.hg38.vcf.idx"
@@ -51,7 +52,6 @@ wget $cmd -c "https://storage.googleapis.com/genomics-public-data/references/hg3
 # wget $cmd -c "https://storage.googleapis.com/genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.fasta.fai"
 # wget $cmd -c "https://storage.googleapis.com/genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.fasta.pac"
 # wget $cmd -c "https://storage.googleapis.com/genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.fasta.sa"
-# wget $cmd -c "https://storage.googleapis.com/genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.haplotype_database.txt"
 # wget $cmd -c "https://storage.googleapis.com/genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.known_indels.vcf.gz"
 # wget $cmd -c "https://storage.googleapis.com/genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.known_indels.vcf.gz.tbi"
 # wget $cmd -c "https://storage.googleapis.com/genomics-public-data/references/hg38/v0/Homo_sapiens_assembly38.ref_cache.tar.gz"
