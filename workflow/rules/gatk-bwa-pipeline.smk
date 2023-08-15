@@ -90,9 +90,18 @@ def get_reblocked_gvcf(wildcards):
         for sample in set(samples_IDs)]
 
 def get_final_output(wildcards):
-    final_output = ["03-3_bamQC/CrossCheckFingerprints/metrics.file"]
+    final_output = []
     final_output.extend(expand(
             "04_calling/QC/{sample}.eval.grp",
+            sample = samples_IDs
+    ))
+
+    final_output.extend(expand(
+            "04-4_gvcf-QC/{sample}.variant_calling_summary_metrics",
+            sample = samples_IDs
+    ))
+    final_output.extend(expand(
+            "03-3_bamQC/ValidateSamFile/{sample}.txt",
             sample = samples_IDs
     ))
 
@@ -697,170 +706,6 @@ rule CheckContamination:
             --threads {threads} 
         '''
 
-#-----------------------------------------------#
-#                    BAM QC                     #
-#-----------------------------------------------#
-
-# Input is the final processed bam file
-
-# Collect sequencing yield quality metrics
-rule CollecQualityYieldMetrics:
-    input:
-        "03_bamPrep/{sample}.bam",
-    output:
-        "03-3_bamQC/{sample}.metrics.txt",
-
-    conda: "../env/wes_gatk.yml"
-    resources:
-        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
-        mem_gb=lambda wildcards, attempt: 8  * attempt,
-        runtime = lambda wildcards, attempt: 60 * 2 * attempt
-    threads: 1
-    shell:
-        """
-        gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" 
-            CollectQualityYieldMetrics \
-            --INPUT {input} \
-            --OQ true \
-            --OUTPUT {output}
-        """
-
-# Collect alignment summary and GC bias quality metrics
-rule CollectBamQualityMetrics:
-    input:
-        "03_bamPrep/{sample}.bam",
-    output:
-        pre_adapter_detail_metrics = "03-3_bamQC/CBQmatrix/{sample}/BamMatrix.pre_adapter_detail_metrics",
-        pre_adapter_summary_metrics = "03-3_bamQC/CBQmatrix/{sample}/BamMatrix.pre_adapter_summary_metrics",
-
-    conda: "../env/wes_gatk.yml"
-    params: 
-        prefix = "03-3_bamQC/CBQmatrix/{sample}/BamMatrix",
-        ref = ref_fasta,
-
-    resources:
-        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
-        mem_gb=lambda wildcards, attempt: 8  * attempt,
-        runtime = lambda wildcards, attempt: 60 * 2 * attempt
-    threads: 1
-    shell:
-        """
-        gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
-            CollectMultipleMetrics \
-            --INPUT {input} \
-            --REFERENCE_SEQUENCE {params.ref} \
-            --OUTPUT {params.prefix} \
-            --ASSUME_SORTED true \
-            --PROGRAM null \
-            --PROGRAM CollectAlignmentSummaryMetrics \
-            --PROGRAM CollectSequencingArtifactMetrics \
-            --PROGRAM QualityScoreDistribution \
-            --PROGRAM CollectGcBiasMetrics \
-            --METRIC_ACCUMULATION_LEVEL null \
-            --METRIC_ACCUMULATION_LEVEL SAMPLE \
-            --METRIC_ACCUMULATION_LEVEL LIBRARY \
-            --METRIC_ACCUMULATION_LEVEL ALL_READS 
-
-        """
-
-
-
-# Collect ConvertSequencingArtifactToOxoG
-rule ConvertSequencingArtifactToOxoG:
-    input:
-        bam = "03_bamPrep/{sample}.bam",
-        pre_adapter_detail_metrics = "03-3_bamQC/CBQmatrix/{sample}/BamMatrix.pre_adapter_detail_metrics",
-    output:
-        "03-3_bamQC/SequencingArtifactToOxoG/{sample}.oxog_metrics"
-
-    conda: "../env/wes_gatk.yml"
-    params: 
-        prefix = "03-3_bamQC/SequencingArtifactToOxoG/{sample}",
-        inPasename = "03-3_bamQC/CBQmatrix/{sample}/BamMatrix",
-        ref = ref_fasta,
-    resources:
-        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
-        mem_gb=lambda wildcards, attempt: 8  * attempt,
-        runtime = lambda wildcards, attempt: 60 * 2 * attempt
-    threads: 1
-    shell:
-        """
-        gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
-            ConvertSequencingArtifactToOxoG \
-            --INPUT_BASE {params.inPasename} \
-            --OUTPUT_BASE {params.prefix} \
-            --REFERENCE_SEQUENCE {params.ref} \
-        """
-
-
-# Check that the fingerprints of separate readgroups all match
-rule CrossCheckFingerprints:
-    input:
-        bams = expand("03_bamPrep/{sample}.bam", sample = samples_IDs),
-
-    output:
-        "03-3_bamQC/CrossCheckFingerprints/metrics.file"
-
-    conda: "../env/wes_gatk.yml"
-    params: 
-        files = lambda wildcards, input: [f" --INPUT {v}" for v in input["bams"]],
-        ref = ref_fasta,
-        htdbf = HTDBfile
-    resources:
-        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
-        mem_gb=lambda wildcards, attempt: 8  * attempt,
-        runtime = lambda wildcards, attempt: 60 * 2 * attempt
-    threads: 1
-    shell:
-        """
-        gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
-            CrosscheckFingerprints \
-            --OUTPUT {output} \
-            --HAPLOTYPE_MAP {params.htdbf} \
-            --EXPECT_ALL_GROUPS_TO_MATCH true \
-            {params.files} \
-            --LOD_THRESHOLD -10.0 \
-        """
-
-# Checks the sample identity of the sequence/genotype data in the provided file (SAM/BAM or VCF) against a set of known genotypes in the supplied genotype file (in VCF format).
-# rule CheckFingerprintTask:
-#     input:
-#         "03_bamPrep/{sample}.bam",
-#         "03-3_bamQC/CrossCheckFingerprints/metrics.file"
-    
-#     output:
-#         "03-3_bamQC/CheckFingerprintTask/metrics.file"
-
-#     conda: "../env/wes_gatk.yml"
-#     params: 
-#         files = lambda wildcards, input: [f" --INPUT {v}" for v in input["bams"]],
-#         ref = ref_fasta,
-#         htdbf = HTDBfile
-#     resources:
-#         mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
-#         mem_gb=lambda wildcards, attempt: 8  * attempt,
-#         runtime = lambda wildcards, attempt: 60 * 2 * attempt
-#     threads: 1
-#     shell:
-#         """
-#         gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
-#             CheckFingerprint \
-#             --INPUT ~{input_file} \
-#             --GENOTYPES ~{genotypes} \
-#             --EXPECTED_SAMPLE_ALIAS "~{expected_sample_alias}" \
-#             ~{if defined(input_bam) then "--IGNORE_READ_GROUPS true" else ""} \
-#             --HAPLOTYPE_MAP ~{haplotype_database_file} \
-#             --GENOTYPE_LOD_THRESHOLD ~{genotype_lod_threshold} \
-#             --SUMMARY_OUTPUT ~{summary_metrics_location} \
-#             --DETAIL_OUTPUT ~{detail_metrics_location} \
-#             ~{"--REFERENCE_SEQUENCE " + ref_fasta}
-
-#             CONTENT_LINE=$(cat ~{summary_metrics_location} |
-#             grep -n "## METRICS CLASS\tpicard.analysis.FingerprintingSummaryMetrics" |
-#             cut -f1 -d:)
-#             CONTENT_LINE=$(($CONTENT_LINE+2))
-#             sed '8q;d' ~{summary_metrics_location} | cut -f5 > lod
-#         """
 
 #################################################
 #             07 variant callign                #
@@ -1571,4 +1416,625 @@ rule Annovar:
             -nastring . \
             -vcfinput \
             --thread {threads} {params.extra}
+        """
+
+#-----------------------------------------------#
+#                    BAM QC                     #
+#-----------------------------------------------#
+
+# Input is the final processed bam file
+
+# Collect sequencing yield quality metrics
+rule CollecQualityYieldMetrics:
+    input:
+        "03_bamPrep/{sample}.bam",
+    output:
+        "03-3_bamQC/{sample}.metrics.txt",
+
+    conda: "../env/wes_gatk.yml"
+    resources:
+        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
+        mem_gb=lambda wildcards, attempt: 8  * attempt,
+        runtime = lambda wildcards, attempt: 60 * 2 * attempt
+    threads: 1
+    shell:
+        """
+        gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" 
+            CollectQualityYieldMetrics \
+            --INPUT {input} \
+            --OQ true \
+            --OUTPUT {output}
+        """
+
+# Collect alignment summary and GC bias quality metrics
+rule CollectBamQualityMetrics:
+    input:
+        "03_bamPrep/{sample}.bam",
+    output:
+        pre_adapter_detail_metrics = "03-3_bamQC/CBQmatrix/{sample}/BamMatrix.pre_adapter_detail_metrics",
+        pre_adapter_summary_metrics = "03-3_bamQC/CBQmatrix/{sample}/BamMatrix.pre_adapter_summary_metrics",
+
+    conda: "../env/wes_gatk.yml"
+    params: 
+        prefix = "03-3_bamQC/CBQmatrix/{sample}/BamMatrix",
+        ref = ref_fasta,
+
+    resources:
+        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
+        mem_gb=lambda wildcards, attempt: 8  * attempt,
+        runtime = lambda wildcards, attempt: 60 * 2 * attempt
+    threads: 1
+    shell:
+        """
+        gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
+            CollectMultipleMetrics \
+            --INPUT {input} \
+            --REFERENCE_SEQUENCE {params.ref} \
+            --OUTPUT {params.prefix} \
+            --ASSUME_SORTED true \
+            --PROGRAM null \
+            --PROGRAM CollectAlignmentSummaryMetrics \
+            --PROGRAM CollectSequencingArtifactMetrics \
+            --PROGRAM QualityScoreDistribution \
+            --PROGRAM CollectGcBiasMetrics \
+            --METRIC_ACCUMULATION_LEVEL null \
+            --METRIC_ACCUMULATION_LEVEL SAMPLE \
+            --METRIC_ACCUMULATION_LEVEL LIBRARY \
+            --METRIC_ACCUMULATION_LEVEL ALL_READS 
+
+        """
+
+
+
+# Collect ConvertSequencingArtifactToOxoG
+rule ConvertSequencingArtifactToOxoG:
+    input:
+        bam = "03_bamPrep/{sample}.bam",
+        pre_adapter_detail_metrics = "03-3_bamQC/CBQmatrix/{sample}/BamMatrix.pre_adapter_detail_metrics",
+    output:
+        "03-3_bamQC/SequencingArtifactToOxoG/{sample}.oxog_metrics"
+
+    conda: "../env/wes_gatk.yml"
+    params: 
+        prefix = "03-3_bamQC/SequencingArtifactToOxoG/{sample}",
+        inPasename = "03-3_bamQC/CBQmatrix/{sample}/BamMatrix",
+        ref = ref_fasta,
+    resources:
+        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
+        mem_gb=lambda wildcards, attempt: 8  * attempt,
+        runtime = lambda wildcards, attempt: 60 * 2 * attempt
+    threads: 1
+    shell:
+        """
+        gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
+            ConvertSequencingArtifactToOxoG \
+            --INPUT_BASE {params.inPasename} \
+            --OUTPUT_BASE {params.prefix} \
+            --REFERENCE_SEQUENCE {params.ref} \
+        """
+
+
+# Check that the fingerprints of separate readgroups all match
+rule CrossCheckFingerprints:
+    input:
+        bams = expand("03_bamPrep/{sample}.bam", sample = samples_IDs),
+
+    output:
+        "03-3_bamQC/CrossCheckFingerprints/metrics.file"
+
+    conda: "../env/wes_gatk.yml"
+    params: 
+        files = lambda wildcards, input: [f" --INPUT {v}" for v in input["bams"]],
+        ref = ref_fasta,
+        htdbf = HTDBfile
+    resources:
+        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
+        mem_gb=lambda wildcards, attempt: 8  * attempt,
+        runtime = lambda wildcards, attempt: 60 * 2 * attempt
+    threads: 1
+    shell:
+        """
+        gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
+            CrosscheckFingerprints \
+            --OUTPUT {output} \
+            --HAPLOTYPE_MAP {params.htdbf} \
+            --EXPECT_ALL_GROUPS_TO_MATCH true \
+            {params.files} \
+            --LOD_THRESHOLD -10.0 \
+        """
+
+# Checks the sample identity of the sequence/genotype data in the provided file (SAM/BAM or VCF) against a set of known genotypes in the supplied genotype file (in VCF format).
+# rule CheckFingerprintTask:
+#     input:
+#         "03_bamPrep/{sample}.bam",
+#         "03-3_bamQC/CrossCheckFingerprints/metrics.file"
+    
+#     output:
+#         "03-3_bamQC/CheckFingerprintTask/metrics.file"
+
+#     conda: "../env/wes_gatk.yml"
+#     params: 
+#         files = lambda wildcards, input: [f" --INPUT {v}" for v in input["bams"]],
+#         ref = ref_fasta,
+#         htdbf = HTDBfile
+#     resources:
+#         mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
+#         mem_gb=lambda wildcards, attempt: 8  * attempt,
+#         runtime = lambda wildcards, attempt: 60 * 2 * attempt
+#     threads: 1
+#     shell:
+#         """
+#         gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
+#             CheckFingerprint \
+#             --INPUT ~{input_file} \
+#             --GENOTYPES ~{genotypes} \
+#             --EXPECTED_SAMPLE_ALIAS "~{expected_sample_alias}" \
+#             ~{if defined(input_bam) then "--IGNORE_READ_GROUPS true" else ""} \
+#             --HAPLOTYPE_MAP ~{haplotype_database_file} \
+#             --GENOTYPE_LOD_THRESHOLD ~{genotype_lod_threshold} \
+#             --SUMMARY_OUTPUT ~{summary_metrics_location} \
+#             --DETAIL_OUTPUT ~{detail_metrics_location} \
+#             ~{"--REFERENCE_SEQUENCE " + ref_fasta}
+
+#             CONTENT_LINE=$(cat ~{summary_metrics_location} |
+#             grep -n "## METRICS CLASS\tpicard.analysis.FingerprintingSummaryMetrics" |
+#             cut -f1 -d:)
+#             CONTENT_LINE=$(($CONTENT_LINE+2))
+#             sed '8q;d' ~{summary_metrics_location} | cut -f5 > lod
+#         """
+
+
+rule CollectQualityYieldMetrics:
+    input:
+        "03_bamPrep/{sample}.bam",
+    output:
+        directory("03-3_bamQC/CollectQualityYieldMetrics/{sample}/"),
+
+    conda: "../env/wes_gatk.yml"
+    params: 
+        prefix = "03-3_bamQC/CollectQualityYieldMetrics/{sample}/BamMatrix",
+        ref = ref_fasta,
+
+    resources:
+        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
+        mem_gb=lambda wildcards, attempt: 8  * attempt,
+        runtime = lambda wildcards, attempt: 60 * 2 * attempt
+    threads: 1
+    shell:
+        """
+        gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
+            CollectMultipleMetrics \
+            --INPUT {input} \
+            --REFERENCE_SEQUENCE {params.ref} \
+            --OUTPUT {params.prefix} \
+            --ASSUME_SORTED true \
+            --PROGRAM null \
+            --PROGRAM CollectBaseDistributionByCycle \
+            --PROGRAM CollectInsertSizeMetrics \
+            --PROGRAM MeanQualityByCycle \
+            --PROGRAM QualityScoreDistribution \
+            --METRIC_ACCUMULATION_LEVEL null \
+            --METRIC_ACCUMULATION_LEVEL ALL_READS
+
+        """
+
+rule CollectReadgroupBamQualityMetrics:
+    input:
+        "03_bamPrep/{sample}.bam",
+    output:
+        directory("03-3_bamQC/CollectReadgroupBamQualityMetrics/{sample}/"),
+
+    conda: "../env/wes_gatk.yml"
+    params: 
+        prefix = "03-3_bamQC/CollectReadgroupBamQualityMetrics/{sample}/RGBamMatrix",
+        ref = ref_fasta,
+
+    resources:
+        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
+        mem_gb=lambda wildcards, attempt: 8  * attempt,
+        runtime = lambda wildcards, attempt: 60 * 2 * attempt
+    threads: 1
+    shell:
+        """
+        gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
+            CollectMultipleMetrics \
+            --INPUT {input} \
+            --REFERENCE_SEQUENCE {params.ref} \
+            --OUTPUT {params.prefix} \
+            --ASSUME_SORTED true \
+            --PROGRAM null \
+            --PROGRAM CollectAlignmentSummaryMetrics \
+            --PROGRAM CollectGcBiasMetrics \
+            --METRIC_ACCUMULATION_LEVEL null \
+            --METRIC_ACCUMULATION_LEVEL READ_GROUP
+        """
+
+rule ValidateSamFile:
+    input:
+        "03_bamPrep/{sample}.bam",
+    output:
+        "03-3_bamQC/ValidateSamFile/{sample}.txt",
+
+    conda: "../env/wes_gatk.yml"
+    params: 
+        ref = ref_fasta
+
+    resources:
+        mem_mb=lambda wildcards, attempt: (4 * 1024) * attempt,
+        mem_gb=lambda wildcards, attempt: 4  * attempt,
+        runtime = lambda wildcards, attempt: 60 * 2 * attempt
+    threads: 1
+    shell:
+        """
+        gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
+            ValidateSamFile \
+            --INPUT {input} \
+            --OUTPUT {output} \
+            --REFERENCE_SEQUENCE {params.ref} \
+            --MODE VERBOSE \
+            --IS_BISULFITE_SEQUENCED false
+        """
+
+rule ValidateVariants:
+    input:
+        "04-1_gvcf-processing/reblocked/{sample}.gvcf.gz",
+    conda: "../env/wes_gatk.yml"
+    params: 
+        ref = ref_fasta
+
+    resources:
+        mem_mb=lambda wildcards, attempt: (4 * 1024) * attempt,
+        mem_gb=lambda wildcards, attempt: 4  * attempt,
+        runtime = lambda wildcards, attempt: 60 * 2 * attempt
+    threads: 1
+    shell:
+        """
+        gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
+            ValidateSamFile \
+            -V {input} \
+            -R {params.ref} \
+            --validation-type-to-exclude ALLELES
+        """ 
+
+rule CollectVariantCallingMetrics:
+    input:
+        vcf = "04-1_gvcf-processing/reblocked/{sample}.gvcf.gz",
+        intervals = "resources/padded.bed"
+    output:
+        summary = "04-4_gvcf-QC/{sample}.variant_calling_summary_metrics",
+        detail_metrics = "04-4_gvcf-QC/{sample}.variant_calling_detail_metrics",
+    params: 
+        prefix = "04-4_gvcf-QC/{sample}",
+        refdict = ref_fasta.replace(".fasta", ".dict"),
+        dbsnp = known_variants_snps,
+        
+    
+    resources:
+        mem_mb=lambda wildcards, attempt: (4 * 1024) * attempt,
+        mem_gb=lambda wildcards, attempt: 4  * attempt,
+        runtime = lambda wildcards, attempt: 60 * 2 * attempt
+    threads: 1
+    conda: "../env/wes_gatk.yml"
+
+    shell:
+        """
+        gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
+            CollectVariantCallingMetrics \
+            -I {input.vcf} \
+            --OUTPUT {params.prefix} \
+            --DBSNP {params.dbsnp} \
+            --SEQUENCE_DICTIONARY {params.refdict} \
+            --TARGET_INTERVALS {input.intervals} \
+            --GVCF_INPUT true
+        """ 
+
+
+
+#-----------------------------------------------#
+#                   CNVs                        #
+#-----------------------------------------------#
+
+
+rule PreprocessIntervals:
+    input:
+        ref = ref_fasta
+    output:
+        "000_CNV_Intervalsprep/targets.preprocessed.interval_list"
+    params:
+        bed = bed_file
+
+    conda: "../env/wes_gatk.yml"
+
+    threads: 1
+    resources:
+        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
+        mem_gb=lambda wildcards, attempt: 8  * attempt,
+        runtime = lambda wildcards, attempt: 60 * 2 * attempt
+
+    shell:
+        """
+        mkdir -p 000_CNV_Intervalsprep
+        gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
+            PreprocessIntervals \
+            -R {input.ref} \
+            -L {params.bed} \
+            --padding 250 \
+            --bin-length 0 \
+            -imr OVERLAPPING_ONLY \
+            -O {output}
+        """
+
+rule CollectReadCounts:
+    input:
+        intervals = "000_CNV_Intervalsprep/targets.preprocessed.interval_list",
+        sample = "03_bamPrep/{sample}.pqsr.bam"
+    output:
+        "06_cnvPrep/{sample}.pqsr.hdf5"
+    params:
+        ref = ref_fasta,
+        bed = bed_file,
+
+    conda: "../env/wes_gatk.yml"
+
+    threads: 1
+    resources:
+        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
+        mem_gb=lambda wildcards, attempt: 8  * attempt,
+        runtime = lambda wildcards, attempt: 60 * 2 * attempt
+
+    shell:
+        """
+        gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
+            CollectReadCounts \
+            -R {params.ref} \
+            -L {input.intervals} \
+            -imr OVERLAPPING_ONLY \
+            -I {input.sample} \
+            -O {output}
+        """
+    
+rule AnnotateIntervals:
+    input:
+        intervals = "000_CNV_Intervalsprep/targets.preprocessed.interval_list"
+    output:
+        "000_CNV_Intervalsprep/annotated.ref.tsv"
+    params:
+        ref = ref_fasta
+
+    conda: "../env/wes_gatk.yml"
+
+    threads: 1
+    resources:
+        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
+        mem_gb=lambda wildcards, attempt: 8  * attempt,
+        runtime = lambda wildcards, attempt: 60 * 2 * attempt
+
+    shell:
+        """
+        gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
+            AnnotateIntervals \
+            -L {input.intervals} \
+            -R {params.ref} \
+            -imr OVERLAPPING_ONLY \
+            -O {output}
+        """
+
+rule FilterIntervals:
+    input:
+        annotatedIntervals = "000_CNV_Intervalsprep/annotated.ref.tsv",
+        preprocessedIntervals = "000_CNV_Intervalsprep/targets.preprocessed.interval_list",
+        all_samples = expand("06_cnvPrep/{sample}.pqsr.hdf5", sample=set(samples_IDs))
+
+    output:
+        "000_CNV_Intervalsprep/ref.cohort.gc.filtered.interval_list"
+
+    params:
+        ref = ref_fasta,
+        samples = lambda wildcards: [f" -I 06_cnvPrep/{sample}.pqsr.hdf5" for sample in set(samples_IDs)]
+
+    conda: "../env/wes_gatk.yml"
+
+    threads: 1
+    resources:
+        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
+        mem_gb=lambda wildcards, attempt: 8  * attempt,
+        runtime = lambda wildcards, attempt: 60 * 2 * attempt
+
+    shell:
+        """
+        echo {params.samples} 
+        gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
+            FilterIntervals \
+            -L {input.preprocessedIntervals}\
+            --annotated-intervals {input.annotatedIntervals} \
+            {params.samples} \
+            -imr OVERLAPPING_ONLY \
+            --minimum-gc-content 0.1 \
+            --maximum-gc-content 0.9 \
+            --minimum-mappability 0.9 \
+            --maximum-mappability 1.0 \
+            --minimum-segmental-duplication-content 0.0 \
+            --maximum-segmental-duplication-content 0.5 \
+            --low-count-filter-count-threshold 5 \
+            --low-count-filter-percentage-of-samples 90.0 \
+            --extreme-count-filter-minimum-percentile 1.0 \
+            --extreme-count-filter-maximum-percentile 99.0 \
+            --extreme-count-filter-percentage-of-samples 90.0 \
+            -O {output}
+        """
+
+rule DetermineGermlineContigPloidy:
+    input:
+        filteredIntervals = "000_CNV_Intervalsprep/ref.cohort.gc.filtered.interval_list",
+        all_samples = expand("06_cnvPrep/{sample}.pqsr.hdf5", sample=samples_IDs)
+        # TODO: double check which samples to include?
+
+    output:
+        dir = directory("06_cnvPrep/ploidy-priors"),
+        for_automation = "06_cnvPrep/ploidy-priors/ploidy-calls"
+
+    params:
+        samples = lambda wildcards: [f" -I 06_cnvPrep/{sample}.pqsr.hdf5" for sample in samples_IDs],
+        contigPloidyPriors = config["contig_ploidy_priors"],
+        prefix = "06_cnvPrep/ploidy-priors/ploidy" 
+
+    conda: "../env/wes_gatk.yml"
+
+    threads: 1
+    resources:
+        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
+        mem_gb=lambda wildcards, attempt: 8  * attempt,
+        runtime = lambda wildcards, attempt: 60 * 2 * attempt
+
+    shell:
+        """
+        # eval "$(conda shell.bash hook)"
+        # set +u; conda activate gatk ; set -u
+
+        gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
+            DetermineGermlineContigPloidy  \
+            -L {input.filteredIntervals}\
+            {params.samples}  \
+            -imr OVERLAPPING_ONLY \
+            --contig-ploidy-priors {params.contigPloidyPriors} \
+            -O {output.dir} \
+            --output-prefix ploidy \
+            --verbosity DEBUG
+        """
+
+rule GermlineCNVCaller:
+    input:
+        sample = expand("06_cnvPrep/{sample}.pqsr.hdf5", sample=samples_IDs),
+        annotated = "000_CNV_Intervalsprep/annotated.ref.tsv",
+        ploidy = '06_cnvPrep/ploidy-priors/ploidy-calls',
+        interval = "000_CNV_Intervalsprep/ref.cohort.gc.filtered.interval_list"
+
+    output:
+        modelf = "07_cnv/cohort-calls/Allsamples-model",
+        callsf = "07_cnv/cohort-calls/Allsamples-calls"
+
+    params:
+        outdir = '07_cnv/cohort-calls',
+        outpref = 'Allsamples',
+        samples = lambda wildcards: [f" -I 06_cnvPrep/{sample}.pqsr.hdf5" for sample in samples_IDs]
+
+    conda: "../env/wes_gatk.yml"
+
+    threads: 1
+    resources:
+        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
+        mem_gb=lambda wildcards, attempt: 8  * attempt,
+        runtime = lambda wildcards, attempt: 60 * 2 * attempt
+
+    shell:
+        """
+        # eval "$(conda shell.bash hook)"
+        # set +u; conda activate gatk; set -u
+
+        gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
+            GermlineCNVCaller  \
+            --run-mode COHORT \
+            -L {input.interval} \
+            -I {params.samples} \
+            --contig-ploidy-calls {input.ploidy}/dogs-calls \
+            --annotated-intervals {input.annotated} \
+            --output-prefix {params.outpref} \
+            --interval-merging-rule OVERLAPPING_ONLY \
+            -O {params.outdir}
+        """
+
+
+def sampleindex(sample):
+    samples = list(samples_IDs)
+    index = samples.index(sample)
+    return index
+
+rule PostprocessGermlineCNVCalls:
+    input:
+        model = "07_cnv/cohort-calls/Allsamples-model",
+        calls = "07_cnv/cohort-calls/Allsamples-calls",
+        seq_dict = str(config["reference_fasta"]).replace(".fa", ".dict")
+
+    output:
+        intervals = "08_cnv_postprocessing/{sample}.intervals_cohort.vcf.gz",
+        segments = "08_cnv_postprocessing/{sample}.segments_cohort.vcf.gz"
+    params:
+        index = lambda wildcards: sampleindex(wildcards.sample)
+
+    conda: "../env/wes_gatk.yml"
+
+    threads: 1
+    resources:
+        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
+        mem_gb=lambda wildcards, attempt: 8  * attempt,
+        runtime = lambda wildcards, attempt: 60 * 2 * attempt
+
+    shell:
+        """
+        gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
+            PostprocessGermlineCNVCalls \
+            --model-shard-path {input.model} \
+            --calls-shard-path {input.call} \
+            --allosomal-contig chrX --allosomal-contig chrY \
+            --contig-ploidy-calls ploidy-calls \
+            --sample-index {params.index} \
+            --output-genotyped-intervals  {output.intervals} \
+            --output-genotyped-segments  {output.segments} \
+            --sequence-dictionary {input.seq_dict}
+
+        """
+
+## you can visualize the gCNV with IGV
+
+
+### you can perfrom the following:
+# [i] VariantsToTable to subset and columnize annotations
+
+rule VariantsToTable :
+    input:
+        "08_cnv_postprocessing/{sample}.segments_cohort.vcf.gz",
+
+    output:
+        "08_cnv_postprocessing/{sample}/genotyped-segments-case-{sample}-vs-cohort.table.txt",
+
+    conda: "../env/wes_gatk.yml"
+
+    threads: 1
+    resources:
+        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
+        mem_gb=lambda wildcards, attempt: 8  * attempt,
+        runtime = lambda wildcards, attempt: 60 * 2 * attempt
+
+    shell:
+        """
+        gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
+            VariantsToTable \
+            -V {input} \
+            -F CHROM -F POS -F END -GF NP -GF CN \
+            -O {output}
+
+        """
+
+# [ii] Unix shell commands to convert to SEG format data
+rule VariantsToTable_seg:
+    input:
+        txt = "08_cnv_postprocessing/{sample}/genotyped-segments-case-{sample}-vs-cohort.table.txt",
+        vcf = "08_cnv_postprocessing/{sample}.segments_cohort.vcf.gz"
+    output:
+        "08_cnv_postprocessing/{sample}/genotyped-segments-case-{sample}-vs-cohort.table.txt.seg"
+
+    conda: "../env/wes_gatk.yml"
+
+    threads: 1
+    resources:
+        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
+        mem_gb=lambda wildcards, attempt: 8  * attempt,
+        runtime = lambda wildcards, attempt: 60 * 2 * attempt
+
+    shell:
+        """
+        
+        sampleName=$(gzcat {input.vcf} | grep -v '##' | head -n1 | cut -f10)
+        awk -v sampleName=$sampleName 'BEGIN {FS=OFS="\t"} {print sampleName, $0}' {input.txt} &gt; ${i}.seg; head ${i}.seg
+
         """
