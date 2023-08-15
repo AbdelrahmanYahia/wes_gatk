@@ -261,6 +261,7 @@ Regarding whether you need to rerun the analysis if you didn't use these paramet
 
 When using the Haplotype Caller (part of GATK), the impact of these parameters could be similar, as the principles of alignment and variant calling still apply. However, the specific implications might vary depending on the algorithm's behavior and the downstream analyses you plan to perform on the haplotype-called variants. It's always a good idea to refer to the GATK documentation and best practices for guidance on parameter choices and their effects on different analysis scenarios.
 """
+
 rule ubam_align:
     input:
         bam="0_samples/{sample}/{sample}-{unit}.adab.ubam"
@@ -686,19 +687,14 @@ rule CheckContamination:
 
     shell:
         '''
-        verifybamid2 \
-            --NumPC 4 \
-            --NumThread {threads} \
-            --Output {params.prefix} \
-            --BamFile {input.target_bam} \
-            --Reference {input.ref} \
-            --SVDPrefix {params.svdprefix} \
-
-        # extract the contamination value from the selfSM file  
         python3 {params.get_con_file} \
-            --input {output.selfSM} \
-            --output {output.contamination} 
-
+            --prefix {params.prefix} \
+            --output {output.contamination} \
+            --svdprefix {params.svdprefix} \
+            --get_con_file {params.get_con_file} \
+            --target_bam {input.target_bam} \
+            --ref {input.ref} \
+            --threads {threads} 
         '''
 
 #-----------------------------------------------#
@@ -904,12 +900,9 @@ rule HaplotypeCaller:
 
     shell:
         """
-        if [ -s "{input.contamination}" ]; then
-            cont=$(<{input.contamination})
-        else
-            cont=0
-        fi
-
+        cont=$(cat {input.contamination})
+        echo $cont
+        
         gatk --java-options "-Xmx{resources.reduced}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
             HaplotypeCaller -R {params.ref} \
             -G StandardAnnotation -G StandardHCAnnotation \
@@ -917,8 +910,8 @@ rule HaplotypeCaller:
             -GQB 20 -GQB 30 -GQB 40 -GQB 50 -GQB 60 -GQB 70 -GQB 80 -GQB 90 \
             -L {params.bed} \
             --interval-padding {params.padding} \
-            -I {input} --native-pair-hmm-threads {threads} -ERC GVCF -O {output.vcf} \
-            -contamination $cont {params.Dragon_mode} \
+            -I {input.bam} --native-pair-hmm-threads {threads} -ERC GVCF -O {output.vcf} \
+            -contamination $cont \
             -bamout {output.bam} \
 
         """
