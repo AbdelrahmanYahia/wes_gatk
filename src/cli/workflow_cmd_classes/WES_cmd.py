@@ -334,6 +334,13 @@ class WES(WorkflowCli):
         )
 
         variant_caller_conf.add_argument(
+            '--svd-prefix',
+            metavar='path', 
+            type=os.path.abspath, 
+            help="path to files needed by varivfybamid",
+        )
+
+        variant_caller_conf.add_argument(
             '--dbSNP',
             metavar='path', 
             type=os.path.abspath, 

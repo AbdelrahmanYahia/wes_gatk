@@ -72,6 +72,9 @@ Nirvana_supplementray = f"{nirvana_path}/DB/SupplementaryAnnotation/GRCh38/"
 Nirvana_ref = f"{nirvana_path}/DB/References/Homo_sapiens.GRCh38.Nirvana.dat"
 Nirvana_cache = f"{nirvana_path}/DB/Cache/GRCh38/Both"
 
+svd_file = config["svd_prefix"]
+
+
 gff = config["gff_file"]
 
 call_cnv = config["call_CNV"]
@@ -622,9 +625,9 @@ rule create_padded_interval:
 rule GenerateSubsettedContaminationResources:
     input: 
         intervalslist = "resources/padded.bed",
-        UD = "/home/marc/Desktop/data/refs/GATK-Resources/Homo_sapiens_assembly38.contam.UD",
-        BED = "/home/marc/Desktop/data/refs/GATK-Resources/Homo_sapiens_assembly38.contam.bed",
-        MU = "/home/marc/Desktop/data/refs/GATK-Resources/Homo_sapiens_assembly38.contam.mu",
+        UD = f"{{svd_file}}.UD",
+        BED = f"{{svd_file}}.bed",
+        MU = f"{{svd_file}}.mu",
 
     conda: "../env/wes_gatk.yml"
 
@@ -1728,6 +1731,89 @@ rule CollectVariantCallingMetrics:
             --GVCF_INPUT true
         """ 
 
+
+# #-----------------------------------------------#
+# #               Dragon tasks                    #
+# #-----------------------------------------------#
+# rule dragon_ref_prep:
+#     input:
+#         ref = ref_fasta,
+#     output:
+#         directory("resources/dragon_ref/hg38_no_alt")
+
+#     conda: "../env/wes_gatk.yml"
+#     threads: 4
+
+#     benchmark: "benchamrks/ubam_align/{sample}/{sample}-{unit}.txt"
+#     resources:
+#         mem_mb = 32* 1024,
+#         mem_gb = 32,
+#         runtime = lambda wildcards, attempt: 60 * 2 * attempt
+
+#     shell:
+#         '''
+#         outdir=resources/dragon_ref/hg38_no_alt
+#         mkdir -p $outdir
+#         dragen-os --build-hash-table true --ht-reference {input}  --output-directory $outdir --num-threads {threads}
+#         '''
+
+# rule dragon_align:
+#     input:
+#         bam="0_samples/{sample}/{sample}-{unit}.adab.ubam",
+#         ref = ref_fasta,
+#         dragon_ref = "resources/dragon_ref/hg38_no_alt"
+
+#     output:
+#         bam="02_alignment/{sample}/{sample}-{unit}_mergedDragonUnmapped.bam"
+
+#     conda: "../env/wes_gatk.yml"
+#     threads: 4
+#     params:
+#         fa = ref_fasta,
+#         index = ref_bwa,
+#         bwa_args = config["aligner_extra_args"],
+#         daragon_workflow_params = "--ATTRIBUTES_TO_REMOVE NM --ATTRIBUTES_TO_REMOVE MD --ADD_PG_TAG_TO_READS false"
+
+#     benchmark: "benchamrks/ubam_align/{sample}/{sample}-{unit}.txt"
+#     resources:
+#         mem_mb = 32* 1024,
+#         mem_gb = 32,
+#         runtime = lambda wildcards, attempt: 60 * 2 * attempt
+#     shell:
+#         '''
+#         dragen-os \
+#             -b {input.bam} \
+#             -r {input.dragon_ref} --num-threads {threads} \
+#             --interleaved=1 | samtools view \
+#             -h -O BAM - > aligned.bam
+#         gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
+#             MergeBamAlignment \
+#             --VALIDATION_STRINGENCY SILENT \
+#             --EXPECTED_ORIENTATIONS FR \
+#             --ATTRIBUTES_TO_RETAIN X0 \
+#             --ATTRIBUTES_TO_REMOVE RG \
+#             --ATTRIBUTES_TO_REMOVE NM \
+#             --ATTRIBUTES_TO_REMOVE MD \
+#             --ALIGNED_BAM aligned.bam \
+#             --UNMAPPED_BAM {input.bam} \
+#             --OUTPUT {output.bam} \
+#             -R {params.fa} \
+#             --PAIRED_RUN true \
+#             --SORT_ORDER "unsorted" \
+#             --IS_BISULFITE_SEQUENCE false \
+#             --ALIGNED_READS_ONLY false \
+#             --CLIP_ADAPTERS false \
+#             --MAX_RECORDS_IN_RAM 2000000 \
+#             --ADD_MATE_CIGAR true \
+#             --MAX_INSERTIONS_OR_DELETIONS -1 \
+#             --PRIMARY_ALIGNMENT_STRATEGY MostDistant \
+#             --UNMAPPED_READ_STRATEGY COPY_TO_TAG \
+#             --ALIGNER_PROPER_PAIR_FLAGS true \
+#             --UNMAP_CONTAMINANT_READS true {params.daragon_workflow_params}
+#             --ADD_PG_TAG_TO_READS false
+#         rm aligned.bam
+
+#         '''
 
 
 #-----------------------------------------------#
