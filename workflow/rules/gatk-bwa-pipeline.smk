@@ -284,7 +284,7 @@ rule ubam_align:
         fa = ref_fasta,
         index = ref_bwa,
         bwa_args = config["aligner_extra_args"],
-        daragon_workflow_params = "--ATTRIBUTES_TO_REMOVE NM --ATTRIBUTES_TO_REMOVE MD --ADD_PG_TAG_TO_READS false"
+        warp_workflow_params = "--ATTRIBUTES_TO_REMOVE NM --ATTRIBUTES_TO_REMOVE MD --ADD_PG_TAG_TO_READS false"
 
     benchmark: "benchamrks/ubam_align/{sample}/{sample}-{unit}.txt"
     resources:
@@ -320,7 +320,7 @@ rule ubam_align:
             --PRIMARY_ALIGNMENT_STRATEGY MostDistant \
             --UNMAPPED_READ_STRATEGY COPY_TO_TAG \
             --ALIGNER_PROPER_PAIR_FLAGS true \
-            --UNMAP_CONTAMINANT_READS true {params.daragon_workflow_params}
+            --UNMAP_CONTAMINANT_READS true {params.warp_workflow_params}
         '''
 
 #################################################

@@ -10,5 +10,6 @@ python3 ./wes.py WES \
     --known-variants-indels /mnt/home/mansourt/annDB/broad_hg38/Mills_and_1000G_gold_standard.indels.hg38.vcf.gz \
     --known-variants-indels2 /mnt/home/mansourt/annDB/broad_hg38/Homo_sapiens_assembly38.known_indels.vcf.gz \
     --reference-index /mnt/home/mansourt/annDB/broad_hg38/Homo_sapiens_assembly38.fasta \
+    --svd-prefix /mnt/home/mansourt/annDB/broad_hg38/Homo_sapiens_assembly38.contam \
     --generate-confs-only \
     --threads 12
