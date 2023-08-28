@@ -194,7 +194,7 @@ rule FastqToSam:
     resources:
         mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
         mem_gb=lambda wildcards, attempt: 8  * attempt,
-        runtime = lambda wildcards, attempt: 60 * 2 * attempt
+        runtime = lambda wildcards, attempt: 60 * attempt
 
     shell:
         """
@@ -230,11 +230,11 @@ rule MarkIlluminaAdapters:
     output:
         bam="0_samples/{sample}/{sample}-{unit}.adab.ubam",
         metrics="0_samples/{sample}/{sample}-{unit}.adap_metrics.txt"
-    threads:4
+    threads:1
     resources:
-        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
-        mem_gb=lambda wildcards, attempt: 8  * attempt,
-        runtime = lambda wildcards, attempt: 60 * 2 * attempt
+        mem_mb=lambda wildcards, attempt: (4 * 1024) * attempt,
+        mem_gb=lambda wildcards, attempt: 4  * attempt,
+        runtime = lambda wildcards, attempt: 60 * attempt
 
     benchmark: "benchamrks/MarkIlluminaAdapters/{sample}/{sample}-{unit}.txt"
 
@@ -282,7 +282,7 @@ rule ubam_align:
         bam="02_alignment/{sample}/{sample}-{unit}_mergedUnmapped.bam"
 
     conda: "../env/wes_gatk.yml"
-    threads: 4
+    threads:8
     params:
         fa = ref_fasta,
         index = ref_bwa,
@@ -291,8 +291,8 @@ rule ubam_align:
 
     benchmark: "benchamrks/ubam_align/{sample}/{sample}-{unit}.txt"
     resources:
-        mem_mb = 32* 1024,
-        mem_gb = 32,
+        mem_mb = 24* 1024,
+        mem_gb = 24,
         runtime = lambda wildcards, attempt: 60 * 2 * attempt
     shell:
         '''
@@ -342,9 +342,9 @@ rule QC_alignment:
         stats = "03_bamPrep/QC/{sample}.stats"
     threads: 1
     resources:
-        mem_mb=lambda wildcards, attempt: (4 * 1024) * attempt,
-        mem_gb=lambda wildcards, attempt: 4  * attempt,
-        runtime = lambda wildcards, attempt: 60 * 2 * attempt
+        mem_mb=lambda wildcards, attempt: (2 * 1024) * attempt,
+        mem_gb=lambda wildcards, attempt: 2  * attempt,
+        runtime = lambda wildcards, attempt: 60 * 1 * attempt
     shell:
         """
         samtools depth {input} | awk '{{sum+=$3}} END {{print "Average = ",sum/NR, "No of covered Nuc = ", NR}}' > {output.cov}
@@ -363,9 +363,9 @@ rule qualimap:
 
     threads: 2
     resources:
-        mem_mb=lambda wildcards, attempt: (16 * 1024) * attempt,
-        mem_gb=lambda wildcards, attempt: 16  * attempt,
-        runtime = lambda wildcards, attempt: 60 * 2 * attempt  
+        mem_mb=lambda wildcards, attempt: (10 * 1024) * attempt,
+        mem_gb=lambda wildcards, attempt: 10  * attempt,
+        runtime = lambda wildcards, attempt: 60 * attempt  
 
     shell:
         """
@@ -401,9 +401,9 @@ rule MergeSamFiles:
 
     threads: 1
     resources:
-        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
-        mem_gb=lambda wildcards, attempt: 8  * attempt,
-        runtime = lambda wildcards, attempt: 60 * 2 * attempt
+        mem_mb=lambda wildcards, attempt: (4 * 1024) * attempt,
+        mem_gb=lambda wildcards, attempt: 4  * attempt,
+        runtime = lambda wildcards, attempt: 60 * attempt
     shell:
         """
         picard MergeSamFiles  \
@@ -423,7 +423,7 @@ rule MarkDuplicates:
         bam = "03_bamPrep/{sample}.dedub.bam",
         matrix = "03_bamPrep/{sample}.dedub.matrix"
 
-    threads: 4
+    threads: 1
     benchmark: "benchamrks/mrkDuplicates/{sample}.txt"
 
     resources:
@@ -458,8 +458,8 @@ rule SortNFix:
     benchmark: "benchamrks/SortNFix/{sample}.txt"
 
     resources:
-        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
-        mem_gb=lambda wildcards, attempt: 8  * attempt,
+        mem_mb=lambda wildcards, attempt: (10 * 1024) * attempt,
+        mem_gb=lambda wildcards, attempt: 10  * attempt,
         runtime = lambda wildcards, attempt: 60 * 2 * attempt
     shell:
         """
@@ -493,12 +493,12 @@ rule BaseRecalibrator:
         bed = bed_file,
         padding = config["padding"]
 
-    threads: 4
+    threads: 1
     benchmark: "benchamrks/BaseRecalibrator/{sample}.txt"
     resources:
         mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
         mem_gb=lambda wildcards, attempt: 8  * attempt,
-        runtime = lambda wildcards, attempt: 60 * 2 * attempt
+        runtime = lambda wildcards, attempt: 60 * attempt
     shell:
         """
         gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
@@ -617,6 +617,12 @@ rule create_padded_interval:
 
     output: "resources/padded.bed"
 
+    threads: 1
+    resources:
+        mem_mb=lambda wildcards, attempt: (2 * 1024) * attempt,
+        mem_gb=lambda wildcards, attempt: 2  * attempt,
+        runtime = lambda wildcards, attempt: 30 * attempt
+
     shell:
         """
         bedtools slop -i {input.bed} -g {params.ref}.fai -b {params.padding} > {output}
@@ -625,9 +631,9 @@ rule create_padded_interval:
 rule GenerateSubsettedContaminationResources:
     input: 
         intervalslist = "resources/padded.bed",
-        UD = f"{{svd_file}}.UD",
-        BED = f"{{svd_file}}.bed",
-        MU = f"{{svd_file}}.mu",
+        UD = svd_file + ".UD",
+        BED = svd_file + ".bed",
+        MU = svd_file + ".mu",
 
     conda: "../env/wes_gatk.yml"
 
@@ -639,11 +645,11 @@ rule GenerateSubsettedContaminationResources:
         MU = "03-1_SubsettedContamination/EXOME_Contams.mu",
         target_overlap_counts = "03-1_SubsettedContamination/target_overlap_counts.txt"
 
-    threads: 2
+    threads: 1
     resources:
-        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
-        mem_gb=lambda wildcards, attempt: 8  * attempt,
-        runtime = lambda wildcards, attempt: 60 * 2 * attempt
+        mem_mb=lambda wildcards, attempt: (2 * 1024) * attempt,
+        mem_gb=lambda wildcards, attempt: 2  * attempt,
+        runtime = lambda wildcards, attempt: 60 * attempt
 
     shell:
         '''
@@ -691,11 +697,11 @@ rule CheckContamination:
         prefix = "03-2_contamitnation_check/{sample}",
         svdprefix = "03-1_SubsettedContamination/EXOME_Contams"
 
-    threads: 2
+    threads: 1
     resources:
-        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
-        mem_gb=lambda wildcards, attempt: 8  * attempt,
-        runtime = lambda wildcards, attempt: 60 * 2 * attempt
+        mem_mb=lambda wildcards, attempt: (2 * 1024) * attempt,
+        mem_gb=lambda wildcards, attempt: 2  * attempt,
+        runtime = lambda wildcards, attempt: 30 * attempt
 
     shell:
         '''
@@ -741,10 +747,10 @@ rule HaplotypeCaller:
     resources:
         mem_mb=lambda wildcards, attempt: (12 * 1024) * attempt,
         mem_gb=lambda wildcards, attempt: 12  * attempt,
-        runtime = lambda wildcards, attempt: 60 * 2 * attempt,
+        runtime = lambda wildcards, attempt: 60 * 4 * attempt,
         reduced = lambda wildcards, attempt: int(attempt * (12 * 0.80))
 
-    threads: 4
+    threads: 1
 
     shell:
         """
@@ -1059,7 +1065,7 @@ rule GenomicsDBImport:
     resources:
         mem_mb=lambda wildcards, attempt: (32 * 1024) * attempt,
         mem_gb=lambda wildcards, attempt: 32  * attempt,
-        runtime = lambda wildcards, attempt: 60 * 2 * attempt,
+        runtime = lambda wildcards, attempt: 60 * 4 * attempt,
         reduced = lambda wildcards, attempt: int(attempt * (32 * 0.80))
 
     shell:
@@ -1398,9 +1404,9 @@ rule Annovar:
         directory("05_Annotation/ANNOVAR/{type}")
     threads: 1
     resources:
-        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
-        mem_gb=lambda wildcards, attempt: 8  * attempt,
-        runtime = lambda wildcards, attempt: 60 * 2 * attempt
+        mem_mb=lambda wildcards, attempt: (32 * 1024) * attempt,
+        mem_gb=lambda wildcards, attempt: 32  * attempt,
+        runtime = lambda wildcards, attempt: 60 * 4 * attempt
     params:
         annovar_dir = annovar_dir,
         protocol = config["annovar_protocol"],
@@ -1635,7 +1641,7 @@ rule CollectReadgroupBamQualityMetrics:
     resources:
         mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
         mem_gb=lambda wildcards, attempt: 8  * attempt,
-        runtime = lambda wildcards, attempt: 60 * 2 * attempt
+        runtime = lambda wildcards, attempt: 60 * attempt
     threads: 1
     shell:
         """
@@ -1654,7 +1660,8 @@ rule CollectReadgroupBamQualityMetrics:
 
 rule ValidateSamFile:
     input:
-        "03_bamPrep/{sample}.bam",
+        "03_bamPrep/{sample}.dedub.sorted.bam",
+#        "03_bamPrep/{sample}.bam",
     output:
         "03-3_bamQC/ValidateSamFile/{sample}.txt",
 
@@ -1665,7 +1672,7 @@ rule ValidateSamFile:
     resources:
         mem_mb=lambda wildcards, attempt: (4 * 1024) * attempt,
         mem_gb=lambda wildcards, attempt: 4  * attempt,
-        runtime = lambda wildcards, attempt: 60 * 2 * attempt
+        runtime = lambda wildcards, attempt: 60 * attempt
     threads: 1
     shell:
         """

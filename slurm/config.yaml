@@ -20,11 +20,11 @@ default-resources:
 jobs: 400
 latency-wait: 120
 local-cores: 1
-#restart-times: 3
+#restart-times: 2
 max-jobs-per-second: 4
 max-status-checks-per-second: 4
 keep-going: True
-#rerun-incomplete: True
+rerun-incomplete: True
 printshellcmds: True
 #scheduler: greedy
 use-conda: True
