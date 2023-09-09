@@ -1384,8 +1384,8 @@ rule Nirvana:
 
     shell:
         """
-        eval "$(conda shell.bash hook)"
-        set +u; conda activate dotnet; set -u
+        # eval "$(conda shell.bash hook)"
+        # set +u; conda activate dotnet; set -u
         dotnet {params.Nirvana_cmd} \
             -i {input} \
             -o {params.file_name} \
@@ -1436,7 +1436,7 @@ rule Annovar:
 # Collect sequencing yield quality metrics
 rule CollecQualityYieldMetrics:
     input:
-        "03_bamPrep/{sample}.bam",
+        "03_bamPrep/{sample}.dedub.sorted.bam",
     output:
         "03-3_bamQC/{sample}.metrics.txt",
 
@@ -1458,7 +1458,7 @@ rule CollecQualityYieldMetrics:
 # Collect alignment summary and GC bias quality metrics
 rule CollectBamQualityMetrics:
     input:
-        "03_bamPrep/{sample}.bam",
+        "03_bamPrep/{sample}.dedub.sorted.bam",
     output:
         pre_adapter_detail_metrics = "03-3_bamQC/CBQmatrix/{sample}/BamMatrix.pre_adapter_detail_metrics",
         pre_adapter_summary_metrics = "03-3_bamQC/CBQmatrix/{sample}/BamMatrix.pre_adapter_summary_metrics",
@@ -1498,7 +1498,7 @@ rule CollectBamQualityMetrics:
 # Collect ConvertSequencingArtifactToOxoG
 rule ConvertSequencingArtifactToOxoG:
     input:
-        bam = "03_bamPrep/{sample}.bam",
+        bam = "03_bamPrep/{sample}.dedub.sorted.bam",
         pre_adapter_detail_metrics = "03-3_bamQC/CBQmatrix/{sample}/BamMatrix.pre_adapter_detail_metrics",
     output:
         "03-3_bamQC/SequencingArtifactToOxoG/{sample}.oxog_metrics"
@@ -1526,7 +1526,7 @@ rule ConvertSequencingArtifactToOxoG:
 # Check that the fingerprints of separate readgroups all match
 rule CrossCheckFingerprints:
     input:
-        bams = expand("03_bamPrep/{sample}.bam", sample = samples_IDs),
+        bams = expand("03_bamPrep/{sample}.dedub.sorted.bam", sample = samples_IDs),
 
     output:
         "03-3_bamQC/CrossCheckFingerprints/metrics.file"
@@ -1595,7 +1595,7 @@ rule CrossCheckFingerprints:
 
 rule CollectQualityYieldMetrics:
     input:
-        "03_bamPrep/{sample}.bam",
+        "03_bamPrep/{sample}.dedub.sorted.bam",
     output:
         directory("03-3_bamQC/CollectQualityYieldMetrics/{sample}/"),
 
@@ -1629,7 +1629,7 @@ rule CollectQualityYieldMetrics:
 
 rule CollectReadgroupBamQualityMetrics:
     input:
-        "03_bamPrep/{sample}.bam",
+        "03_bamPrep/{sample}.dedub.sorted.bam",
     output:
         directory("03-3_bamQC/CollectReadgroupBamQualityMetrics/{sample}/"),
 
@@ -1661,7 +1661,6 @@ rule CollectReadgroupBamQualityMetrics:
 rule ValidateSamFile:
     input:
         "03_bamPrep/{sample}.dedub.sorted.bam",
-#        "03_bamPrep/{sample}.bam",
     output:
         "03-3_bamQC/ValidateSamFile/{sample}.txt",
 
