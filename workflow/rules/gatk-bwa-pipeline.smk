@@ -103,6 +103,7 @@ def get_final_output(wildcards):
             "04-4_gvcf-QC/{sample}.variant_calling_summary_metrics",
             sample = samples_IDs
     ))
+    
     final_output.extend(expand(
             "03-3_bamQC/ValidateSamFile/{sample}.txt",
             sample = samples_IDs
@@ -120,6 +121,11 @@ def get_final_output(wildcards):
 
     final_output.extend(expand(
             "05_Annotation/Nirvana/{type}/Annotation.json.gz",
+            type = ["snvs", "indels"]
+    ))
+
+    final_output.extend(expand(
+            "05_Annotation/snpEff/{type}_annotation.csv",
             type = ["snvs", "indels"]
     ))
 
@@ -1384,14 +1390,43 @@ rule Nirvana:
 
     shell:
         """
-        # eval "$(conda shell.bash hook)"
-        # set +u; conda activate dotnet; set -u
+        eval "$(conda shell.bash hook)"
+        set +u; conda activate dotnet; set -u
         dotnet {params.Nirvana_cmd} \
             -i {input} \
             -o {params.file_name} \
             -r {params.Nirvana_ref} \
             --sd {params.Nirvana_supplementray} \
             -c {params.Nirvana_cache} {params.extra}
+        """
+
+rule snpEFF:
+    input:
+        "04_calling/{type}/variants_genotyped.filttered.gvcf.gz"
+    
+    benchmark: "benchamrks/snpeff/{type}/variants_genotyped_annotation.txt"
+
+    output:
+        stats = "05_Annotation/snpEff/{type}_annotation.csv",
+        html = "05_Annotation/snpEff/{type}_annotation.html",
+        vcf = "05_Annotation/snpEff/{type}_annotation.vcf"
+
+    threads: 1
+
+    resources:
+        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
+        mem_gb=lambda wildcards, attempt: 8  * attempt,
+        runtime = lambda wildcards, attempt: 60 * 2 * attempt
+
+    params:
+        genome =  "hg38"
+
+    shell:
+        """
+        snpEff \
+            -v -csvStats {output.stats} \
+            -stats {output.html} \
+            {params.genome} {input} > {output.vcf}
         """
 
 rule Annovar:
@@ -1552,46 +1587,6 @@ rule CrossCheckFingerprints:
             --LOD_THRESHOLD -10.0 \
         """
 
-# Checks the sample identity of the sequence/genotype data in the provided file (SAM/BAM or VCF) against a set of known genotypes in the supplied genotype file (in VCF format).
-# rule CheckFingerprintTask:
-#     input:
-#         "03_bamPrep/{sample}.bam",
-#         "03-3_bamQC/CrossCheckFingerprints/metrics.file"
-    
-#     output:
-#         "03-3_bamQC/CheckFingerprintTask/metrics.file"
-
-#     conda: "../env/wes_gatk.yml"
-#     params: 
-#         files = lambda wildcards, input: [f" --INPUT {v}" for v in input["bams"]],
-#         ref = ref_fasta,
-#         htdbf = HTDBfile
-#     resources:
-#         mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
-#         mem_gb=lambda wildcards, attempt: 8  * attempt,
-#         runtime = lambda wildcards, attempt: 60 * 2 * attempt
-#     threads: 1
-#     shell:
-#         """
-#         gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
-#             CheckFingerprint \
-#             --INPUT ~{input_file} \
-#             --GENOTYPES ~{genotypes} \
-#             --EXPECTED_SAMPLE_ALIAS "~{expected_sample_alias}" \
-#             ~{if defined(input_bam) then "--IGNORE_READ_GROUPS true" else ""} \
-#             --HAPLOTYPE_MAP ~{haplotype_database_file} \
-#             --GENOTYPE_LOD_THRESHOLD ~{genotype_lod_threshold} \
-#             --SUMMARY_OUTPUT ~{summary_metrics_location} \
-#             --DETAIL_OUTPUT ~{detail_metrics_location} \
-#             ~{"--REFERENCE_SEQUENCE " + ref_fasta}
-
-#             CONTENT_LINE=$(cat ~{summary_metrics_location} |
-#             grep -n "## METRICS CLASS\tpicard.analysis.FingerprintingSummaryMetrics" |
-#             cut -f1 -d:)
-#             CONTENT_LINE=$(($CONTENT_LINE+2))
-#             sed '8q;d' ~{summary_metrics_location} | cut -f5 > lod
-#         """
-
 
 rule CollectQualityYieldMetrics:
     input:
@@ -1705,10 +1700,32 @@ rule ValidateVariants:
             --validation-type-to-exclude ALLELES
         """ 
 
+rule BedToIntervalList:
+    input:
+        bed = "resources/padded.bed",
+        seq_dict = str(config["reference_fasta"]).replace(".fa", ".dict")
+    output:
+        "resources/padded.intervals"
+    resources:
+        mem_mb=lambda wildcards, attempt: (4 * 1024) * attempt,
+        mem_gb=lambda wildcards, attempt: 4  * attempt,
+        runtime = lambda wildcards, attempt: 60 * 2 * attempt
+    threads: 1
+    conda: "../env/wes_gatk.yml"
+
+    shell:
+        """
+        gatk --java-options "-Xmx{resources.mem_gb}G -XX:+UseParallelGC -XX:ParallelGCThreads={threads}" \
+            BedToIntervalList \
+            -I {input.bed} \
+            -O {output} \
+            -SD {input.seq_dict}
+        """
+
 rule CollectVariantCallingMetrics:
     input:
         vcf = "04-1_gvcf-processing/reblocked/{sample}.gvcf.gz",
-        intervals = "resources/padded.bed"
+        intervals = "resources/padded.intervals"
     output:
         summary = "04-4_gvcf-QC/{sample}.variant_calling_summary_metrics",
         detail_metrics = "04-4_gvcf-QC/{sample}.variant_calling_detail_metrics",
