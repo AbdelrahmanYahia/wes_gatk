@@ -94,6 +94,12 @@ def get_reblocked_gvcf(wildcards):
 
 def get_final_output(wildcards):
     final_output = []
+
+    final_output.extend(expand(
+            "04-5_VariantQC/{type}_variants_genotyped_filttered.html",
+            type = ["snvs", "indels"]
+    ))
+
     final_output.extend(expand(
             "04_calling/QC/{sample}.eval.grp",
             sample = samples_IDs
@@ -1679,6 +1685,10 @@ rule ValidateSamFile:
             --IS_BISULFITE_SEQUENCED false
         """
 
+#-----------------------------------------------#
+#                    VCF QC                     #
+#-----------------------------------------------#
+
 rule ValidateVariants:
     input:
         "04-1_gvcf-processing/reblocked/{sample}.gvcf.gz",
@@ -1753,6 +1763,36 @@ rule CollectVariantCallingMetrics:
             --TARGET_INTERVALS {input.intervals} \
             --GVCF_INPUT true
         """ 
+
+rule VariantQC:
+    input:
+        "04_calling/{type}/variants_genotyped.filttered.gvcf.gz",
+    output:
+        "04-5_VariantQC/{type}_variants_genotyped_filttered.html",
+    params: 
+        path_to_tool = "/home/marc/DISCVRSeq",
+        ref = ref_fasta
+        
+    resources:
+        mem_mb=lambda wildcards, attempt: (4 * 1024) * attempt,
+        mem_gb=lambda wildcards, attempt: 4  * attempt,
+        runtime = lambda wildcards, attempt: 60 * 2 * attempt
+    threads: 1
+    conda: "../env/wes_gatk.yml"
+
+    shell:
+        """
+        java \
+            -jar {params.path_to_tool}/DISCVRSeq-1.3.42.jar VariantQC \
+            -R {params.ref} \
+            -V {input} \
+            -O {output}
+        """
+
+#--------------------------------------------------------------------------------------------------------------------------#
+#                                       E N D   O F   M A I N   P i p e L i n e                                            #
+#--------------------------------------------------------------------------------------------------------------------------#
+
 
 
 # #-----------------------------------------------#
