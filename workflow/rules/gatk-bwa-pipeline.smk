@@ -1402,11 +1402,11 @@ rule Annovar:
     benchmark: "benchamrks/Annovar/{type}/variants_genotyped_annotation.txt"
     output:
         directory("05_Annotation/ANNOVAR/{type}")
-    threads: 1
+    threads: 32
     resources:
-        mem_mb=lambda wildcards, attempt: (32 * 1024) * attempt,
-        mem_gb=lambda wildcards, attempt: 32  * attempt,
-        runtime = lambda wildcards, attempt: 60 * 4 * attempt
+        mem_mb=32 * 1024,
+        mem_gb=32,
+        runtime = lambda wildcards, attempt: 60 * 24 * attempt
     params:
         annovar_dir = annovar_dir,
         protocol = config["annovar_protocol"],
