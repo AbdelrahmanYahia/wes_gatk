@@ -365,7 +365,8 @@ rule QC_alignment:
 
 rule qualimap:
     input:
-        "03_bamPrep/{sample}.dedub.sorted.bam"
+        bam = "03_bamPrep/{sample}.dedub.sorted.bam",
+        bed = "resources/padded.bed"
     
     conda: "../env/wes_gatk.yml"
 
@@ -383,7 +384,7 @@ rule qualimap:
         """
         qualimap \
             bamqc \
-            -bam {input} \
+            -bam {input.bam} \
             --java-mem-size=15G \
             --paint-chromosome-limits \
             --genome-gc-distr HUMAN \
@@ -391,6 +392,7 @@ rule qualimap:
             -skip-duplicated \
             --skip-dup-mode 0 \
             -outdir {output} \
+            --feature-file {input.bed} \
             -outformat HTML
         """
 
@@ -1425,7 +1427,7 @@ rule snpEFF:
         runtime = lambda wildcards, attempt: 60 * 2 * attempt
 
     params:
-        genome =  "hg38"
+        genome =  config["snpeff_genome"]
 
     shell:
         """

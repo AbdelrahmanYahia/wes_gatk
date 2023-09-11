@@ -446,6 +446,14 @@ class WES(WorkflowCli):
             metavar = "N",
         )
 
+        annotation_conf.add_argument(
+            '--snpeff-genome', 
+            help= "Genome  name for snpeff to use in annotation", 
+            type=str, 
+            default= "hg38",
+            metavar = "hg19|hg38",
+        )
+
         # other options
         other_conf = parser.add_argument_group(f'{CYN}Other{NC}')
 
