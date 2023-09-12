@@ -144,6 +144,13 @@ python3 wes.py WES \
   --dry-run
 
 ```
+### Parsing Annotation files:
+To convert `Nirvana` output to `tsv` here is and example command:
+```
+cd wes_gatk
+python3 ./scripts/export_Nirvana_csv.py -i 05_Annotation/Nirvana/snvs/Annotation.json.gz -o 05_Annotation/Nirvana/snvs/Annotation.tsv --extract-genes ZBTB40,IBSP,TNFSF11,SOST,LRP5,COL1A1,SP7,OR4F21,TNFRSF11B --extracted-genes-outdir 05_Annotation/Nirvana/snvs/extracted_genes
+```
+
 ### Advanced Parameters
 
 For advanced usage, you can refer to the following command-line options:
