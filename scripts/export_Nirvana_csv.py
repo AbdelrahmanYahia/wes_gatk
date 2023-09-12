@@ -5,8 +5,8 @@ import gzip
 
 
 parser = argparse.ArgumentParser(description='Exports Nirvana output to CSV')
-parser.add_argument('--input', help='path to Nirvana gz json', required=True)
-parser.add_argument('--output', help='output file name path', required=True)  
+parser.add_argument('--input', '-i', help='path to Nirvana gz json', required=True)
+parser.add_argument('--output', '-o', help='output file name path', required=True)  
 
 args = parser.parse_args()
 
