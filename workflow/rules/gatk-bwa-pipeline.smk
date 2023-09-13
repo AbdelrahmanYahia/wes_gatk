@@ -1780,7 +1780,7 @@ rule VariantQC:
     resources:
         mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
         mem_gb=lambda wildcards, attempt: 8  * attempt,
-        runtime = lambda wildcards, attempt: 60 * 24 * attempt
+        runtime = lambda wildcards, attempt: 60 * 12 * attempt
     threads: 1
     conda: "../env/wes_gatk.yml"
 
