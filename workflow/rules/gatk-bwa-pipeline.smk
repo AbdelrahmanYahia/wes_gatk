@@ -1715,7 +1715,7 @@ rule ValidateVariants:
 rule BedToIntervalList:
     input:
         bed = "resources/padded.bed",
-        seq_dict = str(config["reference_fasta"]).replace(".fa", ".dict")
+        seq_dict = str(config["reference_fasta"]).replace(".fasta", ".dict")
     output:
         "resources/padded.intervals"
     resources:
@@ -1772,20 +1772,21 @@ rule VariantQC:
     output:
         "04-5_VariantQC/{type}_variants_genotyped_filttered.html",
     params: 
-        path_to_tool = "/home/marc/DISCVRSeq",
+#        path_to_tool = "/mnt/home/mansourt/annDB/DISCVRSeq",
+        path_to_tool = "/mnt/home/mansourt/annDB",
         ref = ref_fasta
         
     resources:
-        mem_mb=lambda wildcards, attempt: (4 * 1024) * attempt,
-        mem_gb=lambda wildcards, attempt: 4  * attempt,
-        runtime = lambda wildcards, attempt: 60 * 2 * attempt
+        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
+        mem_gb=lambda wildcards, attempt: 8  * attempt,
+        runtime = lambda wildcards, attempt: 60 * 24 * attempt
     threads: 1
     conda: "../env/wes_gatk.yml"
 
     shell:
         """
         java \
-            -jar {params.path_to_tool}/DISCVRSeq-1.3.42.jar VariantQC \
+            -jar {params.path_to_tool}/DISCVRSeq-1.3.49.jar VariantQC \
             -R {params.ref} \
             -V {input} \
             -O {output}

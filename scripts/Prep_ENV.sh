@@ -86,6 +86,11 @@ mkdir -p ~/annDB/broad_hg38 && cd ~/annDB/broad_hg38
 source $script_dir/scripts/gatk_download_data.sh
 # wget https://ftp.ensembl.org/pub/release-109/gff3/homo_sapiens/Homo_sapiens.GRCh38.109.gff3.gz
 
+# Download VariantQC
+cd -p $HOME/annDB
+wget https://github.com/BimberLab/DISCVRSeq/releases/download/1.3.49/DISCVRSeq-1.3.49.jar
+#git clone https://github.com/BimberLab/DISCVRSeq 
+
 
 ## not used!
 # # downloading VEP db 
