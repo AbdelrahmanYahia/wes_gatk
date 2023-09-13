@@ -1411,7 +1411,8 @@ rule Nirvana:
 rule snpEFF:
     input:
         "04_calling/{type}/variants_genotyped.filttered.gvcf.gz"
-    
+
+    conda: "../env/wes_gatk.yml"   
     benchmark: "benchamrks/snpeff/{type}/variants_genotyped_annotation.txt"
 
     output:
@@ -1422,8 +1423,8 @@ rule snpEFF:
     threads: 1
 
     resources:
-        mem_mb=lambda wildcards, attempt: (8 * 1024) * attempt,
-        mem_gb=lambda wildcards, attempt: 8  * attempt,
+        mem_mb=lambda wildcards, attempt: (32 * 1024) * attempt,
+        mem_gb=lambda wildcards, attempt: 32  * attempt,
         runtime = lambda wildcards, attempt: 60 * 2 * attempt
 
     params:
@@ -1431,7 +1432,7 @@ rule snpEFF:
 
     shell:
         """
-        snpEff \
+        snpEff -Xmx{resources.mem_gb}G \
             -v -csvStats {output.stats} \
             -stats {output.html} \
             {params.genome} {input} > {output.vcf}
