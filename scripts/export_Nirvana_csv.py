@@ -69,7 +69,7 @@ os.makedirs(directory_path, exist_ok=True)
 def extract_gene_region(Ann_file, gene_info, id, padding=1000):
     interval = os.popen(f"grep -i 'Name={id};' {gene_info} | awk -F'\t' '{{print \"chr\"$1\":\"$4-{padding}\"-\"$5+{padding}}}'").read().strip()
     if interval == '':
-        print("didn't find Gene in Gene list!")
+        print(f"didn't find {id} in Gene list!")
         return None
     else:
         print(F"\nExporting {id} with padding [ {padding} ] ({interval})  from Annotation file...\n")
