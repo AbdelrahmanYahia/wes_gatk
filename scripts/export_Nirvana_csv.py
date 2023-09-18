@@ -6,119 +6,164 @@ import sys
 import os
 
 parser = argparse.ArgumentParser(description='Exports Nirvana output to CSV')
-parser.add_argument('--input', '-i', help='path to Nirvana gz json', required=True)
-parser.add_argument('--output', '-o', help='output file name path (tsv)', required=True)  
-parser.add_argument('--export-genes', help='Export genes df  from Nirvana json file', action='store_true')  
-parser.add_argument('--extract-genes', help='comma seprated gene list or file with gene symbols', default=None)  
-parser.add_argument('--extracted-genes-outdir', help='Output dir for extracted genes', required='--extract-genes' in sys.argv)  
+parser.add_argument(
+    '--input', '-i',
+    help='path to Nirvana gz json', 
+    required=True
+    )
+
+parser.add_argument(
+    '--output', '-o', 
+    help='output dir', 
+    required=True
+    )  
+
+parser.add_argument(
+    '--jasix-path', '-j', 
+    help='full path to jasix.dll', 
+    default="$HOME/annDB/Nirvana/bin/Release/net6.0/Jasix.dll"
+    )  
+
+parser.add_argument(
+    '--gene-info', '-g', 
+    help='full path to gene.info file',
+    required=True
+    ) 
+
+parser.add_argument(
+    '--compine-genes', 
+    help='Compine all genes in one file', 
+    action='store_true'
+    )  
+
+parser.add_argument(
+    '--genes', 
+    help='comma seprated gene list', 
+    default=None,
+    required='--gene-list' not in sys.argv
+    )  
+
+parser.add_argument(
+    '--padding', 
+    help='Padding for gene region', 
+    default=1000
+    )  
+
+parser.add_argument(
+    '--gene-list', 
+    help='File containing gene each gene in a line', 
+    default=None,
+    required='--genes' not in sys.argv
+    )  
 
 args = parser.parse_args()
 
 file = args.input
+Jasix = os.path.expanduser(args.jasix_path)
+gene_info = args.gene_info
+padding = args.padding
 
-header = ''
-positions = []
-genes = []
-is_header_line = True
-is_position_line = False
-is_gene_line = False
-gene_section_line = '],"genes":['
-end_line = ']}'
+directory_path = args.output
+os.makedirs(directory_path, exist_ok=True)
 
-with gzip.open(file, 'rt') as f:
-    position_count = 0
-    gene_count = 0
-    for line in f:
-        trim_line = line.strip()
-        if is_header_line:
-            ## only keep the "header" field content from the line
-            header = trim_line[10:-14]
-            is_header_line = False
-            is_position_line = True
-            continue
-        if trim_line == gene_section_line:
-            is_gene_line = True
-            is_position_line = False
-            continue
-        elif trim_line == end_line:
-            break
+def extract_gene_region(Ann_file, gene_info, id, padding=1000):
+    interval = os.popen(f"grep -i 'Name={id};' {gene_info} | awk -F'\t' '{{print \"chr\"$1\":\"$4-{padding}\"-\"$5+{padding}}}'").read().strip()
+    if interval == '':
+        print("didn't find Gene in Gene list!")
+        return None
+    else:
+        print(F"\nExporting {id} with padding [ {padding} ] ({interval})  from Annotation file...\n")
+        dotnet_command = f"dotnet {Jasix} -i {file} -q {interval}"
+        dotnet_output = os.popen(dotnet_command)
+        dotnet_output_str = dotnet_output.read().replace("\n","")
+        dotnet_output_exitcode = dotnet_output.close()
+        if dotnet_output_exitcode is not None:
+            print(f"ERROR with dotnet command! maybe didn't find the gene {id}")
+            return None
         else:
-            if is_position_line:
-                ## remove the trailing ',' if there is
-                positions.append(trim_line.rstrip(','))
-                position_count += 1
-            if is_gene_line:
-                ## remove the trailing ',' if there is
-                genes.append(trim_line.rstrip(','))
-                gene_count += 1
+            formatted_output = dotnet_output_str.replace("{  \"chromosome", "\n{\"chromosome")
+            formatted_output = formatted_output.replace(" ", "")
+            formatted_output = formatted_output.replace('{"positions":[\n{', '[{').replace("}]}]}]}","}]}]}]")
 
-print ('number of positions:', position_count)
-print ('number of genes:', gene_count)
-print('Processing file, it might take some time...')
+            return pd.DataFrame(json.loads(formatted_output))
 
-mylist = []
-for position in positions:
-    position_dict = json.loads(position)
-    mylist.append(position_dict)
-df = pd.DataFrame(mylist)
-variants_df = df['variants'].apply(pd.Series)
-variants_df2 = variants_df[0].apply(pd.Series)
-final_df = pd.concat([df, variants_df2], axis=1).drop(['variants', 'samples'], axis=1)
-
-final_df.to_csv(args.output,sep='\t',index=False)
-
-if args.export_genes:
-    print('exporting genes...')
-    mylist2 = []
-    for gene in genes:
-        position_dict = json.loads(gene)
-        mylist2.append(position_dict)
-    genedf = pd.DataFrame(mylist2)
-    directory = os.path.dirname(args.output)
-    genedf.to_csv(f"{directory}/Genes.tsv",sep='\t',index=False)
-
-
-genes_arg = args.extract_genes
-
-if genes_arg != None:
-    def parse_genes_arg(genes_arg):
-        if ',' in genes_arg:
-            return genes_arg.split(',')
+def process_region(*args):
+    counter = 0
+    for df in args:
+        if counter == 0:
+            my_df = df
         else:
-            try:
-                with open(genes_arg, 'r') as file:
-                    return [line.strip() for line in file.readlines()]
-            except FileNotFoundError:
-                raise argparse.ArgumentTypeError(f"File '{genes_arg}' not found.")
-            
-    def filter_by_gene_symbol(row):
-        if isinstance(row, list):
-            for d in row:
-                if isinstance(d, dict) and d.get('hgnc') == target_gene_symbol:
-                    return True
-        return False  
+            my_df = pd.concat([my_df, df], axis=0, ignore_index=True)
+        counter += 1
+        
+    return my_df
 
-
-    def is_novel(row):
-        return pd.isna(row['dbsnp'])
-    directory_path = args.extracted_genes_outdir
-    os.makedirs(directory_path, exist_ok=True)
-    Genes  =  parse_genes_arg(genes_arg)
-    for target_gene_symbol in Genes:
-        filtered_df = final_df[final_df['transcripts'].apply(filter_by_gene_symbol)]
-        if len(filtered_df) > 0:
-            total_rows = len(filtered_df)
-            total_variants = total_rows
-            variants_with_annotations = total_rows - filtered_df['dbsnp'].isna().sum()
-            novel_variants = total_variants - variants_with_annotations
-            percentage_novel = (novel_variants / total_rows) * 100
-            print()
-            print(f"#--------------------{target_gene_symbol}--------------------#")
-            print(f"Total Variants: {total_variants}")
-            print(f"Variants with Annotations: {variants_with_annotations}")
-            print(f"Variants without dbSNP Annotations: {novel_variants}")
-            print(f"Percentage of Novel Variants: {percentage_novel} %")
-            filtered_df.to_csv(f"{directory_path}/{target_gene_symbol}.tsv",sep='\t',index=False)
+def process_dataframe(df,target_gene_symbol=None):
+    df = pd.DataFrame(df)
+    try:
+        variants_df = df['variants'].apply(pd.Series)
+        variants_df2 = variants_df[0].apply(pd.Series)
+        final_df = pd.concat([df, variants_df2], axis=1).drop(['variants', 'samples'], axis=1)
+        if target_gene_symbol is not None:
+            final_df.to_csv(f"{directory_path}/{target_gene_symbol}.tsv",sep='\t',index=False)
         else:
-            print()
-            print(f"Didn't find any variants in Gene: {target_gene_symbol}")
+            final_df.to_csv(f"{directory_path}/Multiple_genes.tsv",sep='\t',index=False)
+        return final_df
+    
+
+    except:
+        print("No match found for any of the provided genes!")
+
+
+
+def print_stats(final_df,target_gene_symbol=None):
+    try:
+        total_rows = len(final_df)
+    except:
+        exit(1)
+    total_variants = total_rows
+    try:
+        variants_with_annotations = total_rows - final_df['dbsnp'].isna().sum()
+    except:
+        variants_with_annotations = 0
+    try:
+        variants_with_regulatoryRegions = total_rows - final_df['regulatoryRegions'].isna().sum()
+    except:
+        variants_with_regulatoryRegions = 0
+    try:
+        variants_with_inlowcomplexity = total_rows - final_df['inLowComplexityRegion'].isna().sum()
+    except:
+        variants_with_inlowcomplexity = 0
+    novel_variants = total_variants - variants_with_annotations
+    percentage_novel = round(((novel_variants / total_rows) * 100),2)
+    if target_gene_symbol is not None:
+        print(f"#--------------------{target_gene_symbol}--------------------#")
+    print(f"Total Variants: {total_variants}")
+    print(f"No. Variants with dbSNP Annotations: {variants_with_annotations}")
+    print(f"No. Variants affecting regualtory regions: {variants_with_regulatoryRegions}")
+    print(f"No. Variants in low complexity regions: {variants_with_inlowcomplexity}")
+    print(f"Percentage of Unknown Variants (dbsnp only): {percentage_novel} %\n")
+
+
+
+def parse_genes_arg(genes_arg):
+    if ',' in genes_arg:
+        return genes_arg.split(',')
+
+if args.gene_list is not None:
+    print("Sorry still under development, use --genes instead!")
+    exit(0)
+
+Genes  =  parse_genes_arg(args.genes)
+egenes = []
+
+if args.compine_genes:
+    for gene in Genes:
+        egenes.append(extract_gene_region(file, gene_info, gene, padding))
+    combined = process_region(*egenes)
+    final_df = print_stats(process_dataframe(combined))
+else:
+    for gene in Genes:
+        egene = extract_gene_region(file, gene_info, gene, padding)
+        processed = process_dataframe(egene,target_gene_symbol=gene)
+        final_df = print_stats(processed,target_gene_symbol=gene)
