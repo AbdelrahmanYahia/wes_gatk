@@ -149,6 +149,8 @@ def print_stats(final_df,target_gene_symbol=None):
 def parse_genes_arg(genes_arg):
     if ',' in genes_arg:
         return genes_arg.split(',')
+    else:
+        return [genes_arg]
 
 if args.gene_list is not None:
     print("Sorry still under development, use --genes instead!")
