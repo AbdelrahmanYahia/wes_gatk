@@ -119,30 +119,31 @@ def process_dataframe(df,target_gene_symbol=None):
 def print_stats(final_df,target_gene_symbol=None):
     try:
         total_rows = len(final_df)
+        total_variants = total_rows
+        try:
+            variants_with_annotations = total_rows - final_df['dbsnp'].isna().sum()
+        except:
+            variants_with_annotations = 0
+        try:
+            variants_with_regulatoryRegions = total_rows - final_df['regulatoryRegions'].isna().sum()
+        except:
+            variants_with_regulatoryRegions = 0
+        try:
+            variants_with_inlowcomplexity = total_rows - final_df['inLowComplexityRegion'].isna().sum()
+        except:
+            variants_with_inlowcomplexity = 0
+        novel_variants = total_variants - variants_with_annotations
+        percentage_novel = round(((novel_variants / total_rows) * 100),2)
+        if target_gene_symbol is not None:
+            print(f"#--------------------{target_gene_symbol}--------------------#")
+        print(f"Total Variants: {total_variants}")
+        print(f"No. Variants with dbSNP Annotations: {variants_with_annotations}")
+        print(f"No. Variants affecting regualtory regions: {variants_with_regulatoryRegions}")
+        print(f"No. Variants in low complexity regions: {variants_with_inlowcomplexity}")
+        print(f"Percentage of Unknown Variants (dbsnp only): {percentage_novel} %\n")
     except:
-        exit(1)
-    total_variants = total_rows
-    try:
-        variants_with_annotations = total_rows - final_df['dbsnp'].isna().sum()
-    except:
-        variants_with_annotations = 0
-    try:
-        variants_with_regulatoryRegions = total_rows - final_df['regulatoryRegions'].isna().sum()
-    except:
-        variants_with_regulatoryRegions = 0
-    try:
-        variants_with_inlowcomplexity = total_rows - final_df['inLowComplexityRegion'].isna().sum()
-    except:
-        variants_with_inlowcomplexity = 0
-    novel_variants = total_variants - variants_with_annotations
-    percentage_novel = round(((novel_variants / total_rows) * 100),2)
-    if target_gene_symbol is not None:
-        print(f"#--------------------{target_gene_symbol}--------------------#")
-    print(f"Total Variants: {total_variants}")
-    print(f"No. Variants with dbSNP Annotations: {variants_with_annotations}")
-    print(f"No. Variants affecting regualtory regions: {variants_with_regulatoryRegions}")
-    print(f"No. Variants in low complexity regions: {variants_with_inlowcomplexity}")
-    print(f"Percentage of Unknown Variants (dbsnp only): {percentage_novel} %\n")
+        pass
+
 
 
 
